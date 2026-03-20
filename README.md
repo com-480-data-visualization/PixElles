@@ -60,7 +60,7 @@ The notebook mainly uses plots to show disaster categories and regional distribu
 
 ### Related work
 
-#### Existing Work on the EM-DAT Dataset:
+#### Existing Work on the EM-DAT Dataset
 
 EM-DAT is a widely used dataset and several types of work exist:
 
@@ -72,13 +72,13 @@ EM-DAT is a widely used dataset and several types of work exist:
 
 All of the above are primarily descriptive and exploration-focused.
 
-#### Our Approach:
+#### Our Approach
 
-**From exploration to data storytelling.** Existing work with EM-DAT mainly focuses on descriptive dashboards and trend analysis. Consequently, there is an absence of accessible visualizations that dynamically contextualize these events within a long-term historical framework. Our approach is original because it moves from static, isolated event visualizations to a continuous narrative of global risk from 1975 to 2025, tracing how shifting disaster patterns redraw the map of global vulnerability and what this reveals about our evolving capacity to respond. 
+- **From exploration to data storytelling.** Existing work with EM-DAT mainly focuses on descriptive dashboards and trend analysis. Consequently, there is an absence of accessible visualizations that dynamically contextualize these events within a long-term historical framework. Our approach is original because it moves from static, isolated event visualizations to a continuous narrative of global risk from 1975 to 2025, tracing how shifting disaster patterns redraw the map of global vulnerability and what this reveals about our evolving capacity to respond. 
 
-**Multi-dimensional narrative.** We integrate multiple dimensions (typology, geography and human impact) into a single coherent experience, rather than treating them as separate charts only.
+- **Multi-dimensional narrative.** We integrate multiple dimensions (typology, geography and human impact) into a single coherent experience, rather than treating them as separate charts only.
 
-#### Sources of Inspiration:
+#### Sources of Inspiration
 
 We draw inspiration from a web-based platform for interactive data visualization and storytelling [Flourish](https://flourish.studio/examples/?Industry=Featured) and advanced visualization designers such as [Moritz Stefaner — *Rhythm of Food*](https://truth-and-beauty.net/).
 
