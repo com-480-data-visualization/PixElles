@@ -35,27 +35,19 @@ For detailed information on these biases and limitations, consult the [EM-DAT do
 
 ### Problematic
 
-**General Topic**: Spatio-Temporal Evolution of Natural Disasters (1960-2025)
+**General Topic: Narrative Spatio-Temporal Evolution of Natural Disasters (1975-2025)**
 
-**Main Axis**: This project aims to deconstruct the complex relationship between natural hazards and human societies over the last six decades. Driven by the acceleration of global warming, we seek to visualize the changes of historical disaster baselines and modern climate-driven events. To achieve this, we will address three critical dimensions:
+Public discourse on natural disasters is often reactive and fragmented. Media coverage tends to focus only on isolated, high-intensity events or static snapshots of damage, creating a perception of randomness rather than pattern. Consequently, there is a critical absence of accessible visualizations that dynamically contextualize these events within a long-term historical framework, leaving audiences unable to distinguish between normal variability and emerging non-stationary trends.
 
-1. **Climate-Related Shifts**: Has the frequency of *climate-related* disasters (floods, storms, droughts) increased disproportionately compared to *geological* events (earthquakes, volcanoes) over the past 60 years?
-2. **Geographical Dynamics**: Are traditional disaster hotspots intensifying, or are new regions emerging as vulnerable zones due to climate change?
-3. **Human Impact & Resilience**: How does the rising frequency of these events correlate with human impact (deaths, economic loss), and what does this reveal about our evolving capacity to respond?
+Our approach moves from static, isolated event visualizations, to a continuous, **dynamic** **narrative** of global risk from 1975 to 2025. This project seeks to reconstruct the historical trajectory of global natural hazards and their intersection with human society over the last 50 years. To achieve this, we will address three critical dimensions:
 
-#### Motivation
-
-Public discourse on natural disasters is often reactive and fragmented. Media coverage tends to focus only on isolated, high-intensity events or static snapshots of damage, creating a perception of randomness rather than pattern. Consequently, there is a critical absence of accessible visualizations that dynamically contextualize these events within a long-term historical framework, leaving audiences unable to distinguish between normal variability and systemic climate shifts.
-
-Our approach is to move from static, isolated event visualizations, to a continuous, dynamic narrative of global risk from 1960 to 2025. By contrasting the rising frequency of climate-related events against the stable baseline of geological hazards, we provide a clearer picture of planetary change. Crucially, we go beyond frequency metrics to integrate mortality and economic loss data, addressing a nuanced core question:
-
-> _As disasters become more frequent, is humanity becoming more vulnerable, or are we successfully adapting?_
-
-#### Target Audience
+> 1. **Disaster Typology & Frequency:** How has the global profile of disasters shifted over time? Specifically, has the frequency of climate-related events (floods, storms, droughts) increased disproportionately compared to geological events (earthquakes, volcanoes)?
+> 2. **Geospatial Vulnerability:** Are traditional disaster hotspots intensifying, or are new regions emerging as vulnerable zones?
+> 3. **Human Impact & Resilience**: How does the rising frequency of these events correlate with human impact (deaths, economic loss) and what does this reveal about our evolving capacity to respond?
 
 This project is designed to serve two primary audiences, bridging the gap between public awareness and professional planning:
 
-1. **The General Public**: To move beyond brief news headlines and foster a deeper, data-driven understanding of the evolving nature of global risks. By visualizing long-term trends, we aim to increase public awareness of the world's changing environmental landscape and the urgency of climate adaptation.
+1. **The General Public**: To move beyond brief news headlines and foster a deeper, data-driven understanding of the evolving nature of global risks. By visualizing long-term trends, we aim to increase public awareness of the world's changing environmental landscape.
 2. **Urban Planners & Risk Managers:** To provide a data-driven historical context for site-specific planning. By visualizing the long-term frequency and intensity of disasters in specific locations, planners can understand the local vulnerabilities, make informed decisions on building critical infrastructures and analyze how specific regions have historically coped with repeated events to improve current building codes and emergency strategies.
 
 ### Exploratory Data Analysis
