@@ -80,7 +80,7 @@ All of the above are primarily descriptive and exploration-focused.
 
 #### Sources of Inspiration
 
-We draw inspiration from an online scientific publication [Flourish](https://flourish.studio/examples/?Industry=Featured) and advanced visualization designers such as [Moritz Stefaner — *Rhythm of Food*](https://truth-and-beauty.net/).
+We draw inspiration from a web-based platform for interactive data visualization and storytelling [Flourish](https://flourish.studio/examples/?Industry=Featured) and advanced visualization designers such as [Moritz Stefaner — *Rhythm of Food*](https://truth-and-beauty.net/).
 
 ## Milestone 2 (17th April, 5pm)
 
