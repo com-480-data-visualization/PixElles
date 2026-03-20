@@ -68,7 +68,7 @@ EM-DAT is a widely used dataset and several types of work exist:
 
 **Academic and student projects.** A common pattern is studying trends with choropleth maps, line charts, and pie charts at the country level (such as [example](https://github.com/valeqm/World-Disaster-Pipeline)). [Global Disasters (UGent)](https://datavisualiatie-ugent.github.io/project-dv24-5/) goes further by linking disaster frequency to climate indicators, but each chart is standalone.
 
-**Our World in Data.** OWID offers the most comprehensive public collection of EM-DAT-based charts — deaths, economic costs, and long-term trends - but remains filter-based.
+**Our World in Data.** [OWID](https://ourworldindata.org/natural-disasters) offers the most comprehensive public collection of EM-DAT-based charts — deaths, economic costs, and long-term trends - but remains filter-based.
 
 All of the above are primarily descriptive and exploration-focused.
 
