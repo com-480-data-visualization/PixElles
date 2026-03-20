@@ -64,11 +64,11 @@ The notebook mainly uses plots to show disaster categories and regional distribu
 
 EM-DAT is a widely used dataset and several types of work exist:
 
-**Official tooling.** The EM-DAT ecosystem provides built-in analytics via the [EM-VIEW dashboard](https://emview.streamlit.app/), covering metric, table, map and time views.
+- **Official tooling.** The EM-DAT ecosystem provides built-in analytics via the [EM-VIEW dashboard](https://emview.streamlit.app/), covering metric, table, map and time views.
 
-**Academic and student projects.** A common pattern is studying trends with choropleth maps, line charts, and pie charts at the country level (such as [example](https://github.com/valeqm/World-Disaster-Pipeline)). [Global Disasters (UGent)](https://datavisualiatie-ugent.github.io/project-dv24-5/) goes further by linking disaster frequency to climate indicators, but each chart is standalone.
+- **Academic and student projects.** A common pattern is studying trends with choropleth maps, line charts, and pie charts at the country level (such as [example](https://github.com/valeqm/World-Disaster-Pipeline)). [Global Disasters (UGent)](https://datavisualiatie-ugent.github.io/project-dv24-5/) goes further by linking disaster frequency to climate indicators, but each chart is standalone.
 
-**Our World in Data.** [OWID](https://ourworldindata.org/natural-disasters) offers the most comprehensive public collection of EM-DAT-based charts — deaths, economic costs, and long-term trends - but remains filter-based.
+- **Our World in Data.** [OWID](https://ourworldindata.org/natural-disasters) offers the most comprehensive public collection of EM-DAT-based charts — deaths, economic costs, and long-term trends - but remains filter-based.
 
 All of the above are primarily descriptive and exploration-focused.
 
