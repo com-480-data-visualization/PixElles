@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Natural Disaster Museum · 1975–2025</title>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Special+Elite&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/style.css">
+
+  <!-- Core Libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
+  <script src="https://unpkg.com/globe.gl"></script>
+</head>
+<body>
+  <div id="app">
+    <!-- SCENE 1: Museum Entrance + Ticket -->
+    <div id="scene-ticket" class="scene active">
+      <div class="museum-title">
+        <span class="museum-label">WELCOME TO THE</span>
+        <h1>NATURAL DISASTER<br/>MUSEUM</h1>
+        <span class="museum-subtitle">1975 — 2025 · Based on EM-DAT · CRED</span>
+      </div>
+
+      <div class="ticket-wrapper" id="ticketWrapper">
+        <div class="ticket" id="museumTicket">
+          <!-- TICKET FRONT -->
+          <div class="ticket-front">
+            <div class="ticket-header">
+              <span class="ticket-label">ADMISSION · FREE</span>
+              <span class="ticket-num">#00480</span>
+            </div>
+            <div class="ticket-title">CHRONICLES<br/>OF CATASTROPHE</div>
+            <div class="ticket-map" id="ticketMiniMap">
+              <!-- Tiny SVG world map rendered here by scene1_ticket.js -->
+            </div>
+            <div class="ticket-footer">
+              <div class="ticket-info">
+                <span>4 EXHIBITS</span>
+                <span>50 YEARS OF DATA</span>
+                <span>220 COUNTRIES</span>
+              </div>
+              <div class="ticket-cta">CLICK TO ENTER &rarr;</div>
+            </div>
+            <div class="ticket-tear"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCENE 2: 3D Globe -->
+    <div id="scene-globe" class="scene hidden">
+      <!-- Timeline Slider at Top -->
+      <div class="timeline-slider-container" id="timelineSliderContainer">
+        <label class="timeline-label">YEAR</label>
+        <div class="timeline-slider-wrapper">
+          <input type="range" id="yearSlider" min="1975" max="2025" value="2000" />
+          <span id="yearVal" class="year-display">2000</span>
+        </div>
+      </div>
+
+      <!-- 3D Globe Container -->
+      <div id="globeContainer"></div>
+
+      <!-- Filter Panel (Left) - Disaster Type Only -->
+      <div class="filter-panel" id="filterPanel">
+        <div class="filter-title">DISASTER TYPE</div>
+
+        <div class="filter-chips" id="typeFilter">
+          <button class="chip active" data-type="all">All</button>
+          <button class="chip" data-type="flood" style="--c:var(--flood)">Flood</button>
+          <button class="chip" data-type="storm" style="--c:var(--storm)">Storm</button>
+          <button class="chip" data-type="drought" style="--c:var(--drought)">Drought</button>
+          <button class="chip" data-type="wildfire" style="--c:var(--wildfire)">Wildfire</button>
+          <button class="chip" data-type="earthquake" style="--c:var(--earthquake)">Earthquake</button>
+          <button class="chip" data-type="volcano" style="--c:var(--volcano)">Volcano</button>
+        </div>
+      </div>
+
+      <!-- Legend -->
+      <div class="globe-legend" id="globeLegend">
+        <!-- Populated by JS: colored dots + disaster type labels -->
+      </div>
+
+      <!-- Tooltip (appears on hover over country) -->
+      <div class="globe-tooltip hidden" id="globeTooltip">
+        <div class="tooltip-country"></div>
+        <div class="tooltip-stat"></div>
+        <div class="tooltip-cta">Click to explore timeline &rarr;</div>
+      </div>
+    </div>
+
+    <!-- SCENE 3: Country Timeline -->
+    <div id="scene-country" class="scene hidden">
+      <!-- Header with country name and navigation -->
+      <div class="timeline-header">
+        <button class="back-button" id="backToGlobe">&larr; Back to Globe</button>
+        <div class="timeline-country-title">
+          <h2 id="timelineCountryName">—</h2>
+          <p id="timelineCountryRegion">—</p>
+        </div>
+        <div class="view-toggle">
+          <button class="toggle-pill active" data-view="timeline">Timeline</button>
+          <button class="toggle-pill" data-view="overview">Overview</button>
+        </div>
+      </div>
+
+      <!-- TIMELINE VIEW: Museum-style timeline with exhibit cards -->
+      <div class="timeline-view" id="timelineView">
+        <div class="museum-timeline">
+          <!-- Central timeline axis -->
+          <div class="timeline-axis"></div>
+
+          <!-- Timeline events - will be populated by JS -->
+          <div class="timeline-events" id="timelineEvents">
+            <!-- Placeholder exhibit cards will be added here -->
+          </div>
+        </div>
+      </div>
+
+      <!-- OVERVIEW VIEW: Visualizations and statistics -->
+      <div class="overview-view hidden" id="overviewView">
+        <div class="overview-grid">
+          <!-- Disaster Frequency -->
+          <div class="overview-card">
+            <div class="overview-card-header">
+              <h3>Disaster Frequency</h3>
+              <p>Events over time (1975-2025)</p>
+            </div>
+            <div class="overview-viz" id="overviewFrequency"></div>
+          </div>
+
+          <!-- Distribution by Type -->
+          <div class="overview-card">
+            <div class="overview-card-header">
+              <h3>Distribution by Type</h3>
+              <p>Breakdown of disaster types</p>
+            </div>
+            <div class="overview-viz" id="overviewDistribution"></div>
+          </div>
+
+          <!-- Impact: Deaths -->
+          <div class="overview-card">
+            <div class="overview-card-header">
+              <h3>Human Impact</h3>
+              <p>Deaths and affected populations</p>
+            </div>
+            <div class="overview-viz" id="overviewDeaths"></div>
+          </div>
+
+          <!-- Impact: Economic -->
+          <div class="overview-card">
+            <div class="overview-card-header">
+              <h3>Economic Impact</h3>
+              <p>Damages in USD (thousands)</p>
+            </div>
+            <div class="overview-viz" id="overviewDamages"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCENE 4: Earth Story — Trends Panel -->
+    <div id="scene-story" class="scene hidden">
+      <div class="story-header">
+        <h2 class="story-title">EARTH STORY</h2>
+        <p class="story-subtitle">Analysing 25 years of global disaster trends</p>
+      </div>
+
+      <!-- OVERVIEW: 4 exhibit frames in a 2×2 grid -->
+      <div class="exhibits-hall" id="overviewHall">
+        <div class="wall-exhibit" id="exhibit-frequency">
+          <div class="exhibit-spotlight"></div>
+          <div class="exhibit-label">EXHIBIT I</div>
+          <div class="exhibit-wall-title">THE RISING TIDE</div>
+          <div class="exhibit-wall-subtitle">Climate disaster frequency, 2000–2025</div>
+          <div class="exhibit-viz-area" id="viz-frequency"></div>
+          <div class="exhibit-caption">Floods & storms account for 73% of all recorded events</div>
+        </div>
+
+        <div class="wall-exhibit" id="exhibit-mortality">
+          <div class="exhibit-spotlight"></div>
+          <div class="exhibit-label">EXHIBIT II</div>
+          <div class="exhibit-wall-title">THE RESILIENCE PARADOX</div>
+          <div class="exhibit-wall-subtitle">Deaths per event trends over time</div>
+          <div class="exhibit-viz-area" id="viz-mortality"></div>
+          <div class="exhibit-caption">Early warning systems improving survival rates</div>
+        </div>
+
+        <div class="wall-exhibit" id="exhibit-economic">
+          <div class="exhibit-spotlight"></div>
+          <div class="exhibit-label">EXHIBIT III</div>
+          <div class="exhibit-wall-title">THE ECONOMIC SPIRAL</div>
+          <div class="exhibit-wall-subtitle">Disaster-related losses, 2000–2025</div>
+          <div class="exhibit-viz-area" id="viz-economic"></div>
+          <div class="exhibit-caption">Economic losses continue to rise globally</div>
+        </div>
+
+        <div class="wall-exhibit" id="exhibit-geography">
+          <div class="exhibit-spotlight"></div>
+          <div class="exhibit-label">EXHIBIT IV</div>
+          <div class="exhibit-wall-title">THE SHIFTING MAP</div>
+          <div class="exhibit-wall-subtitle">Regional vulnerability by disaster type</div>
+          <div class="exhibit-viz-area" id="viz-geography"></div>
+          <div class="exhibit-caption">Asia & Africa bear the heaviest burden</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Persistent bottom nav (hidden in scene-ticket) -->
+  <nav id="museum-nav" class="hidden">
+    <button data-scene="scene-globe" class="nav-btn">World Map</button>
+    <button data-scene="scene-story" class="nav-btn">Earth Story</button>
+  </nav>
+
+  <!-- JavaScript Modules -->
+  <script src="js/data.js"></script>
+  <script src="js/scene1_ticket.js"></script>
+  <script src="js/scene2_globe.js"></script>
+  <script src="js/scene3_country.js"></script>
+  <script src="js/scene4_story.js"></script>
+
+  <!-- App Initialization -->
+  <script>
+    // App state and navigation
+    const App = {
+      currentScene: 'scene-ticket',
+
+      showScene(id) {
+        document.querySelectorAll('.scene').forEach(s => {
+          s.classList.add('hidden');
+          s.classList.remove('active');
+        });
+
+        const scene = document.getElementById(id);
+        scene.classList.remove('hidden');
+        scene.classList.add('active');
+
+        // Toggle nav visibility
+        const nav = document.getElementById('museum-nav');
+        nav.classList.toggle('hidden', id === 'scene-ticket');
+
+        // Lazy init scenes
+        if (id === 'scene-globe' && !Scene2._inited) {
+          Scene2.init();
+          Scene2._inited = true;
+        }
+        if (id === 'scene-story' && !Scene4._inited) {
+          Scene4.init();
+          Scene4._inited = true;
+        }
+
+        this.currentScene = id;
+      }
+    };
+
+    // Navigation button handlers
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const scene = btn.getAttribute('data-scene');
+        App.showScene(scene);
+      });
+    });
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      console.log('Natural Disaster Museum initializing...');
+
+      await initData();
+
+      Scene1.init();
+
+      App.showScene('scene-ticket');
+
+      console.log('Museum ready');
+    });
+  </script>
+</body>
+</html>
