@@ -86,6 +86,9 @@ We draw inspiration from a web-based platform for interactive data visualization
 
 **10% of the final grade**
 
+- Overleaf link to the report: [Milestone 2 Report](milestones/milestone-2/report.pdf)
+- Link to the initial website: [Milestone 2 Website](https://com-480-data-visualization.github.io/PixElles/)
+
 ## Milestone 3 (29th May, 5pm)
 
 **80% of the final grade**
