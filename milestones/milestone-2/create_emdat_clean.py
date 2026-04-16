@@ -82,4 +82,3 @@ type_counts = df_clean['type'].value_counts()
 for dtype, count in type_counts.items():
     print(f'  {dtype}: {count:,} ({count/len(df_clean)*100:.1f}%)')
 
-print('\n Done! The website can now load the data from emdat_clean.csv')
