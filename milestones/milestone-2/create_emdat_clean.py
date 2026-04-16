@@ -72,10 +72,10 @@ df_clean['damage_usd_thousands'] = df_clean['damage_usd_thousands'].fillna(0)
 
 df_clean.to_csv(OUTPUT_FILE, index=False)
 
-print(f'\n✓ Saved: {OUTPUT_FILE}')
-print(f'✓ Records: {len(df_clean):,}')
-print(f'✓ Year range: {int(df_clean["year"].min())}-{int(df_clean["year"].max())}')
-print(f'✓ Countries: {df_clean["iso"].nunique()}')
+print(f'\n Saved: {OUTPUT_FILE}')
+print(f' Records: {len(df_clean):,}')
+print(f' Year range: {int(df_clean["year"].min())}-{int(df_clean["year"].max())}')
+print(f' Countries: {df_clean["iso"].nunique()}')
 
 print('\nDisaster type distribution:')
 type_counts = df_clean['type'].value_counts()
