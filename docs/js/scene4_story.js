@@ -29,7 +29,7 @@ const Scene4 = {
 
     this.renderFrequencyExhibit();
     this.renderMortalityExhibit();
-    this.renderDeadliestEvents();
+    this.renderAffectedExhibit();
     this.renderRegionalVulnerability();
   },
 
@@ -150,127 +150,19 @@ const Scene4 = {
 
     container.innerHTML = '';
 
-    // Group data by year for deaths, affected, and damage
-    const yearlyStats = d3.rollup(
+    // Group data by year for deaths only
+    const yearlyDeaths = d3.rollup(
       RAW_DATA,
-      v => ({
-        deaths: d3.sum(v, d => d.deaths),
-        affected: d3.sum(v, d => d.affected),
-        damage: d3.sum(v, d => d.damage)
-      }),
+      v => d3.sum(v, d => d.deaths),
       d => d.year
     );
 
-    const data = Array.from(yearlyStats, ([year, stats]) => ({
+    const data = Array.from(yearlyDeaths, ([year, deaths]) => ({
       year,
-      ...stats
+      deaths
     })).sort((a, b) => a.year - b.year);
 
-    // Create three small multiples
-    const margin = { top: 15, right: 15, bottom: 30, left: 50 };
-    const chartHeight = (container.clientHeight - 40) / 3;
-    const width = container.clientWidth - margin.left - margin.right;
-    const height = chartHeight - margin.top - margin.bottom;
-
-    const svg = d3.select(container)
-      .append('svg')
-      .attr('width', container.clientWidth)
-      .attr('height', container.clientHeight);
-
-    const metrics = [
-      { key: 'deaths', label: 'Deaths', color: '#E74C3C', format: d3.format(',') },
-      { key: 'affected', label: 'Affected (Millions)', color: '#F39C12', format: d => d3.format('.1f')(d / 1e6) },
-      { key: 'damage', label: 'Damage ($B USD)', color: '#3498DB', format: d => d3.format('.1f')(d / 1e6) }
-    ];
-
-    metrics.forEach((metric, i) => {
-      const g = svg.append('g')
-        .attr('transform', `translate(${margin.left}, ${i * chartHeight + margin.top})`);
-
-      const x = d3.scaleLinear()
-        .domain(d3.extent(data, d => d.year))
-        .range([0, width]);
-
-      const y = d3.scaleLinear()
-        .domain([0, d3.max(data, d => d[metric.key])])
-        .nice()
-        .range([height, 0]);
-
-      // Draw bars
-      g.selectAll('.bar')
-        .data(data)
-        .join('rect')
-        .attr('class', 'bar')
-        .attr('x', d => x(d.year) - 2)
-        .attr('y', d => y(d[metric.key]))
-        .attr('width', 4)
-        .attr('height', d => height - y(d[metric.key]))
-        .attr('fill', metric.color)
-        .attr('opacity', 0.6);
-
-      // Add 5-year moving average line
-      const avgData = data.map((d, idx) => {
-        const start = Math.max(0, idx - 2);
-        const end = Math.min(data.length - 1, idx + 2);
-        const slice = data.slice(start, end + 1);
-        const avg = d3.mean(slice, s => s[metric.key]);
-        return { year: d.year, value: avg };
-      });
-
-      const line = d3.line()
-        .x(d => x(d.year))
-        .y(d => y(d.value))
-        .curve(d3.curveMonotoneX);
-
-      g.append('path')
-        .datum(avgData)
-        .attr('fill', 'none')
-        .attr('stroke', metric.color)
-        .attr('stroke-width', 2)
-        .attr('d', line);
-
-      // Add axes
-      if (i === 2) {
-        const xAxis = d3.axisBottom(x).tickFormat(d3.format('d')).ticks(8);
-        g.append('g')
-          .attr('transform', `translate(0,${height})`)
-          .call(xAxis)
-          .style('color', '#9e9e9e')
-          .style('font-size', '10px');
-      }
-
-      const yAxis = d3.axisLeft(y).ticks(4).tickFormat(metric.format);
-      g.append('g')
-        .call(yAxis)
-        .style('color', '#9e9e9e')
-        .style('font-size', '10px');
-
-      // Add label
-      g.append('text')
-        .attr('x', -margin.left + 5)
-        .attr('y', -5)
-        .text(metric.label)
-        .style('font-size', '11px')
-        .style('fill', metric.color)
-        .style('font-weight', 'bold');
-    });
-  },
-
-  renderDeadliestEvents() {
-    const container = document.getElementById('viz-economic');
-    if (!container) return;
-
-    container.innerHTML = '';
-
-    // Get top 10 deadliest events
-    const topEvents = TOP_EVENTS.slice(0, 10);
-
-    if (topEvents.length === 0) {
-      container.innerHTML = '<div style="color: #666;">No data available</div>';
-      return;
-    }
-
-    const margin = { top: 20, right: 20, bottom: 40, left: 150 };
+    const margin = { top: 20, right: 20, bottom: 40, left: 60 };
     const width = container.clientWidth - margin.left - margin.right;
     const height = container.clientHeight - margin.top - margin.bottom;
 
@@ -283,60 +175,167 @@ const Scene4 = {
 
     // Create scales
     const x = d3.scaleLinear()
-      .domain([0, d3.max(topEvents, d => d.deaths)])
-      .nice()
+      .domain(d3.extent(data, d => d.year))
       .range([0, width]);
 
-    const y = d3.scaleBand()
-      .domain(topEvents.map((d, i) => i))
-      .range([0, height])
-      .padding(0.2);
+    const y = d3.scaleLinear()
+      .domain([0, d3.max(data, d => d.deaths)])
+      .nice()
+      .range([height, 0]);
 
     // Draw bars
     svg.selectAll('.bar')
-      .data(topEvents)
+      .data(data)
       .join('rect')
       .attr('class', 'bar')
-      .attr('x', 0)
-      .attr('y', (d, i) => y(i))
-      .attr('width', d => x(d.deaths))
-      .attr('height', y.bandwidth())
-      .attr('fill', d => getDisasterColor(d.type))
-      .attr('opacity', 0.8);
+      .attr('x', d => x(d.year) - 2)
+      .attr('y', d => y(d.deaths))
+      .attr('width', 4)
+      .attr('height', d => height - y(d.deaths))
+      .attr('fill', '#E74C3C')
+      .attr('opacity', 0.7);
 
-    // Add country labels
-    svg.selectAll('.label')
-      .data(topEvents)
-      .join('text')
-      .attr('class', 'label')
-      .attr('x', -5)
-      .attr('y', (d, i) => y(i) + y.bandwidth() / 2)
-      .attr('text-anchor', 'end')
-      .attr('alignment-baseline', 'middle')
-      .text(d => `${d.name || d.country} (${d.year})`)
-      .style('font-size', '10px')
-      .style('fill', '#9e9e9e');
+    // Add 5-year moving average line
+    const avgData = data.map((d, idx) => {
+      const start = Math.max(0, idx - 2);
+      const end = Math.min(data.length - 1, idx + 2);
+      const slice = data.slice(start, end + 1);
+      const avg = d3.mean(slice, s => s.deaths);
+      return { year: d.year, value: avg };
+    });
 
-    // Add death count labels
-    svg.selectAll('.value')
-      .data(topEvents)
-      .join('text')
-      .attr('class', 'value')
-      .attr('x', d => x(d.deaths) + 5)
-      .attr('y', (d, i) => y(i) + y.bandwidth() / 2)
-      .attr('alignment-baseline', 'middle')
-      .text(d => formatNumber(d.deaths))
-      .style('font-size', '10px')
-      .style('fill', '#f0f0f0')
-      .style('font-weight', 'bold');
+    const line = d3.line()
+      .x(d => x(d.year))
+      .y(d => y(d.value))
+      .curve(d3.curveMonotoneX);
 
-    // Add x-axis
-    const xAxis = d3.axisBottom(x).ticks(5).tickFormat(formatNumber);
+    svg.append('path')
+      .datum(avgData)
+      .attr('fill', 'none')
+      .attr('stroke', '#E74C3C')
+      .attr('stroke-width', 3)
+      .attr('d', line);
+
+    // Add axes
+    const xAxis = d3.axisBottom(x).tickFormat(d3.format('d')).ticks(10);
     svg.append('g')
       .attr('transform', `translate(0,${height})`)
       .call(xAxis)
       .style('color', '#9e9e9e')
-      .style('font-size', '10px');
+      .style('font-size', '11px');
+
+    const yAxis = d3.axisLeft(y).ticks(6).tickFormat(d3.format(','));
+    svg.append('g')
+      .call(yAxis)
+      .style('color', '#9e9e9e')
+      .style('font-size', '11px');
+
+    // Add y-axis label
+    svg.append('text')
+      .attr('transform', 'rotate(-90)')
+      .attr('y', -45)
+      .attr('x', -height / 2)
+      .attr('text-anchor', 'middle')
+      .attr('fill', '#9e9e9e')
+      .attr('font-size', '12px')
+      .text('Annual Deaths');
+  },
+
+  renderAffectedExhibit() {
+    const container = document.getElementById('viz-economic');
+    if (!container) return;
+
+    container.innerHTML = '';
+
+    // Group data by year for affected population only
+    const yearlyAffected = d3.rollup(
+      RAW_DATA,
+      v => d3.sum(v, d => d.affected),
+      d => d.year
+    );
+
+    const data = Array.from(yearlyAffected, ([year, affected]) => ({
+      year,
+      affected
+    })).sort((a, b) => a.year - b.year);
+
+    const margin = { top: 20, right: 20, bottom: 40, left: 60 };
+    const width = container.clientWidth - margin.left - margin.right;
+    const height = container.clientHeight - margin.top - margin.bottom;
+
+    const svg = d3.select(container)
+      .append('svg')
+      .attr('width', container.clientWidth)
+      .attr('height', container.clientHeight)
+      .append('g')
+      .attr('transform', `translate(${margin.left},${margin.top})`);
+
+    // Create scales
+    const x = d3.scaleLinear()
+      .domain(d3.extent(data, d => d.year))
+      .range([0, width]);
+
+    const y = d3.scaleLinear()
+      .domain([0, d3.max(data, d => d.affected)])
+      .nice()
+      .range([height, 0]);
+
+    // Draw bars
+    svg.selectAll('.bar')
+      .data(data)
+      .join('rect')
+      .attr('class', 'bar')
+      .attr('x', d => x(d.year) - 2)
+      .attr('y', d => y(d.affected))
+      .attr('width', 4)
+      .attr('height', d => height - y(d.affected))
+      .attr('fill', '#F39C12')
+      .attr('opacity', 0.7);
+
+    // Add 5-year moving average line
+    const avgData = data.map((d, idx) => {
+      const start = Math.max(0, idx - 2);
+      const end = Math.min(data.length - 1, idx + 2);
+      const slice = data.slice(start, end + 1);
+      const avg = d3.mean(slice, s => s.affected);
+      return { year: d.year, value: avg };
+    });
+
+    const line = d3.line()
+      .x(d => x(d.year))
+      .y(d => y(d.value))
+      .curve(d3.curveMonotoneX);
+
+    svg.append('path')
+      .datum(avgData)
+      .attr('fill', 'none')
+      .attr('stroke', '#F39C12')
+      .attr('stroke-width', 3)
+      .attr('d', line);
+
+    // Add axes
+    const xAxis = d3.axisBottom(x).tickFormat(d3.format('d')).ticks(10);
+    svg.append('g')
+      .attr('transform', `translate(0,${height})`)
+      .call(xAxis)
+      .style('color', '#9e9e9e')
+      .style('font-size', '11px');
+
+    const yAxis = d3.axisLeft(y).ticks(6).tickFormat(d => d3.format('.1f')(d / 1e6) + 'M');
+    svg.append('g')
+      .call(yAxis)
+      .style('color', '#9e9e9e')
+      .style('font-size', '11px');
+
+    // Add y-axis label
+    svg.append('text')
+      .attr('transform', 'rotate(-90)')
+      .attr('y', -45)
+      .attr('x', -height / 2)
+      .attr('text-anchor', 'middle')
+      .attr('fill', '#9e9e9e')
+      .attr('font-size', '12px')
+      .text('Affected Population (Millions)');
   },
 
   renderRegionalVulnerability() {
