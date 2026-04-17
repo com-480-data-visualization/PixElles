@@ -29,8 +29,8 @@ const Scene4 = {
 
     this.renderFrequencyExhibit();
     this.renderMortalityExhibit();
-    this.renderPlaceholderExhibit('viz-economic');
-    this.renderPlaceholderExhibit('viz-geography');
+    this.renderDeadliestEvents();
+    this.renderRegionalVulnerability();
   },
 
   renderFrequencyExhibit() {
@@ -256,17 +256,182 @@ const Scene4 = {
     });
   },
 
-  renderPlaceholderExhibit(containerId) {
-    const container = document.getElementById(containerId);
+  renderDeadliestEvents() {
+    const container = document.getElementById('viz-economic');
     if (!container) return;
 
     container.innerHTML = '';
 
-    const placeholder = document.createElement('div');
-    placeholder.style.cssText = 'display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; color: #666; font-size: 0.9rem; text-align: center;';
-    placeholder.textContent = 'Visualization Coming Soon';
+    // Get top 10 deadliest events
+    const topEvents = TOP_EVENTS.slice(0, 10);
 
-    container.appendChild(placeholder);
+    if (topEvents.length === 0) {
+      container.innerHTML = '<div style="color: #666;">No data available</div>';
+      return;
+    }
+
+    const margin = { top: 20, right: 20, bottom: 40, left: 150 };
+    const width = container.clientWidth - margin.left - margin.right;
+    const height = container.clientHeight - margin.top - margin.bottom;
+
+    const svg = d3.select(container)
+      .append('svg')
+      .attr('width', container.clientWidth)
+      .attr('height', container.clientHeight)
+      .append('g')
+      .attr('transform', `translate(${margin.left},${margin.top})`);
+
+    // Create scales
+    const x = d3.scaleLinear()
+      .domain([0, d3.max(topEvents, d => d.deaths)])
+      .nice()
+      .range([0, width]);
+
+    const y = d3.scaleBand()
+      .domain(topEvents.map((d, i) => i))
+      .range([0, height])
+      .padding(0.2);
+
+    // Draw bars
+    svg.selectAll('.bar')
+      .data(topEvents)
+      .join('rect')
+      .attr('class', 'bar')
+      .attr('x', 0)
+      .attr('y', (d, i) => y(i))
+      .attr('width', d => x(d.deaths))
+      .attr('height', y.bandwidth())
+      .attr('fill', d => getDisasterColor(d.type))
+      .attr('opacity', 0.8);
+
+    // Add country labels
+    svg.selectAll('.label')
+      .data(topEvents)
+      .join('text')
+      .attr('class', 'label')
+      .attr('x', -5)
+      .attr('y', (d, i) => y(i) + y.bandwidth() / 2)
+      .attr('text-anchor', 'end')
+      .attr('alignment-baseline', 'middle')
+      .text(d => `${d.name || d.country} (${d.year})`)
+      .style('font-size', '10px')
+      .style('fill', '#9e9e9e');
+
+    // Add death count labels
+    svg.selectAll('.value')
+      .data(topEvents)
+      .join('text')
+      .attr('class', 'value')
+      .attr('x', d => x(d.deaths) + 5)
+      .attr('y', (d, i) => y(i) + y.bandwidth() / 2)
+      .attr('alignment-baseline', 'middle')
+      .text(d => formatNumber(d.deaths))
+      .style('font-size', '10px')
+      .style('fill', '#f0f0f0')
+      .style('font-weight', 'bold');
+
+    // Add x-axis
+    const xAxis = d3.axisBottom(x).ticks(5).tickFormat(formatNumber);
+    svg.append('g')
+      .attr('transform', `translate(0,${height})`)
+      .call(xAxis)
+      .style('color', '#9e9e9e')
+      .style('font-size', '10px');
+  },
+
+  renderRegionalVulnerability() {
+    const container = document.getElementById('viz-geography');
+    if (!container) return;
+
+    container.innerHTML = '';
+
+    if (REGIONAL_DATA.length === 0) {
+      container.innerHTML = '<div style="color: #666;">No data available</div>';
+      return;
+    }
+
+    const margin = { top: 20, right: 20, bottom: 60, left: 60 };
+    const width = container.clientWidth - margin.left - margin.right;
+    const height = container.clientHeight - margin.top - margin.bottom;
+
+    const svg = d3.select(container)
+      .append('svg')
+      .attr('width', container.clientWidth)
+      .attr('height', container.clientHeight)
+      .append('g')
+      .attr('transform', `translate(${margin.left},${margin.top})`);
+
+    // Create scales
+    const x = d3.scaleBand()
+      .domain(REGIONAL_DATA.map(d => d.region))
+      .range([0, width])
+      .padding(0.3);
+
+    const y = d3.scaleLinear()
+      .domain([0, d3.max(REGIONAL_DATA, d => d.events)])
+      .nice()
+      .range([height, 0]);
+
+    // Color scale for regions
+    const regionColors = {
+      'Asia': '#7c4dff',
+      'Americas': '#2196f3',
+      'Africa': '#ff6f00',
+      'Europe': '#795548',
+      'Oceania': '#4caf50'
+    };
+
+    // Draw bars
+    svg.selectAll('.bar')
+      .data(REGIONAL_DATA)
+      .join('rect')
+      .attr('class', 'bar')
+      .attr('x', d => x(d.region))
+      .attr('y', d => y(d.events))
+      .attr('width', x.bandwidth())
+      .attr('height', d => height - y(d.events))
+      .attr('fill', d => regionColors[d.region] || '#666')
+      .attr('opacity', 0.8);
+
+    // Add value labels on top of bars
+    svg.selectAll('.value')
+      .data(REGIONAL_DATA)
+      .join('text')
+      .attr('class', 'value')
+      .attr('x', d => x(d.region) + x.bandwidth() / 2)
+      .attr('y', d => y(d.events) - 5)
+      .attr('text-anchor', 'middle')
+      .text(d => d.events)
+      .style('font-size', '11px')
+      .style('fill', '#f0f0f0')
+      .style('font-weight', 'bold');
+
+    // Add axes
+    const xAxis = d3.axisBottom(x);
+    svg.append('g')
+      .attr('transform', `translate(0,${height})`)
+      .call(xAxis)
+      .style('color', '#9e9e9e')
+      .style('font-size', '10px')
+      .selectAll('text')
+      .attr('transform', 'rotate(-45)')
+      .attr('text-anchor', 'end');
+
+    const yAxis = d3.axisLeft(y).ticks(5);
+    svg.append('g')
+      .call(yAxis)
+      .style('color', '#9e9e9e')
+      .style('font-size', '10px');
+
+    // Add y-axis label
+    svg.append('text')
+      .attr('transform', 'rotate(-90)')
+      .attr('y', -45)
+      .attr('x', -height / 2)
+      .attr('text-anchor', 'middle')
+      .attr('fill', '#9e9e9e')
+      .attr('font-size', '11px')
+      .text('Number of Disasters');
   },
 
 };
