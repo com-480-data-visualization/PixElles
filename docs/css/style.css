@@ -131,41 +131,110 @@ button {
 #scene-ticket {
   display: flex;
   flex-direction: column;
+  background: var(--void);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Time travel section - top third */
+.time-travel-section {
+  position: relative;
+  width: 100%;
+  height: 35vh;
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 60px;
+  justify-content: flex-start;
+  padding-top: 8vh;
+  overflow: hidden;
   background: var(--void);
 }
 
+/* Starry background - only for time travel section */
+.time-travel-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(2px 2px at 20% 30%, white, transparent),
+    radial-gradient(2px 2px at 60% 70%, white, transparent),
+    radial-gradient(1px 1px at 50% 50%, white, transparent),
+    radial-gradient(1px 1px at 80% 10%, white, transparent),
+    radial-gradient(2px 2px at 90% 60%, white, transparent),
+    radial-gradient(1px 1px at 33% 80%, white, transparent),
+    radial-gradient(1px 1px at 15% 55%, white, transparent);
+  background-size: 200% 200%, 180% 180%, 220% 220%, 250% 250%, 190% 190%, 210% 210%, 230% 230%;
+  background-position: 0% 0%;
+  animation: twinkling 8s ease-in-out infinite;
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+@keyframes twinkling {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+}
+
+/* Time travel canvas */
+#timeTravel {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Ticket section - bottom part, simple */
+.ticket-section {
+  width: 100%;
+  height: 65vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--void);
+  position: relative;
+  padding-top: 3vh;
+}
+
 .museum-title {
+  position: relative;
+  z-index: 1;
   text-align: center;
+}
+
+.ticket-wrapper {
+  position: relative;
+  z-index: 1;
 }
 
 .museum-label {
   font-family: var(--font-display);
   font-size: 0.9rem;
-  letter-spacing: 0.3em;
+  letter-spacing: 0.4em;
   color: var(--gold);
   display: block;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
+  font-weight: 400;
 }
 
 .museum-title h1 {
   font-family: var(--font-display);
-  font-size: 4.5rem;
+  font-size: 3.5rem;
   line-height: 1;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.08em;
   color: var(--text-bright);
   margin: 0;
+  font-weight: 400;
+  text-shadow: 0 2px 40px rgba(255, 213, 79, 0.25);
 }
 
 .museum-subtitle {
-  font-family: var(--font-body);
-  font-size: 0.85rem;
-  color: var(--text-mid);
+  font-family: var(--font-display);
+  font-size: 1rem;
+  color: var(--gold);
   display: block;
   margin-top: 12px;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.2em;
+  font-weight: 300;
 }
 
 .ticket-wrapper {
