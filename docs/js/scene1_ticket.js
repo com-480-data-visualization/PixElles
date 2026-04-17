@@ -4,6 +4,10 @@
 
 const Scene1 = {
   worldData: null,
+  timeTravelCanvas: null,
+  timeTravelCtx: null,
+  particles: [],
+  animationId: null,
 
   async init() {
     console.log('Initializing Scene 1: Ticket');
@@ -15,7 +19,125 @@ const Scene1 = {
       console.error('Failed to load world map:', error);
     }
 
+    this.initTimeTravelEffect();
     this.attachTicketClickHandler();
+  },
+
+  initTimeTravelEffect() {
+    this.timeTravelCanvas = document.getElementById('timeTravel');
+    if (!this.timeTravelCanvas) return;
+
+    this.timeTravelCtx = this.timeTravelCanvas.getContext('2d');
+
+    // Set canvas size
+    const resize = () => {
+      this.timeTravelCanvas.width = window.innerWidth;
+      this.timeTravelCanvas.height = window.innerHeight;
+    };
+    resize();
+    window.addEventListener('resize', resize);
+
+    // Create particles
+    const numParticles = 100;
+    const centerX = this.timeTravelCanvas.width / 2;
+    const centerY = this.timeTravelCanvas.height / 2;
+
+    for (let i = 0; i < numParticles; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const speed = Math.random() * 2 + 0.5;
+      const distance = Math.random() * 300;
+
+      this.particles.push({
+        x: centerX + Math.cos(angle) * distance,
+        y: centerY + Math.sin(angle) * distance,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+        size: Math.random() * 2 + 1,
+        opacity: Math.random() * 0.5 + 0.3,
+        year: 1975 + Math.floor(Math.random() * 51) // Random year between 1975-2025
+      });
+    }
+
+    // Add some year labels that travel
+    for (let year = 1975; year <= 2025; year += 5) {
+      const angle = Math.random() * Math.PI * 2;
+      const speed = Math.random() * 1.5 + 1;
+      const distance = Math.random() * 200;
+
+      this.particles.push({
+        x: centerX + Math.cos(angle) * distance,
+        y: centerY + Math.sin(angle) * distance,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+        size: 0,
+        opacity: Math.random() * 0.4 + 0.2,
+        year: year,
+        isYearLabel: true
+      });
+    }
+
+    this.animateTimeTravel();
+  },
+
+  animateTimeTravel() {
+    const ctx = this.timeTravelCtx;
+    const canvas = this.timeTravelCanvas;
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+
+    const animate = () => {
+      // Fade out effect for trails
+      ctx.fillStyle = 'rgba(8, 10, 15, 0.15)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Update and draw particles
+      this.particles.forEach(particle => {
+        // Move particle
+        particle.x += particle.vx;
+        particle.y += particle.vy;
+
+        // Reset if out of bounds
+        const dx = particle.x - centerX;
+        const dy = particle.y - centerY;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+
+        if (distance > Math.max(canvas.width, canvas.height) / 2 + 100) {
+          const angle = Math.random() * Math.PI * 2;
+          const speed = Math.random() * (particle.isYearLabel ? 1.5 : 2) + (particle.isYearLabel ? 1 : 0.5);
+          const resetDistance = Math.random() * 100;
+
+          particle.x = centerX + Math.cos(angle) * resetDistance;
+          particle.y = centerY + Math.sin(angle) * resetDistance;
+          particle.vx = Math.cos(angle) * speed;
+          particle.vy = Math.sin(angle) * speed;
+        }
+
+        // Draw particle
+        if (particle.isYearLabel) {
+          // Draw year label
+          ctx.fillStyle = `rgba(255, 213, 79, ${particle.opacity})`;
+          ctx.font = '14px "Bebas Neue", sans-serif';
+          ctx.fillText(particle.year, particle.x, particle.y);
+        } else {
+          // Draw dot
+          ctx.fillStyle = `rgba(255, 255, 255, ${particle.opacity})`;
+          ctx.beginPath();
+          ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      });
+
+      this.animationId = requestAnimationFrame(animate);
+    };
+
+    animate();
+  },
+
+  stopTimeTravelEffect() {
+    if (this.animationId) {
+      cancelAnimationFrame(this.animationId);
+      this.animationId = null;
+    }
   },
 
   renderTicketMap() {
