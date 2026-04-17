@@ -29,13 +29,10 @@ const Scene1 = {
 
     this.timeTravelCtx = this.timeTravelCanvas.getContext('2d');
 
-    // Set canvas size - only top half of screen
+    // Set canvas size - full screen
     const resize = () => {
-      const timeTravelSection = document.querySelector('.time-travel-section');
-      if (timeTravelSection) {
-        this.timeTravelCanvas.width = timeTravelSection.clientWidth;
-        this.timeTravelCanvas.height = timeTravelSection.clientHeight;
-      }
+      this.timeTravelCanvas.width = window.innerWidth;
+      this.timeTravelCanvas.height = window.innerHeight;
     };
     resize();
 

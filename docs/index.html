@@ -20,16 +20,18 @@
   <div id="app">
     <!-- SCENE 1: Museum Entrance + Ticket -->
     <div id="scene-ticket" class="scene active">
-      <!-- Top half: Time travel effect + Title -->
+      <!-- Background: Full screen time travel canvas -->
+      <canvas id="timeTravel"></canvas>
+
+      <!-- Content: Title at top -->
       <div class="time-travel-section">
-        <canvas id="timeTravel"></canvas>
         <div class="museum-title">
           <h1>WELCOME TO THE<br/>NATURAL DISASTER<br/>MUSEUM</h1>
           <span class="museum-subtitle">1975 — 2025</span>
         </div>
       </div>
 
-      <!-- Bottom half: Simple ticket -->
+      <!-- Content: Ticket at bottom -->
       <div class="ticket-section">
         <div class="ticket-wrapper" id="ticketWrapper">
           <div class="ticket" id="museumTicket">

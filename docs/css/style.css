@@ -129,29 +129,13 @@ button {
    ============================================ */
 
 #scene-ticket {
-  display: flex;
-  flex-direction: column;
-  background: var(--void);
   position: relative;
+  background: var(--void);
   overflow: hidden;
 }
 
-/* Time travel section - top third */
-.time-travel-section {
-  position: relative;
-  width: 100%;
-  height: 35vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  padding-top: 8vh;
-  overflow: hidden;
-  background: var(--void);
-}
-
-/* Starry background - only for time travel section */
-.time-travel-section::before {
+/* Starry background - full screen */
+#scene-ticket::before {
   content: '';
   position: absolute;
   inset: 0;
@@ -168,6 +152,7 @@ button {
   animation: twinkling 8s ease-in-out infinite;
   opacity: 0.6;
   pointer-events: none;
+  z-index: 1;
 }
 
 @keyframes twinkling {
@@ -175,7 +160,7 @@ button {
   50% { opacity: 0.8; }
 }
 
-/* Time travel canvas */
+/* Time travel canvas - full screen background */
 #timeTravel {
   position: absolute;
   inset: 0;
@@ -183,27 +168,36 @@ button {
   z-index: 0;
 }
 
-/* Ticket section - bottom part, simple */
-.ticket-section {
+/* Time travel section and ticket section - just containers */
+.time-travel-section {
+  position: relative;
   width: 100%;
-  height: 65vh;
+  height: 40vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--void);
+  z-index: 2;
+}
+
+.ticket-section {
   position: relative;
-  padding-top: 3vh;
+  width: 100%;
+  height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
 }
 
 .museum-title {
   position: relative;
-  z-index: 1;
+  z-index: 3;
   text-align: center;
 }
 
 .ticket-wrapper {
   position: relative;
-  z-index: 1;
+  z-index: 3;
 }
 
 .museum-label {
