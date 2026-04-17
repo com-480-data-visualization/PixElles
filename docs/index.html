@@ -20,32 +20,38 @@
   <div id="app">
     <!-- SCENE 1: Museum Entrance + Ticket -->
     <div id="scene-ticket" class="scene active">
-      <canvas id="timeTravel"></canvas>
-      <div class="museum-title">
-        <h1>WELCOME TO THE<br/>NATURAL DISASTER<br/>MUSEUM</h1>
-        <span class="museum-subtitle">1975 — 2025</span>
+      <!-- Top half: Time travel effect + Title -->
+      <div class="time-travel-section">
+        <canvas id="timeTravel"></canvas>
+        <div class="museum-title">
+          <h1>WELCOME TO THE<br/>NATURAL DISASTER<br/>MUSEUM</h1>
+          <span class="museum-subtitle">1975 — 2025</span>
+        </div>
       </div>
 
-      <div class="ticket-wrapper" id="ticketWrapper">
-        <div class="ticket" id="museumTicket">
-          <!-- TICKET FRONT -->
-          <div class="ticket-front">
-            <div class="ticket-header">
-              <span class="ticket-label">ADMISSION · FREE</span>
-              <span class="ticket-num">#00480</span>
-            </div>
-            <div class="ticket-map" id="ticketMiniMap">
-              <!-- Tiny SVG world map rendered here by scene1_ticket.js -->
-            </div>
-            <div class="ticket-footer">
-              <div class="ticket-info">
-                <span>4 EXHIBITS</span>
-                <span>50 YEARS OF DATA</span>
-                <span>230 COUNTRIES</span>
+      <!-- Bottom half: Simple ticket -->
+      <div class="ticket-section">
+        <div class="ticket-wrapper" id="ticketWrapper">
+          <div class="ticket" id="museumTicket">
+            <!-- TICKET FRONT -->
+            <div class="ticket-front">
+              <div class="ticket-header">
+                <span class="ticket-label">ADMISSION · FREE</span>
+                <span class="ticket-num">#00480</span>
               </div>
-              <div class="ticket-cta">CLICK TO ENTER &rarr;</div>
+              <div class="ticket-map" id="ticketMiniMap">
+                <!-- Tiny SVG world map rendered here by scene1_ticket.js -->
+              </div>
+              <div class="ticket-footer">
+                <div class="ticket-info">
+                  <span>4 EXHIBITS</span>
+                  <span>50 YEARS OF DATA</span>
+                  <span>230 COUNTRIES</span>
+                </div>
+                <div class="ticket-cta">CLICK TO ENTER &rarr;</div>
+              </div>
+              <div class="ticket-tear"></div>
             </div>
-            <div class="ticket-tear"></div>
           </div>
         </div>
       </div>

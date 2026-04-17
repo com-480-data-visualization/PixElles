@@ -29,13 +29,32 @@ const Scene1 = {
 
     this.timeTravelCtx = this.timeTravelCanvas.getContext('2d');
 
-    // Set canvas size
+    // Set canvas size - only top half of screen
     const resize = () => {
-      this.timeTravelCanvas.width = window.innerWidth;
-      this.timeTravelCanvas.height = window.innerHeight;
+      const timeTravelSection = document.querySelector('.time-travel-section');
+      if (timeTravelSection) {
+        this.timeTravelCanvas.width = timeTravelSection.clientWidth;
+        this.timeTravelCanvas.height = timeTravelSection.clientHeight;
+      }
     };
     resize();
-    window.addEventListener('resize', resize);
+
+    // Recreate particles on resize
+    let resizeTimeout;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(() => {
+        resize();
+        this.createParticles();
+      }, 100);
+    });
+
+    this.createParticles();
+    this.animateTimeTravel();
+  },
+
+  createParticles() {
+    this.particles = [];
 
     // Create particles
     const numParticles = 100;
@@ -75,17 +94,20 @@ const Scene1 = {
         isYearLabel: true
       });
     }
-
-    this.animateTimeTravel();
   },
 
   animateTimeTravel() {
     const ctx = this.timeTravelCtx;
     const canvas = this.timeTravelCanvas;
-    const centerX = canvas.width / 2;
-    const centerY = canvas.height / 2;
 
     const animate = () => {
+      if (!this.timeTravelCanvas || !this.timeTravelCtx) {
+        return; // Stop if canvas is removed
+      }
+
+      const centerX = canvas.width / 2;
+      const centerY = canvas.height / 2;
+
       // Fade out effect for trails
       ctx.fillStyle = 'rgba(8, 10, 15, 0.15)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
