@@ -172,20 +172,22 @@ button {
 .time-travel-section {
   position: relative;
   width: 100%;
-  height: 40vh;
+  height: 30vh;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
+  padding-top: 8vh;
   z-index: 2;
 }
 
 .ticket-section {
   position: relative;
   width: 100%;
-  height: 60vh;
+  height: 70vh;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
+  padding-top: 5vh;
   z-index: 2;
 }
 
@@ -212,7 +214,7 @@ button {
 
 .museum-title h1 {
   font-family: var(--font-display);
-  font-size: 3.5rem;
+  font-size: 3rem;
   line-height: 1;
   letter-spacing: 0.08em;
   color: var(--text-bright);
@@ -223,10 +225,10 @@ button {
 
 .museum-subtitle {
   font-family: var(--font-display);
-  font-size: 1rem;
+  font-size: 0.95rem;
   color: var(--gold);
   display: block;
-  margin-top: 12px;
+  margin-top: 10px;
   letter-spacing: 0.2em;
   font-weight: 300;
 }
