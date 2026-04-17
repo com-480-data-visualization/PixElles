@@ -187,7 +187,7 @@ button {
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  padding-top: 2vh;
+  padding-top: 6vh;
   z-index: 2;
 }
 
