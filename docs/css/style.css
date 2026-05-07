@@ -15,11 +15,13 @@
   --volcano:     #e64a19;
   --landslide:   #6d4c41;
 
-  /* UI accents */
-  --gold:        #ffd54f;
-  --text-bright: #f0f0f0;
-  --text-mid:    #9e9e9e;
-  --text-dim:    #555;
+  /* Color theme */
+  --bluegrey:    #97AEC4;
+  --bluesky:     #6EB6FF;
+  --orange:      #FF8775;
+  --bgcolor:     #0C1116;
+  --text:        #FFF;
+  --gradient-primary: linear-gradient(90deg, #97AEC4 0%, #6EB6FF 50%, #FF8775 100%);
 
   /* Typography */
   --font-display: 'Bebas Neue', sans-serif;
@@ -28,23 +30,39 @@
 }
 
 
+ * { box-sizing: border-box; margin: 0; padding: 0; }
 
+ html, body { height: 100%; }
 
-
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
 
 body {
-  font-family: var(--font-body);
-  background: var(--void);
-  color: var(--text-bright);
+  background: var(--bgcolor);
+  color: var(--ink);
+  font-family: 'Inter', -apple-system, sans-serif;
   overflow: hidden;
-  width: 100vw;
-  height: 100vh;
+  min-height: 100vh;
+}
+
+/* very subtle starfield */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image:
+    radial-gradient(1.5px 1.5px at 12% 18%, #ffffff, transparent),
+    radial-gradient(1px 1px   at 73% 24%, #ffffff, transparent),
+    radial-gradient(2px 2px   at 23% 67%, #ffffff, transparent),
+    radial-gradient(1px 1px   at 88% 78%, #ffffff, transparent),
+    radial-gradient(1.5px 1.5px at 56% 88%, #ffffff, transparent),
+    radial-gradient(1px 1px   at 41% 12%, #ffffff, transparent),
+    radial-gradient(1.5px 1.5px at 8% 82%, #ffffff, transparent),
+    radial-gradient(1px 1px   at 35% 45%, #ffffff, transparent),
+    radial-gradient(2px 2px   at 64% 55%, #ffffff, transparent),
+    radial-gradient(1px 1px   at 92% 35%, #ffffff, transparent);
+  background-size: 100% 100%;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.85;
 }
 
 button {
@@ -64,13 +82,13 @@ button {
   overflow: hidden;
 }
 
-.scene {
+/* .scene {
   position: fixed;
   inset: 0;
   opacity: 1;
   transform: translateY(0);
   transition: opacity 0.6s ease, transform 0.6s ease;
-}
+} */
 
 .scene.hidden {
   opacity: 0;
@@ -78,11 +96,289 @@ button {
   pointer-events: none;
 }
 
-.scene.active {
+/* .scene.active {
   opacity: 1;
   transform: translateY(0);
   pointer-events: all;
+} */
+
+/* WELCOME PAGE */
+
+#timeTravel {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none;
+  z-index: 0;
 }
+
+.frame {
+    position: relative;
+    z-index: 1;
+    height: 100vh;
+    width: 100vw;
+    padding: 3rem 4.5rem;
+    display: grid;
+    grid-template-rows: 1fr auto;
+  }
+ 
+.stage {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 4rem;
+}
+
+/* ---------- LEFT SIDE — TITLE ---------- */
+.left {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    max-width: 38rem;
+  }
+ 
+  .now-open {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+  }
+ 
+  .now-open .word {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+ 
+  .compass {
+    width: 18px;
+    height: 18px;
+    display: inline-block;
+    flex-shrink: 0;
+  }
+ 
+  h1 {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: clamp(2.6rem, 5.2vw, 4.8rem);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: var(--text);
+  }
+ 
+  h1 .earth {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--text);
+  }
+ 
+  h1 .gradient {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-weight: 700;
+  }
+ 
+  .lede {
+    font-family: 'Inter', sans-serif;
+    font-size: 1.2rem;
+    line-height: 1.5;
+    color: var(--bluegrey);
+    font-weight: 400;
+    max-width: 32rem;
+  }
+ 
+  /* ---------- RIGHT SIDE — TICKET ---------- */
+  .right {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.4rem;
+  }
+
+ .ticket {
+  position: relative;
+  width: 600px;
+  flex-shrink: 0;
+  aspect-ratio: 3 / 1;
+  background: var(--bluegrey);
+  cursor: pointer;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  padding: 16px 70px 16px 22px;
+  filter: drop-shadow(0 18px 40px rgba(122, 167, 230, 0.15));
+  transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1),
+              filter 0.5s ease;
+}
+
+.ticket:hover {
+  transform: translateY(-6px) scale(1.015);
+  filter: drop-shadow(0 28px 60px rgba(122, 167, 230, 0.3));
+}
+
+/* Inner navy + Earth panel (the inset card) */
+.ticket-inner {
+  flex: 1;
+  height: 100%;
+  background-color: #142a47;
+  background-image: url('../images/earth_ticket_img.jpg');
+  background-size: cover;
+  background-position: center;
+  background-blend-mode: lighten;
+  position: relative;
+  overflow: hidden;
+}
+
+.ticket-inner svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Barcode panel — sits on the light-blue card, to the right of the inner */
+.ticket-barcode {
+  position: absolute;
+  top: 16px;
+  bottom: 16px;
+  right: 16px;
+  width: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ticket-barcode svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* Hover overlay — covers the whole ticket */
+.ticket-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(8, 10, 15, 0.65);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.ticket:hover .ticket-overlay {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+
+.enter-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.85rem 2.2rem;
+  background: transparent;
+  border: 1.5px solid rgba(255, 255, 255, 0.75);
+  border-radius: 999px;
+  color: #fff;
+  font-family: 'Inter', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  cursor: pointer;
+  transform: translateY(8px);
+  transition: transform 0.4s ease, background 0.3s ease;
+}
+
+.ticket:hover .enter-btn {
+  transform: translateY(0);
+}
+
+.enter-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.enter-btn .arrow {
+  transition: transform 0.3s ease;
+}
+
+.enter-btn:hover .arrow {
+  transform: translateX(4px);
+}
+
+.click-hint {
+  font-style: italic;
+  font-size: 1.05rem;
+  color: var(--bluegrey);
+  font-weight: 400;
+  letter-spacing: 0.01em;
+}
+ 
+  /* ---------- FOOTER ---------- */
+  footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--bluegrey);
+    padding-top: 2rem;
+  }
+
+   .reveal {
+    opacity: 0;
+    transform: translateY(10px);
+    animation: rise 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  }
+  .d1 { animation-delay: 0.05s; }
+  .d2 { animation-delay: 0.20s; }
+  .d3 { animation-delay: 0.40s; }
+  .d4 { animation-delay: 0.55s; }
+  .d5 { animation-delay: 0.75s; }
+  .d6 { animation-delay: 0.90s; }
+ 
+  @keyframes rise {
+    to { opacity: 1; transform: translateY(0); }
+  }
+ 
+  /* compass icons gentle rotation on hover of "NOW OPEN" */
+  .now-open:hover .compass {
+    animation: spin 4s linear infinite;
+  }
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+ 
+  /* responsive */
+  @media (max-width: 1100px) {
+    .frame { padding: 2rem 2.4rem; }
+    .stage { gap: 2.5rem; }
+    .stage {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    }
+  }
+  @media (max-width: 880px) {
+    html, body { overflow: auto; }
+    .frame { height: auto; min-height: 100vh; padding: 1.6rem 1.4rem; }
+    .stage { grid-template-columns: 1fr; gap: 2rem; }
+    .ticket { width: 600px; }
+    h1 { font-size: clamp(2rem, 9vw, 3rem); }
+    footer { flex-direction: column; gap: 0.6rem; padding-top: 1.5rem; }
+  }
 
 /* ============================================
    MUSEUM NAVIGATION
@@ -124,49 +420,6 @@ button {
   background: var(--glass);
 }
 
-/* ============================================
-   SCENE 1: MUSEUM ENTRANCE + TICKET
-   ============================================ */
-
-#scene-ticket {
-  position: relative;
-  background: var(--void);
-  overflow: hidden;
-}
-
-/* Starry background - full screen */
-#scene-ticket::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image:
-    radial-gradient(2px 2px at 20% 30%, white, transparent),
-    radial-gradient(2px 2px at 60% 70%, white, transparent),
-    radial-gradient(1px 1px at 50% 50%, white, transparent),
-    radial-gradient(1px 1px at 80% 10%, white, transparent),
-    radial-gradient(2px 2px at 90% 60%, white, transparent),
-    radial-gradient(1px 1px at 33% 80%, white, transparent),
-    radial-gradient(1px 1px at 15% 55%, white, transparent);
-  background-size: 200% 200%, 180% 180%, 220% 220%, 250% 250%, 190% 190%, 210% 210%, 230% 230%;
-  background-position: 0% 0%;
-  animation: twinkling 8s ease-in-out infinite;
-  opacity: 0.6;
-  pointer-events: none;
-  z-index: 1;
-}
-
-@keyframes twinkling {
-  0%, 100% { opacity: 0.4; }
-  50% { opacity: 0.8; }
-}
-
-/* Time travel canvas - full screen background */
-#timeTravel {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-}
 
 /* Time travel section and ticket section - just containers */
 .time-travel-section {
@@ -180,173 +433,6 @@ button {
   z-index: 2;
 }
 
-.ticket-section {
-  position: relative;
-  width: 100%;
-  height: 75vh;
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  padding-top: 6vh;
-  z-index: 2;
-}
-
-.museum-title {
-  position: relative;
-  z-index: 3;
-  text-align: center;
-}
-
-.ticket-wrapper {
-  position: relative;
-  z-index: 3;
-}
-
-.museum-label {
-  font-family: var(--font-display);
-  font-size: 0.9rem;
-  letter-spacing: 0.4em;
-  color: var(--gold);
-  display: block;
-  margin-bottom: 12px;
-  font-weight: 400;
-}
-
-.museum-title h1 {
-  font-family: var(--font-display);
-  font-size: 3rem;
-  line-height: 1;
-  letter-spacing: 0.08em;
-  color: var(--text-bright);
-  margin: 0;
-  font-weight: 400;
-  text-shadow: 0 2px 40px rgba(255, 213, 79, 0.25);
-}
-
-.museum-subtitle {
-  font-family: var(--font-display);
-  font-size: 0.95rem;
-  color: var(--gold);
-  display: block;
-  margin-top: 10px;
-  letter-spacing: 0.2em;
-  font-weight: 300;
-}
-
-.ticket-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 20px;
-}
-
-.ticket {
-  width: 380px;
-  height: 220px;
-  background: #faf8f0;
-  border-radius: 8px;
-  box-shadow: 0 20px 80px rgba(255,213,79,0.15);
-  cursor: pointer;
-  transition: all 0.3s ease;
-  position: relative;
-}
-
-.ticket:hover {
-  transform: translateY(-8px) rotate(1deg);
-  box-shadow: 0 30px 100px rgba(255,213,79,0.25);
-}
-
-.ticket-front {
-  padding: 20px;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  color: #1a1a1a;
-}
-
-.ticket-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-}
-
-.ticket-label {
-  font-family: var(--font-display);
-  font-size: 0.7rem;
-  letter-spacing: 0.15em;
-  color: #666;
-}
-
-.ticket-num {
-  font-family: var(--font-typewriter);
-  font-size: 0.75rem;
-  color: #999;
-}
-
-.ticket-title {
-  font-family: var(--font-display);
-  font-size: 1.8rem;
-  line-height: 1.1;
-  letter-spacing: 0.03em;
-  color: #1a1a1a;
-  margin-bottom: 12px;
-}
-
-.ticket-map {
-  width: 100%;
-  height: 80px;
-  margin-bottom: 8px;
-}
-
-.ticket-map svg {
-  width: 100%;
-  height: 100%;
-}
-
-.ticket-footer {
-  margin-top: auto;
-}
-
-.ticket-info {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.65rem;
-  font-weight: 600;
-  letter-spacing: 0.05em;
-  color: #ff6f00;
-  margin-bottom: 12px;
-}
-
-.ticket-cta {
-  font-family: var(--font-display);
-  font-size: 0.9rem;
-  letter-spacing: 0.1em;
-  color: var(--drought);
-  text-align: right;
-}
-
-.ticket-tear {
-  position: absolute;
-  bottom: 40px;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: repeating-linear-gradient(
-    to right,
-    transparent,
-    transparent 8px,
-    #ccc 8px,
-    #ccc 10px
-  );
-}
-
-.ticket-hint {
-  font-size: 0.85rem;
-  color: var(--text-mid);
-  text-align: center;
-  font-style: italic;
-}
 
 /* ============================================
    SCENE 2: GLOBE & MAP
@@ -460,7 +546,7 @@ button {
 }
 
 .chip.active {
-  background: var(--c, var(--gold));
+  background: var(--c, var(--bluegrey));
   color: #000;
   border-color: transparent;
 }

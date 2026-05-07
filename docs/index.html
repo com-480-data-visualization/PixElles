@@ -19,44 +19,131 @@
 <body>
   <div id="app">
     <!-- SCENE 1: Museum Entrance + Ticket -->
-    <div id="scene-ticket" class="scene active">
+    <div id="scene-ticket" class="frame">
       <!-- Background: Full screen time travel canvas -->
       <canvas id="timeTravel"></canvas>
 
-      <!-- Content: Title at top -->
-      <div class="time-travel-section">
-        <div class="museum-title">
-          <h1>WELCOME TO THE<br/>NATURAL DISASTER<br/>MUSEUM</h1>
-          <span class="museum-subtitle">1975 — 2025</span>
+      <main class="stage">
+      <!-- LEFT SIDE -->
+      <section class="left">
+        <div class="now-open reveal d1">
+          <svg class="compass" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="9" stroke="#7aa7e6" stroke-width="1.2"/>
+            <path d="M12 3 L13.5 12 L12 21 L10.5 12 Z" fill="#7aa7e6" opacity="0.85"/>
+            <path d="M3 12 L12 10.5 L21 12 L12 13.5 Z" fill="#e6a3b8" opacity="0.85"/>
+          </svg>
+          <span class="word">NOW&nbsp;OPEN</span>
+          <svg class="compass" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="9" stroke="#e6a3b8" stroke-width="1.2"/>
+            <path d="M12 3 L13.5 12 L12 21 L10.5 12 Z" fill="#7aa7e6" opacity="0.85"/>
+            <path d="M3 12 L12 10.5 L21 12 L12 13.5 Z" fill="#e6a3b8" opacity="0.85"/>
+          </svg>
         </div>
-      </div>
+ 
+        <h1 class="reveal d2">
+          Welcome to the<br>
+          <span class="earth">Earth</span> <span class="gradient">NATURAL</span><br>
+          <span class="gradient">DISASTERS</span><br>
+          MUSEUM
+        </h1>
+ 
+        <p class="lede reveal d3">
+          Grab your ticket and explore the Earth History of global natural disasters
+        </p>
+      </section>
 
-      <!-- Content: Ticket at bottom -->
-      <div class="ticket-section">
-        <div class="ticket-wrapper" id="ticketWrapper">
-          <div class="ticket" id="museumTicket">
-            <!-- TICKET FRONT -->
-            <div class="ticket-front">
-              <div class="ticket-header">
-                <span class="ticket-label">ADMISSION · FREE</span>
-                <span class="ticket-num">#00480</span>
-              </div>
-              <div class="ticket-map" id="ticketMiniMap">
-                <!-- Tiny SVG world map rendered here by scene1_ticket.js -->
-              </div>
-              <div class="ticket-footer">
-                <div class="ticket-info">
-                  <span>4 EXHIBITS</span>
-                  <span>50 YEARS OF DATA</span>
-                  <span>230 COUNTRIES</span>
-                </div>
-                <div class="ticket-cta">CLICK TO ENTER &rarr;</div>
-              </div>
-              <div class="ticket-tear"></div>
-            </div>
+      <!-- RIGHT SIDE -->
+      <section class="right">
+        <div class="ticket reveal d4" id="ticket" role="button" tabindex="0" aria-label="Enter the museum">
+          <!-- Inner panel: navy + Earth image + text -->
+          <div class="ticket-inner">
+            <svg viewBox="0 0 530 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+              <text x="30" y="32" fill="#9bb6d4" font-family="Inter, sans-serif"
+                    font-size="11" font-weight="400" letter-spacing="0.5">Admission · Free</text>
+              <text x="30" y="64" fill="#ffffff" font-family="Inter, sans-serif"
+                    font-size="18" font-weight="300" font-style="italic">Earth</text>
+              <text x="30" y="92" fill="#ffffff" font-family="Inter, sans-serif"
+                    font-size="22" font-weight="700">Natural Disasters</text>
+              <text x="30" y="120" fill="#ffffff" font-family="Inter, sans-serif"
+                    font-size="20" font-weight="300">Museum</text>
+
+              <text x="30" y="180" fill="#7aa7e6" font-family="Inter, sans-serif"
+                    font-size="9" font-weight="600" letter-spacing="1.5">50 YEARS OF DATA</text>
+              <text x="265" y="180" fill="#7aa7e6" font-family="Inter, sans-serif"
+                    font-size="9" font-weight="600" letter-spacing="1.5"
+                    text-anchor="middle">220 COUNTRIES</text>
+              <text x="500" y="180" fill="#7aa7e6" font-family="Inter, sans-serif"
+                    font-size="9" font-weight="600" letter-spacing="1.5"
+                    text-anchor="end">#003DTVZ</text>
+            </svg>
+          </div>
+
+          <!-- Barcode panel -->
+          <div class="ticket-barcode">
+            <svg viewBox="0 0 30 144" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+              <g fill="#ffffff">
+                <!-- your barcode rects, unchanged -->
+                <rect x="0" y="4"   width="30" height="1.2"/>
+                <rect x="0" y="7"   width="30" height="2"/>
+                <rect x="0" y="11"  width="30" height="0.8"/>
+                <rect x="0" y="14"  width="30" height="2.4"/>
+                <rect x="0" y="18"  width="30" height="1"/>
+                <rect x="0" y="21"  width="30" height="0.8"/>
+                <rect x="0" y="24"  width="30" height="2"/>
+                <rect x="0" y="28"  width="30" height="1.4"/>
+                <rect x="0" y="32"  width="30" height="0.8"/>
+                <rect x="0" y="35"  width="30" height="2.2"/>
+                <rect x="0" y="39"  width="30" height="1"/>
+                <rect x="0" y="42"  width="30" height="1.4"/>
+                <rect x="0" y="46"  width="30" height="0.8"/>
+                <rect x="0" y="49"  width="30" height="2.2"/>
+                <rect x="0" y="53"  width="30" height="1"/>
+                <rect x="0" y="56"  width="30" height="1.6"/>
+                <rect x="0" y="60"  width="30" height="0.8"/>
+                <rect x="0" y="63"  width="30" height="2"/>
+                <rect x="0" y="67"  width="30" height="1.2"/>
+                <rect x="0" y="71"  width="30" height="2.4"/>
+                <rect x="0" y="75"  width="30" height="0.8"/>
+                <rect x="0" y="78"  width="30" height="1"/>
+                <rect x="0" y="82"  width="30" height="2.2"/>
+                <rect x="0" y="86"  width="30" height="0.8"/>
+                <rect x="0" y="89"  width="30" height="1.4"/>
+                <rect x="0" y="93"  width="30" height="2"/>
+                <rect x="0" y="96"  width="30" height="0.8"/>
+                <rect x="0" y="100" width="30" height="2.4"/>
+                <rect x="0" y="104" width="30" height="1"/>
+                <rect x="0" y="107" width="30" height="0.8"/>
+                <rect x="0" y="110" width="30" height="2"/>
+                <rect x="0" y="114" width="30" height="1.2"/>
+                <rect x="0" y="118" width="30" height="0.8"/>
+                <rect x="0" y="120" width="30" height="1"/>
+                <rect x="0" y="123" width="30" height="0.8"/>
+                <rect x="0" y="128" width="30" height="2"/>
+                <rect x="0" y="131" width="30" height="1.2"/>
+                <rect x="0" y="134" width="30" height="0.8"/>
+                <rect x="0" y="138" width="30" height="0.8"/>
+                <rect x="0" y="140" width="30" height="2"/>
+                <rect x="0" y="144" width="30" height="1.2"/>
+                <rect x="0" y="147" width="30" height="0.8"/>
+              </g>
+            </svg>
+          </div>
+
+          <!-- Hover overlay -->
+          <div class="ticket-overlay">
+            <button class="enter-btn">ENTER <span class="arrow">→</span></button>
           </div>
         </div>
-      </div>
+ 
+        <p class="click-hint reveal d5">Click on the ticket to enter the museum</p>
+      </section>
+     </main>
+     <footer class="reveal d6">
+      <span>Source · EM-DAT</span>
+      <span>50 Years · 1975 — 2025</span>
+    </footer>
+
+      
     </div>
 
     <!-- SCENE 2: 3D Globe -->
@@ -240,6 +327,16 @@
       currentScene: 'scene-ticket',
 
       showScene(id) {
+
+        // Stop scene 1 animation if leaving it
+        if (this.currentScene === 'scene-ticket' && id !== 'scene-ticket' && WelcomePage.stopTimeTravelEffect) {
+          WelcomePage.stopTimeTravelEffect();
+        }
+
+        document.querySelectorAll('.scene').forEach(s => {
+          s.classList.add('hidden');
+          s.classList.remove('active');
+        });
         document.querySelectorAll('.scene').forEach(s => {
           s.classList.add('hidden');
           s.classList.remove('active');
@@ -275,14 +372,15 @@
       });
     });
 
+
+
     document.addEventListener('DOMContentLoaded', async () => {
       console.log('Natural Disaster Museum initializing...');
 
-      await initData();
-
-      Scene1.init();
-
+      WelcomePage.initTimeTravelEffect();
       App.showScene('scene-ticket');
+
+      await initData();
 
       console.log('Museum ready');
     });

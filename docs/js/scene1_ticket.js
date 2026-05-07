@@ -2,303 +2,275 @@
    SCENE 1: MUSEUM ENTRANCE + TICKET
    ============================================ */
 
-const Scene1 = {
-  worldData: null,
-  timeTravelCanvas: null,
-  timeTravelCtx: null,
-  particles: [],
-  animationId: null,
+// const WelcomePage = {
+//   worldData: null,
+//   timeTravelCanvas: null,
+//   timeTravelCtx: null,
+//   particles: [],
+//   animationId: null,
 
-  async init() {
-    console.log('Initializing Scene 1: Ticket');
+//   async init() {
+//     console.log('Initializing Scene 1: Welcome Page');
 
-    try {
-      this.worldData = await d3.json('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json');
-      this.renderTicketMap();
-    } catch (error) {
-      console.error('Failed to load world map:', error);
-    }
 
-    this.initTimeTravelEffect();
-    this.attachTicketClickHandler();
-  },
+//     this.initTimeTravelEffect();
+//     this.attachTicketClickHandler();
+//   },
 
-  initTimeTravelEffect() {
-    this.timeTravelCanvas = document.getElementById('timeTravel');
-    if (!this.timeTravelCanvas) return;
+//   initTimeTravelEffect() {
+//     this.timeTravelCanvas = document.getElementById('timeTravel');
+//     if (!this.timeTravelCanvas) return;
 
-    this.timeTravelCtx = this.timeTravelCanvas.getContext('2d');
+//     this.timeTravelCtx = this.timeTravelCanvas.getContext('2d');
 
-    // Set canvas size - full screen
-    const resize = () => {
-      this.timeTravelCanvas.width = window.innerWidth;
-      this.timeTravelCanvas.height = window.innerHeight;
+//     // Set canvas size - full screen
+//     const resize = () => {
+//       this.timeTravelCanvas.width = window.innerWidth;
+//       this.timeTravelCanvas.height = window.innerHeight;
+//     };
+//     resize();
+
+//     // Recreate particles on resize
+//     let resizeTimeout;
+//     window.addEventListener('resize', () => {
+//       clearTimeout(resizeTimeout);
+//       resizeTimeout = setTimeout(() => {
+//         resize();
+//         this.createParticles();
+//       }, 100);
+//     });
+
+//     this.createParticles();
+//     this.animateTimeTravel();
+//   },
+
+//   createParticles() {
+//     this.particles = [];
+
+//     // Create particles
+//     const numParticles = 100;
+//     const centerX = this.timeTravelCanvas.width / 2;
+//     const centerY = this.timeTravelCanvas.height / 2;
+
+//     for (let i = 0; i < numParticles; i++) {
+//       const angle = Math.random() * Math.PI * 2;
+//       const speed = Math.random() * 2 + 0.5;
+//       const distance = Math.random() * 300;
+
+//       this.particles.push({
+//         x: centerX + Math.cos(angle) * distance,
+//         y: centerY + Math.sin(angle) * distance,
+//         vx: Math.cos(angle) * speed,
+//         vy: Math.sin(angle) * speed,
+//         size: Math.random() * 2 + 1,
+//         opacity: Math.random() * 0.5 + 0.3,
+//         year: 1975 + Math.floor(Math.random() * 51) // Random year between 1975-2025
+//       });
+//     }
+
+//     // Add some year labels that travel
+//     for (let year = 1975; year <= 2025; year += 5) {
+//       const angle = Math.random() * Math.PI * 2;
+//       const speed = Math.random() * 1.5 + 1;
+//       const distance = Math.random() * 200;
+
+//       this.particles.push({
+//         x: centerX + Math.cos(angle) * distance,
+//         y: centerY + Math.sin(angle) * distance,
+//         vx: Math.cos(angle) * speed,
+//         vy: Math.sin(angle) * speed,
+//         size: 0,
+//         opacity: Math.random() * 0.4 + 0.2,
+//         year: year,
+//         isYearLabel: true
+//       });
+//     }
+//   },
+
+//   animateTimeTravel() {
+//     const ctx = this.timeTravelCtx;
+//     const canvas = this.timeTravelCanvas;
+
+//     const animate = () => {
+//       if (!this.timeTravelCanvas || !this.timeTravelCtx) {
+//         return; // Stop if canvas is removed
+//       }
+
+//       const centerX = canvas.width / 2;
+//       const centerY = canvas.height / 2;
+
+//       // Fade out effect for trails
+//       ctx.fillStyle = 'rgba(8, 10, 15, 0.15)';
+//       ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+//       // Update and draw particles
+//       this.particles.forEach(particle => {
+//         // Move particle
+//         particle.x += particle.vx;
+//         particle.y += particle.vy;
+
+//         // Reset if out of bounds
+//         const dx = particle.x - centerX;
+//         const dy = particle.y - centerY;
+//         const distance = Math.sqrt(dx * dx + dy * dy);
+
+//         if (distance > Math.max(canvas.width, canvas.height) / 2 + 100) {
+//           const angle = Math.random() * Math.PI * 2;
+//           const speed = Math.random() * (particle.isYearLabel ? 1.5 : 2) + (particle.isYearLabel ? 1 : 0.5);
+//           const resetDistance = Math.random() * 100;
+
+//           particle.x = centerX + Math.cos(angle) * resetDistance;
+//           particle.y = centerY + Math.sin(angle) * resetDistance;
+//           particle.vx = Math.cos(angle) * speed;
+//           particle.vy = Math.sin(angle) * speed;
+//         }
+
+//         // Draw particle
+//         if (particle.isYearLabel) {
+//           // Draw year label
+//           ctx.fillStyle = `rgba(110, 182, 255, ${particle.opacity})`;
+//           ctx.font = '14px "Bebas Neue", sans-serif';
+//           ctx.fillText(particle.year, particle.x, particle.y);
+//         } else {
+//           // Draw dot
+//           ctx.fillStyle = `rgba(255, 255, 255, ${particle.opacity})`;
+//           ctx.beginPath();
+//           ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+//           ctx.fill();
+//         }
+//       });
+
+//       this.animationId = requestAnimationFrame(animate);
+//     };
+
+//     animate();
+//   },
+
+//   stopTimeTravelEffect() {
+//     if (this.animationId) {
+//       cancelAnimationFrame(this.animationId);
+//       this.animationId = null;
+//     }
+//   },
+
+//   attachTicketClickHandler() {
+//     const ticket = document.getElementById('ticket');
+
+//     ticket.addEventListener('click', () => {
+//       console.log('Ticket clicked - transitioning to globe scene');
+
+//       // Zoom animation
+//       ticket.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+//       ticket.style.transform = 'scale(8)';
+//       ticket.style.opacity = '0';
+
+//       // Navigate to globe scene after animation
+//       setTimeout(() => {
+//         App.showScene('scene-globe');
+
+//         // Reset ticket for next time
+//         setTimeout(() => {
+//           ticket.style.transition = 'none';
+//           ticket.style.transform = '';
+//           ticket.style.opacity = '1';
+//           setTimeout(() => {
+//             ticket.style.transition = '';
+//           }, 50);
+//         }, 100);
+//       }, 600);
+//     });
+//   }
+// };
+
+// // Drifting starfield background
+(function initTimeTravel() {
+  const canvas = document.getElementById('timeTravel');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+
+  let stars = [];
+  let w, h, cx, cy;
+  const STAR_COUNT = 880;
+
+  function resize() {
+    const dpr = window.devicePixelRatio || 1;
+    w = canvas.clientWidth = window.innerWidth;
+    h = canvas.clientHeight = window.innerHeight;
+    canvas.width = w * dpr;
+    canvas.height = h * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    cx = w / 2;
+    cy = h / 2;
+  }
+
+  function makeStar() {
+    return {
+      // Position in 3D space — z is depth (small z = far, large z = close)
+      x: (Math.random() - 0.5) * w * 2,
+      y: (Math.random() - 0.5) * h * 2,
+      z: Math.random() * w,
+      pz: 0,
     };
+  }
+
+  function init() {
     resize();
+    stars = Array.from({ length: STAR_COUNT }, makeStar);
+  }
 
-    // Recreate particles on resize
-    let resizeTimeout;
-    window.addEventListener('resize', () => {
-      clearTimeout(resizeTimeout);
-      resizeTimeout = setTimeout(() => {
-        resize();
-        this.createParticles();
-      }, 100);
-    });
+  function frame() {
+    // Soft trailing fade — instead of clearing, draw a translucent dark layer.
+    // This creates faint motion-trails that sell the "drifting through space" feel.
+    ctx.fillStyle = 'rgba(12, 17, 22, 0.25)';   // matches your --bgcolor
+    ctx.fillRect(0, 0, w, h);
 
-    this.createParticles();
-    this.animateTimeTravel();
-  },
+    for (const s of stars) {
+      s.pz = s.z;
+      s.z -= 0.8; // drift speed (smaller = slower, more meditative)
 
-  createParticles() {
-    this.particles = [];
-
-    // Create particles
-    const numParticles = 100;
-    const centerX = this.timeTravelCanvas.width / 2;
-    const centerY = this.timeTravelCanvas.height / 2;
-
-    for (let i = 0; i < numParticles; i++) {
-      const angle = Math.random() * Math.PI * 2;
-      const speed = Math.random() * 2 + 0.5;
-      const distance = Math.random() * 300;
-
-      this.particles.push({
-        x: centerX + Math.cos(angle) * distance,
-        y: centerY + Math.sin(angle) * distance,
-        vx: Math.cos(angle) * speed,
-        vy: Math.sin(angle) * speed,
-        size: Math.random() * 2 + 1,
-        opacity: Math.random() * 0.5 + 0.3,
-        year: 1975 + Math.floor(Math.random() * 51) // Random year between 1975-2025
-      });
-    }
-
-    // Add some year labels that travel
-    for (let year = 1975; year <= 2025; year += 5) {
-      const angle = Math.random() * Math.PI * 2;
-      const speed = Math.random() * 1.5 + 1;
-      const distance = Math.random() * 200;
-
-      this.particles.push({
-        x: centerX + Math.cos(angle) * distance,
-        y: centerY + Math.sin(angle) * distance,
-        vx: Math.cos(angle) * speed,
-        vy: Math.sin(angle) * speed,
-        size: 0,
-        opacity: Math.random() * 0.4 + 0.2,
-        year: year,
-        isYearLabel: true
-      });
-    }
-  },
-
-  animateTimeTravel() {
-    const ctx = this.timeTravelCtx;
-    const canvas = this.timeTravelCanvas;
-
-    const animate = () => {
-      if (!this.timeTravelCanvas || !this.timeTravelCtx) {
-        return; // Stop if canvas is removed
+      if (s.z < 1) {
+        // Reset star: throw it back into the distance
+        s.x = (Math.random() - 0.5) * w * 2;
+        s.y = (Math.random() - 0.5) * h * 2;
+        s.z = w;
+        s.pz = w;
+        continue;
       }
 
-      const centerX = canvas.width / 2;
-      const centerY = canvas.height / 2;
+      // Project 3D point onto 2D screen using simple perspective
+      const sx = (s.x / s.z) * (w * 0.5) + cx;
+      const sy = (s.y / s.z) * (w * 0.5) + cy;
 
-      // Fade out effect for trails
-      ctx.fillStyle = 'rgba(8, 10, 15, 0.15)';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      const psx = (s.x / s.pz) * (w * 0.5) + cx;
+      const psy = (s.y / s.pz) * (w * 0.5) + cy;
 
-      // Update and draw particles
-      this.particles.forEach(particle => {
-        // Move particle
-        particle.x += particle.vx;
-        particle.y += particle.vy;
+      // Skip if off-screen
+      if (sx < 0 || sx > w || sy < 0 || sy > h) continue;
 
-        // Reset if out of bounds
-        const dx = particle.x - centerX;
-        const dy = particle.y - centerY;
-        const distance = Math.sqrt(dx * dx + dy * dy);
+      // Closer stars are brighter and bigger
+      const depth = 1 - s.z / w;
+      const size = depth * 1.4;
+      const alpha = Math.min(1, depth * 1.2);
 
-        if (distance > Math.max(canvas.width, canvas.height) / 2 + 100) {
-          const angle = Math.random() * Math.PI * 2;
-          const speed = Math.random() * (particle.isYearLabel ? 1.5 : 2) + (particle.isYearLabel ? 1 : 0.5);
-          const resetDistance = Math.random() * 100;
+      // Draw a short streak from previous to current position
+      ctx.strokeStyle = `rgba(255, 255, 255, ${alpha * 0.5})`;
+      ctx.lineWidth = size;
+      ctx.beginPath();
+      ctx.moveTo(psx, psy);
+      ctx.lineTo(sx, sy);
+      ctx.stroke();
 
-          particle.x = centerX + Math.cos(angle) * resetDistance;
-          particle.y = centerY + Math.sin(angle) * resetDistance;
-          particle.vx = Math.cos(angle) * speed;
-          particle.vy = Math.sin(angle) * speed;
-        }
-
-        // Draw particle
-        if (particle.isYearLabel) {
-          // Draw year label
-          ctx.fillStyle = `rgba(255, 213, 79, ${particle.opacity})`;
-          ctx.font = '14px "Bebas Neue", sans-serif';
-          ctx.fillText(particle.year, particle.x, particle.y);
-        } else {
-          // Draw dot
-          ctx.fillStyle = `rgba(255, 255, 255, ${particle.opacity})`;
-          ctx.beginPath();
-          ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
-          ctx.fill();
-        }
-      });
-
-      this.animationId = requestAnimationFrame(animate);
-    };
-
-    animate();
-  },
-
-  stopTimeTravelEffect() {
-    if (this.animationId) {
-      cancelAnimationFrame(this.animationId);
-      this.animationId = null;
+      // Bright dot at the leading edge
+      ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+      ctx.beginPath();
+      ctx.arc(sx, sy, size, 0, Math.PI * 2);
+      ctx.fill();
     }
-  },
 
-  renderTicketMap() {
-    const container = document.getElementById('ticketMiniMap');
-    const width = 280;
-    const height = 140;
-
-    const svg = d3.select(container)
-      .append('svg')
-      .attr('width', width)
-      .attr('height', height)
-      .attr('viewBox', `0 0 ${width} ${height}`);
-
-    const projection = d3.geoNaturalEarth1()
-      .fitSize([width, height], topojson.feature(this.worldData, this.worldData.objects.countries));
-
-    const path = d3.geoPath().projection(projection);
-
-    const countries = topojson.feature(this.worldData, this.worldData.objects.countries);
-
-    svg.append('rect')
-      .attr('width', width)
-      .attr('height', height)
-      .attr('fill', '#e8e6d8');
-
-    svg.append('g')
-      .selectAll('path')
-      .data(countries.features)
-      .join('path')
-      .attr('d', path)
-      .attr('fill', d => {
-        // Get country ISO code from the topology
-        const countryId = d.id;
-        const iso3 = this.getISO3FromNumericId(countryId);
-
-        if (iso3 && COUNTRY_DOMINANT[iso3]) {
-          return COUNTRY_DOMINANT[iso3].color;
-        }
-        return '#d4d2c0'; // Light grey for no data
-      })
-      .attr('stroke', '#fff')
-      .attr('stroke-width', 0.5)
-      .attr('opacity', 0.9);
-  },
-
-  getISO3FromNumericId(numericId) {
-    // Map numeric IDs to ISO3 codes for major countries
-    const idToISO = {
-      '156': 'CHN', // China
-      '840': 'USA', // United States
-      '356': 'IND', // India
-      '360': 'IDN', // Indonesia
-      '608': 'PHL', // Philippines
-      '392': 'JPN', // Japan
-      '050': 'BGD', // Bangladesh
-      '586': 'PAK', // Pakistan
-      '076': 'BRA', // Brazil
-      '484': 'MEX', // Mexico
-      '036': 'AUS', // Australia
-      '276': 'DEU', // Germany
-      '250': 'FRA', // France
-      '826': 'GBR', // United Kingdom
-      '724': 'ESP', // Spain
-      '380': 'ITA', // Italy
-      '792': 'TUR', // Turkey
-      '364': 'IRN', // Iran
-      '231': 'ETH', // Ethiopia
-      '404': 'KEN', // Kenya
-      '566': 'NGA', // Nigeria
-      '710': 'ZAF', // South Africa
-      '704': 'VNM', // Vietnam
-      '764': 'THA', // Thailand
-      '004': 'AFG', // Afghanistan
-      '524': 'NPL', // Nepal
-      '104': 'MMR', // Myanmar
-      '332': 'HTI', // Haiti
-      '440': 'LTU', // Lithuania
-      '112': 'BLR', // Belarus
-      '643': 'RUS', // Russia
-      '124': 'CAN', // Canada
-      '032': 'ARG', // Argentina
-      '152': 'CHL', // Chile
-      '170': 'COL', // Colombia
-      '604': 'PER', // Peru
-      '858': 'URY', // Uruguay
-      '862': 'VEN', // Venezuela
-      '012': 'DZA', // Algeria
-      '818': 'EGY', // Egypt
-      '434': 'LBY', // Libya
-      '504': 'MAR', // Morocco
-      '788': 'TUN', // Tunisia
-      '426': 'LSO', // Lesotho
-      '508': 'MOZ', // Mozambique
-      '834': 'TZA', // Tanzania
-      '800': 'UGA', // Uganda
-      '894': 'ZMB', // Zambia
-      '716': 'ZWE', // Zimbabwe
-      '024': 'AGO', // Angola
-      '120': 'CMR', // Cameroon
-      '148': 'TCD', // Chad
-      '178': 'COG', // Congo
-      '180': 'COD', // DR Congo
-      '266': 'GAB', // Gabon
-      '288': 'GHN', // Ghana
-      '384': 'CIV', // Ivory Coast
-      '466': 'MLI', // Mali
-      '478': 'MRT', // Mauritania
-      '562': 'NER', // Niger
-      '686': 'SEN', // Senegal
-      '694': 'SLE', // Sierra Leone
-      '729': 'SDN', // Sudan
-      '728': 'SSD'  // South Sudan
-    };
-
-    return idToISO[numericId];
-  },
-
-  attachTicketClickHandler() {
-    const ticket = document.getElementById('museumTicket');
-
-    ticket.addEventListener('click', () => {
-      console.log('Ticket clicked - transitioning to globe scene');
-
-      // Zoom animation
-      ticket.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
-      ticket.style.transform = 'scale(8)';
-      ticket.style.opacity = '0';
-
-      // Navigate to globe scene after animation
-      setTimeout(() => {
-        App.showScene('scene-globe');
-
-        // Reset ticket for next time
-        setTimeout(() => {
-          ticket.style.transition = 'none';
-          ticket.style.transform = '';
-          ticket.style.opacity = '1';
-          setTimeout(() => {
-            ticket.style.transition = '';
-          }, 50);
-        }, 100);
-      }, 600);
-    });
+    requestAnimationFrame(frame);
   }
-};
+
+  window.addEventListener('resize', resize);
+  init();
+  requestAnimationFrame(frame);
+})();
