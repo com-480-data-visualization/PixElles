@@ -24,6 +24,7 @@
   --gradient-primary: linear-gradient(90deg, #97AEC4 0%, #6EB6FF 50%, #FF8775 100%);
 
   /* Typography */
+  --font-inter: 'Inter', sans-serif;
   --font-display: 'Bebas Neue', sans-serif;
   --font-typewriter: 'Special Elite', cursive;
   --font-body:    'Source Sans 3', sans-serif;
@@ -63,7 +64,7 @@ body::before {
   pointer-events: none;
   z-index: 0;
   opacity: 0.85;
-}
+} 
 
 button {
   cursor: pointer;
@@ -166,7 +167,7 @@ button {
   }
  
   h1 {
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-inter);
     font-weight: 700;
     font-size: clamp(2.6rem, 5.2vw, 4.8rem);
     line-height: 1.05;
@@ -189,7 +190,7 @@ button {
   }
  
   .lede {
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-inter);
     font-size: 1.2rem;
     line-height: 1.5;
     color: var(--bluegrey);

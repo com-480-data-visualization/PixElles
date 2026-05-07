@@ -19,7 +19,7 @@
 <body>
   <div id="app">
     <!-- SCENE 1: Museum Entrance + Ticket -->
-    <div id="scene-ticket" class="frame">
+    <div id="scene-ticket" class="frame scene active">
       <!-- Background: Full screen time travel canvas -->
       <canvas id="timeTravel"></canvas>
 
@@ -328,11 +328,6 @@
 
       showScene(id) {
 
-        // Stop scene 1 animation if leaving it
-        if (this.currentScene === 'scene-ticket' && id !== 'scene-ticket' && WelcomePage.stopTimeTravelEffect) {
-          WelcomePage.stopTimeTravelEffect();
-        }
-
         document.querySelectorAll('.scene').forEach(s => {
           s.classList.add('hidden');
           s.classList.remove('active');
@@ -372,12 +367,9 @@
       });
     });
 
-
-
     document.addEventListener('DOMContentLoaded', async () => {
       console.log('Natural Disaster Museum initializing...');
 
-      WelcomePage.initTimeTravelEffect();
       App.showScene('scene-ticket');
 
       await initData();

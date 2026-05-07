@@ -182,7 +182,28 @@
 //   }
 // };
 
-// // Drifting starfield background
+// Kept as a global utility — scene2_globe.js calls Scene1.getISO3FromNumericId()
+const Scene1 = {
+  getISO3FromNumericId(numericId) {
+    const idToISO = {
+      '156': 'CHN', '840': 'USA', '356': 'IND', '360': 'IDN', '608': 'PHL',
+      '392': 'JPN', '050': 'BGD', '586': 'PAK', '076': 'BRA', '484': 'MEX',
+      '036': 'AUS', '276': 'DEU', '250': 'FRA', '826': 'GBR', '724': 'ESP',
+      '380': 'ITA', '792': 'TUR', '364': 'IRN', '231': 'ETH', '404': 'KEN',
+      '566': 'NGA', '710': 'ZAF', '704': 'VNM', '764': 'THA', '004': 'AFG',
+      '524': 'NPL', '104': 'MMR', '332': 'HTI', '643': 'RUS', '124': 'CAN',
+      '032': 'ARG', '152': 'CHL', '170': 'COL', '604': 'PER', '012': 'DZA',
+      '818': 'EGY', '504': 'MAR', '508': 'MOZ', '800': 'UGA', '024': 'AGO',
+      '120': 'CMR', '180': 'COD', '729': 'SDN', '440': 'LTU', '112': 'BLR',
+      '426': 'LSO', '834': 'TZA', '894': 'ZMB', '716': 'ZWE', '178': 'COG',
+      '266': 'GAB', '288': 'GHA', '384': 'CIV', '466': 'MLI', '478': 'MRT',
+      '562': 'NER', '686': 'SEN', '694': 'SLE', '728': 'SSD'
+    };
+    return idToISO[numericId];
+  }
+};
+
+// Drifting starfield background
 (function initTimeTravel() {
   const canvas = document.getElementById('timeTravel');
   if (!canvas) return;
@@ -273,4 +294,32 @@
   window.addEventListener('resize', resize);
   init();
   requestAnimationFrame(frame);
+})();
+
+// Ticket click → Scene 2
+// (script is at end of <body> so DOM is ready — no DOMContentLoaded needed)
+(function attachTicketHandler() {
+  const ticket = document.getElementById('ticket');
+  const frame  = document.getElementById('scene-ticket');
+  if (!ticket || !frame) return;
+
+  function enterMuseum() {
+    ticket.style.transition = 'transform 0.7s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.7s ease';
+    ticket.style.transform  = 'scale(8)';
+    ticket.style.opacity    = '0';
+
+    setTimeout(() => {
+      App.showScene('scene-globe');
+
+      setTimeout(() => {
+        ticket.style.transition = 'none';
+        ticket.style.transform  = '';
+        ticket.style.opacity    = '1';
+        setTimeout(() => { ticket.style.transition = ''; }, 50);
+      }, 100);
+    }, 700);
+  }
+
+  ticket.addEventListener('click', enterMuseum);
+  ticket.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') enterMuseum(); });
 })();
