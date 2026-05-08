@@ -6,7 +6,7 @@
   <title>Natural Disaster Museum · 1975–2025</title>
 
   <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Special+Elite&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600&family=Special+Elite&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
 
   <!-- Styles -->
   <link rel="stylesheet" href="css/style.css">
@@ -148,37 +148,47 @@
 
     <!-- SCENE 2: 3D Globe -->
     <div id="scene-globe" class="scene hidden">
-      <!-- Timeline Slider at Top -->
-      <div class="timeline-slider-container" id="timelineSliderContainer">
-        <label class="timeline-label">YEAR</label>
-        <div class="timeline-slider-wrapper">
-          <input type="range" id="yearSlider" min="1975" max="2025" value="2000" />
-          <span id="yearVal" class="year-display">2000</span>
-        </div>
-      </div>
-
       <!-- 3D Globe Container -->
       <div id="globeContainer"></div>
 
-      <!-- Filter Panel (Left) - Disaster Type Only -->
-      <div class="filter-panel" id="filterPanel">
-        <div class="filter-title">DISASTER TYPE</div>
+      <!-- Filter Panel (Left) -->
+      <aside class="filter-panel globe-filter-panel" id="filterPanel" aria-label="Globe filters">
+        <section class="filter-section" aria-labelledby="timePeriodTitle">
+          <h2 class="filter-title" id="timePeriodTitle">Time period</h2>
+          <div class="year-range-control">
+            <div class="range-values" aria-hidden="true">
+              <span id="yearMinVal">1975</span>
+              <span id="yearMaxVal">2025</span>
+            </div>
+            <div class="range-slider" aria-label="Select event year range">
+              <div class="range-track">
+                <div class="range-fill" id="yearRangeFill"></div>
+              </div>
+              <input class="range-input range-input-min" type="range" id="yearStartSlider" min="1975" max="2025" value="1975" aria-label="Start year" />
+              <input class="range-input range-input-max" type="range" id="yearEndSlider" min="1975" max="2025" value="2025" aria-label="End year" />
+            </div>
+          </div>
+        </section>
 
-        <div class="filter-chips" id="typeFilter">
-          <button class="chip active" data-type="all">All</button>
-          <button class="chip" data-type="flood" style="--c:var(--flood)">Flood</button>
-          <button class="chip" data-type="storm" style="--c:var(--storm)">Storm</button>
-          <button class="chip" data-type="drought" style="--c:var(--drought)">Drought</button>
-          <button class="chip" data-type="wildfire" style="--c:var(--wildfire)">Wildfire</button>
-          <button class="chip" data-type="earthquake" style="--c:var(--earthquake)">Earthquake</button>
-          <button class="chip" data-type="volcano" style="--c:var(--volcano)">Volcano</button>
+        <section class="filter-section" aria-labelledby="disasterTypesTitle">
+          <h2 class="filter-title" id="disasterTypesTitle">Disaster types</h2>
+          <div class="filter-chips" id="typeFilter">
+            <button class="chip chip-action" type="button" id="unselectAllFilters">Unselect All</button>
+          </div>
+        </section>
+
+        <div class="events-widget" aria-live="polite">
+          <div class="events-count" id="eventCount">0</div>
+          <div class="events-label">Events displayed</div>
+          <div class="data-status hidden" id="dataStatus"></div>
         </div>
-      </div>
+      </aside>
 
-      <!-- Legend -->
-      <div class="globe-legend" id="globeLegend">
-        <!-- Populated by JS: colored dots + disaster type labels -->
-      </div>
+      <aside class="earth-story-card" aria-labelledby="earthStoryCardTitle">
+        <h2 id="earthStoryCardTitle">Earth Story</h2>
+        <p>How has the global profile of disasters shifted over time? Explore our Earth Story and uncover 50 years of striking trends.</p>
+        <button type="button" id="earthStoryExplore" class="earth-story-button">Explore</button>
+      </aside>
 
       <!-- Tooltip (appears on hover over country) -->
       <div class="globe-tooltip hidden" id="globeTooltip">
@@ -343,7 +353,7 @@
 
         // Toggle nav visibility
         const nav = document.getElementById('museum-nav');
-        nav.classList.toggle('hidden', id === 'scene-ticket');
+        nav.classList.toggle('hidden', id === 'scene-ticket' || id === 'scene-globe');
 
         // Lazy init scenes
         if (id === 'scene-globe' && !Scene2._inited) {
@@ -367,12 +377,15 @@
       });
     });
 
+    document.getElementById('earthStoryExplore')?.addEventListener('click', () => {
+      App.showScene('scene-story');
+    });
+
     document.addEventListener('DOMContentLoaded', async () => {
       console.log('Natural Disaster Museum initializing...');
 
-      App.showScene('scene-ticket');
-
       await initData();
+      App.showScene('scene-ticket');
 
       console.log('Museum ready');
     });

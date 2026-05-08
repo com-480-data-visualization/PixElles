@@ -12,16 +12,23 @@ const Scene4 = {
     'flood': 'Hydrological',
     'drought': 'Climatological',
     'wildfire': 'Climatological',
+    'extreme_temperature': 'Climatological',
     'earthquake': 'Geophysical',
     'volcano': 'Geophysical',
-    'landslide': 'Geophysical'
+    'landslide': 'Geophysical',
+    'epidemic': 'Biological',
+    'infestation': 'Biological',
+    'animal_incident': 'Biological',
+    'impact': 'Extra-terrestrial'
   },
 
   subgroupColors: {
     'Meteorological': '#7c4dff',
     'Hydrological': '#2196f3',
     'Climatological': '#ff6f00',
-    'Geophysical': '#795548'
+    'Geophysical': '#795548',
+    'Biological': '#70C7A8',
+    'Extra-terrestrial': '#C7B2FF'
   },
 
   init() {
@@ -49,7 +56,7 @@ const Scene4 = {
 
     // Convert to array format for stacking
     const years = Array.from(new Set(RAW_DATA.map(d => d.year))).sort((a, b) => a - b);
-    const subgroups = ['Meteorological', 'Hydrological', 'Climatological', 'Geophysical'];
+    const subgroups = ['Meteorological', 'Hydrological', 'Climatological', 'Geophysical', 'Biological', 'Extra-terrestrial'];
 
     const data = years.map(year => {
       const obj = { year };
