@@ -15,6 +15,24 @@ SHEET_NAME = 'EM-DAT Data'
 YEAR_START = 1975
 YEAR_END = 2025
 
+# Group raw EM-DAT disaster types into categories
+DISASTER_TYPE_MAPPING = {
+    'Flood': 'flood',
+    'Glacial lake outburst flood': 'flood',
+    'Storm': 'storm',
+    'Epidemic': 'epidemic',
+    'Infestation': 'infestation',
+    'Animal incident': 'animal_incident',
+    'Earthquake': 'earthquake',
+    'Mass movement (wet)': 'landslide',
+    'Mass movement (dry)': 'landslide',
+    'Drought': 'drought',
+    'Wildfire': 'wildfire',
+    'Extreme temperature': 'extreme_temperature',
+    'Volcanic activity': 'volcano',
+    'Impact': 'impact',
+}
+
 print(f'Reading: {INPUT_FILE}')
 
 df_full = pd.read_excel(INPUT_FILE, sheet_name=SHEET_NAME)
@@ -37,38 +55,37 @@ df_clean = df[[
 
 df_clean.columns = [
     'year', 'iso', 'country', 'region', 'subregion',
-    'type', 'type_detail', 'name',
+    'raw_type', 'type_detail', 'name',
     'deaths', 'affected', 'damage_usd_thousands',
     'lat', 'lon'
 ]
 
-type_mapping = {
-    'Flood': 'flood',
-    'Storm': 'storm',
-    'Drought': 'drought',
-    'Wildfire': 'wildfire',
-    'Earthquake': 'earthquake',
-    'Volcanic activity': 'volcano',
-    'Landslide': 'landslide',
-    'Extreme temperature': 'drought',  
-    'Mass movement (dry)': 'landslide', 
-    'Glacial lake outburst': 'flood',  
-    'Fog': 'storm', 
-}
+df_clean['type'] = df_clean['raw_type'].map(DISASTER_TYPE_MAPPING)
 
-df_clean['type'] = df_clean['type'].map(type_mapping)
-
-# Remove rows with unmapped disaster types
+# Remove rows with unmapped disaster types and report them.
 before_filter = len(df_clean)
+unmapped_types = sorted(df_clean.loc[df_clean['type'].isna(), 'raw_type'].dropna().unique())
 df_clean = df_clean[df_clean['type'].notna()]
 print(f'Removed {before_filter - len(df_clean)} records with unmapped disaster types')
+if unmapped_types:
+    print('Unmapped disaster types:')
+    for dtype in unmapped_types:
+        print(f'  - {dtype}')
 
 # Fill NaN values
 df_clean['name'] = df_clean['name'].fillna('Unnamed Event')
+df_clean['raw_type'] = df_clean['raw_type'].fillna('')
 df_clean['type_detail'] = df_clean['type_detail'].fillna('')
 df_clean['deaths'] = df_clean['deaths'].fillna(0)
 df_clean['affected'] = df_clean['affected'].fillna(0)
 df_clean['damage_usd_thousands'] = df_clean['damage_usd_thousands'].fillna(0)
+
+df_clean = df_clean[[
+    'year', 'iso', 'country', 'region', 'subregion',
+    'type', 'raw_type', 'type_detail', 'name',
+    'deaths', 'affected', 'damage_usd_thousands',
+    'lat', 'lon'
+]]
 
 df_clean.to_csv(OUTPUT_FILE, index=False)
 
@@ -82,3 +99,7 @@ type_counts = df_clean['type'].value_counts()
 for dtype, count in type_counts.items():
     print(f'  {dtype}: {count:,} ({count/len(df_clean)*100:.1f}%)')
 
+print('\nRaw disaster type distribution:')
+raw_type_counts = df_clean['raw_type'].value_counts()
+for dtype, count in raw_type_counts.items():
+    print(f'  {dtype}: {count:,}')
