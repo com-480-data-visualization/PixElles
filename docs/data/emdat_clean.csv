@@ -7108,7 +7108,6 @@ year,iso,country,region,subregion,type,raw_type,type_detail,name,deaths,affected
 2014,SLV,El Salvador,Americas,Latin America and the Caribbean,epidemic,Epidemic,Viral disease,Dengue,4.0,12783.0,0.0,,
 2014,COL,Colombia,Americas,Latin America and the Caribbean,flood,Flood,Riverine flood,Unnamed Event,0.0,4085.0,0.0,,
 2014,NGA,Nigeria,Africa,Sub-Saharan Africa,epidemic,Epidemic,Bacterial disease,Cholera,755.0,35996.0,0.0,,
-2014,NER,Niger,Africa,Sub-Saharan Africa,animal_incident,Animal incident,Animal incident,Unnamed Event,12.0,5.0,0.0,,
 2014,CPV,Cabo Verde,Africa,Sub-Saharan Africa,volcano,Volcanic activity,Lava flow,Pico do Fogo,0.0,2500.0,0.0,,
 2014,NER,Niger,Africa,Sub-Saharan Africa,epidemic,Epidemic,Bacterial disease,Cholera,8.0,183.0,0.0,,
 2014,MOZ,Mozambique,Africa,Sub-Saharan Africa,flood,Flood,Flash flood,Unnamed Event,5.0,300.0,0.0,,
@@ -14227,7 +14226,6 @@ year,iso,country,region,subregion,type,raw_type,type_detail,name,deaths,affected
 2013,MDG,Madagascar,Africa,Sub-Saharan Africa,storm,Storm,Tropical cyclone,Topical Depression Feleng,9.0,4598.0,0.0,,
 2013,JPN,Japan,Asia,Eastern Asia,storm,Storm,Blizzard/Winter storm,Unnamed Event,2.0,1569.0,0.0,,
 2013,BOL,Bolivia (Plurinational State of),Americas,Latin America and the Caribbean,flood,Flood,Riverine flood,Unnamed Event,25.0,145000.0,3366.0,,
-2013,RUS,Russian Federation,Europe,Eastern Europe,impact,Impact,Collision,Unnamed Event,0.0,301491.0,44436.0,,
 2013,CHN,China,Asia,Eastern Asia,storm,Storm,Tropical cyclone,Tropical storm Ciramon,1.0,3000.0,340678.0,25.8633,118.14
 2013,MKD,North Macedonia,Europe,Southern Europe,flood,Flood,Riverine flood,Unnamed Event,1.0,4864.0,0.0,42.0408,21.58
 2013,CHN,China,Asia,Eastern Asia,storm,Storm,Blizzard/Winter storm,Unnamed Event,2.0,13500.0,166972.0,,

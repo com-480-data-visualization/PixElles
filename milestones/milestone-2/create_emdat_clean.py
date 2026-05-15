@@ -22,7 +22,6 @@ DISASTER_TYPE_MAPPING = {
     'Storm': 'storm',
     'Epidemic': 'epidemic',
     'Infestation': 'infestation',
-    'Animal incident': 'animal_incident',
     'Earthquake': 'earthquake',
     'Mass movement (wet)': 'landslide',
     'Mass movement (dry)': 'landslide',
@@ -30,7 +29,6 @@ DISASTER_TYPE_MAPPING = {
     'Wildfire': 'wildfire',
     'Extreme temperature': 'extreme_temperature',
     'Volcanic activity': 'volcano',
-    'Impact': 'impact',
 }
 
 print(f'Reading: {INPUT_FILE}')
