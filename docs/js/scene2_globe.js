@@ -280,7 +280,23 @@ const Scene2 = {
   },
 
   refreshCurrentCountryData() {
-    this.currentCountryData = getFilteredCountryData(this.getActiveFilters());
+    const raw = getFilteredCountryData(this.getActiveFilters());
+    this.currentCountryData = {};
+    Object.entries(raw).forEach(([iso, stats]) => {
+      const key = this.canonicalIso(iso);
+      const merged = this.currentCountryData[key];
+      if (!merged) {
+        this.currentCountryData[key] = { ...stats };
+      } else {
+        merged.count += stats.count;
+        merged.deaths += stats.deaths;
+        merged.damage += stats.damage;
+      }
+    });
+  },
+
+  canonicalIso(iso) {
+    return GLOBE_ISO_CENTER_ALIASES[iso] || iso;
   },
 
   getCountryLabel(country) {
@@ -290,21 +306,23 @@ const Scene2 = {
     const stats = COUNTRY_STATS[iso3];
     const filteredStats = this.currentCountryData[iso3];
     const count = filteredStats?.count || 0;
-    const deaths = filteredStats?.deaths || 0;
-    const dominantType = filteredStats?.dominantType
-      ? filteredStats.dominantType.replace(/_/g, ' ')
+    const hasMatches = count > 0;
+    const typeLabel = hasMatches
+      ? getDisasterTypeLabel(this.selectedType)
       : 'No matching type';
+    const accent = hasMatches ? getDisasterColor(this.selectedType) : '#97AEC4';
+    const displayName = country?.properties?.name || stats.country;
 
     return `
-      <div style="background: rgba(13,17,23,0.95); padding: 12px; border-radius: 8px; border: 1px solid rgba(151,174,196,0.35);">
-        <div style="font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; color: #97AEC4; margin-bottom: 4px;">
-          ${this.escapeHTML(stats.country)}
+      <div style="background: rgba(13,17,23,0.95); padding: 12px; border-radius: 8px; border: 1px solid ${accent};">
+        <div style="font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; color: ${accent}; margin-bottom: 4px;">
+          ${this.escapeHTML(displayName)}
         </div>
         <div style="font-size: 0.85rem; color: #fff;">
-          ${formatNumber(count)} matching events · ${formatNumber(deaths)} deaths
+          ${formatNumber(count)} matching events
         </div>
-        <div style="font-size: 0.75rem; color: #97AEC4; margin-top: 4px; text-transform: capitalize;">
-          ${dominantType}
+        <div style="font-size: 0.75rem; color: ${accent}; margin-top: 4px;">
+          ${this.escapeHTML(typeLabel)}
         </div>
       </div>
     `;
@@ -495,7 +513,7 @@ const Scene2 = {
     if (!isRealDataLoaded() || !this.selectedType) return [];
 
     const events = getFilteredEvents(this.getActiveFilters());
-    const eventsByCountry = d3.group(events, d => d.iso);
+    const eventsByCountry = d3.group(events, d => this.canonicalIso(d.iso));
 
     const countryGroups = Array.from(eventsByCountry, ([iso, countryEvents]) => ({
       iso,
@@ -581,8 +599,7 @@ const Scene2 = {
     element.style.setProperty('--marker-size', `${marker.size}px`);
     element.style.setProperty('--marker-color', marker.color);
     element.style.setProperty('--angle-opacity', '1');
-    element.title = `${marker.country}: ${formatNumber(marker.count)} ${marker.typeLabel} events`;
-    element.setAttribute('aria-label', element.title);
+    element.setAttribute('aria-label', `${marker.country}: ${formatNumber(marker.count)} ${marker.typeLabel} events`);
 
     element.addEventListener('click', event => {
       event.stopPropagation();

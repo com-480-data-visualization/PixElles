@@ -697,6 +697,18 @@ button {
   margin-bottom: 9px;
 }
 
+.scene-tooltip,
+.float-tooltip-kap {
+  padding: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  color: inherit !important;
+  font-size: inherit !important;
+  z-index: 1000 !important;
+}
+
 .globe-country-bubble {
   width: var(--marker-size, 24px);
   height: var(--marker-size, 24px);
