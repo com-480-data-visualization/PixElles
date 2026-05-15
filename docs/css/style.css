@@ -7,18 +7,18 @@
   --border-dim:  rgba(255,255,255,0.08);
 
   /* Disaster type colors */
-  --flood:       #5F9CF5;
-  --storm:       #7870D8;
-  --epidemic:    #70C7A8;
-  --infestation: #B8C96B;
-  --animal-incident: #66BFD2;
-  --drought:     #F2B44D;
-  --wildfire:    #F39A3C;
-  --earthquake:  #8A4E24;
-  --volcano:     #D85745;
-  --landslide:   #7D9D67;
-  --extreme-temperature: #F45FA8;
-  --impact:      #C7B2FF;
+  --flood:       #5EA8FF;
+  --storm:       #8C86FF;
+  --epidemic:    #6EE7C8;
+  --infestation: #D6E75B;
+  --animal-incident: #6DD6E8;
+  --drought:     #FFC857;
+  --wildfire:    #FFA142;
+  --earthquake:  #C96B32;
+  --volcano:     #FF695B;
+  --landslide:   #7FE36A;
+  --extreme-temperature: #FF5DB8;
+  --impact:      #C7A8FF;
 
   /* Color theme */
   --bluegrey:    #97AEC4;
@@ -668,6 +668,63 @@ button {
   font-style: italic;
 }
 
+.globe-point-tooltip {
+  width: 230px;
+  padding: 12px 14px;
+  background: rgba(13, 17, 23, 0.96);
+  border: 1px solid rgba(151, 174, 196, 0.38);
+  border-radius: 8px;
+  color: var(--text);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+}
+
+.globe-point-tooltip .tooltip-kicker {
+  margin-bottom: 4px;
+  color: var(--bluegrey);
+  font-family: var(--font-inter);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.globe-point-tooltip .tooltip-country {
+  margin-bottom: 5px;
+  color: var(--text-bright);
+}
+
+.globe-point-tooltip .tooltip-stat {
+  margin-bottom: 9px;
+}
+
+.globe-country-bubble {
+  width: var(--marker-size, 24px);
+  height: var(--marker-size, 24px);
+  display: block;
+  padding: 0;
+  border: 1px solid color-mix(in srgb, var(--marker-color, var(--bluegrey)) 70%, #ffffff 30%);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--marker-color, var(--bluegrey)) 78%, transparent);
+  box-shadow:
+    0 0 6px color-mix(in srgb, var(--marker-color, var(--bluegrey)) 60%, transparent),
+    0 0 16px color-mix(in srgb, var(--marker-color, var(--bluegrey)) 28%, transparent);
+  opacity: calc(var(--angle-opacity, 1) * 0.85);
+  cursor: pointer;
+  pointer-events: auto;
+  transition: filter 0.18s ease;
+}
+
+.globe-country-bubble:hover,
+.globe-country-bubble:focus-visible {
+  opacity: var(--angle-opacity, 1);
+  filter: saturate(1.25) brightness(1.08);
+}
+
+.globe-country-bubble:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--marker-color, var(--bluegrey)) 60%, #ffffff 40%);
+  outline-offset: 3px;
+}
+
 /* ============================================
    SCENE 3: COUNTRY DETAIL WITH ZOOMED MAP
    ============================================ */
@@ -1098,6 +1155,7 @@ button {
   inset: 0;
   background: radial-gradient(ellipse at center, #0a0e27 0%, #020308 100%);
   overflow: hidden;
+  z-index: 1;
 }
 
 /* Starfield background */
@@ -1147,7 +1205,7 @@ button {
   max-height: calc(100vh - 36px);
   overflow-x: hidden;
   overflow-y: auto;
-  z-index: 30;
+  z-index: 80;
   scrollbar-color: rgba(151,174,196,0.5) transparent;
   scrollbar-width: thin;
 }
@@ -1406,7 +1464,7 @@ button {
   border: 1px solid rgba(151, 174, 196, 0.35);
   border-radius: 15px;
   color: var(--text);
-  z-index: 20;
+  z-index: 80;
 }
 
 .earth-story-card h2 {
