@@ -577,7 +577,7 @@ const Scene2 = {
     const limit = Math.max(1, scaleLimit);
     const normalized = Math.min(count, limit);
     const scale = Math.sqrt(normalized / limit);
-    return Math.round(8 + scale * 48);
+    return Math.round(5 + scale * 27);
   },
 
   getCountryBubbleLabel(marker) {
