@@ -394,6 +394,58 @@ button {
    MUSEUM NAVIGATION
    ============================================ */
 
+/* ---------- Top bar ---------- */
+.top-bar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  padding: 22px 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(180deg, rgba(12,17,22,.85) 0%, rgba(12,17,22,.4) 80%, transparent 100%);
+  backdrop-filter: blur(8px);
+}
+.brand {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text);
+}
+.brand .dim { color: var(--text-mid); font-style: italic; }
+.breadcrumb {
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+.breadcrumb .sep { margin: 0 10px; opacity: .5; }
+.breadcrumb .active { color: var(--text-mid); }
+
+.pill-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 22px;
+  border: 1px solid var(--text-mid);
+  border-radius: 999px;
+  color: var(--text);
+  background: transparent;
+  font-family: 'Inter', sans-serif;
+  font-size: 12.5px;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all .3s ease;
+}
+.pill-btn:hover {
+  background: var(--text);
+  color: var(--bgcolor);
+  border-color: var(--text);
+}
+.pill-btn .arrow { transition: transform .3s ease; }
+.pill-btn:hover .arrow { transform: translateX(3px); }
+
 #museum-nav {
   position: fixed;
   bottom: 30px;
