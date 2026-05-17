@@ -17,18 +17,18 @@ let DATA_LOAD_ERROR = null;
 
 // Metadata for normalized values from the CSV `type` column.
 const DISASTER_TYPE_META = {
-  drought: { label: 'Drought', color: '#F2B44D', order: 10 },
-  earthquake: { label: 'Earthquake', color: '#8A4E24', order: 20 },
-  extreme_temperature: { label: 'Extreme Temperature', color: '#F45FA8', order: 30 },
-  flood: { label: 'Flood', color: '#5F9CF5', order: 40 },
-  landslide: { label: 'Landslide', color: '#7D9D67', order: 50 },
-  storm: { label: 'Storm', color: '#7870D8', order: 60 },
-  epidemic: { label: 'Epidemic', color: '#70C7A8', order: 70 },
-  infestation: { label: 'Infestation', color: '#B8C96B', order: 80 },
-  animal_incident: { label: 'Animal Incident', color: '#66BFD2', order: 90 },
-  volcano: { label: 'Volcano', color: '#D85745', order: 100 },
-  wildfire: { label: 'Wildfire', color: '#F39A3C', order: 110 },
-  impact: { label: 'Impact', color: '#C7B2FF', order: 120 }
+  drought: { label: 'Drought', color: '#FFC857', order: 10 },
+  earthquake: { label: 'Earthquake', color: '#C96B32', order: 20 },
+  extreme_temperature: { label: 'Extreme Temperature', color: '#FF5DB8', order: 30 },
+  flood: { label: 'Flood', color: '#5EA8FF', order: 40 },
+  landslide: { label: 'Landslide', color: '#7FE36A', order: 50 },
+  storm: { label: 'Storm', color: '#8C86FF', order: 60 },
+  epidemic: { label: 'Epidemic', color: '#6EE7C8', order: 70 },
+  infestation: { label: 'Infestation', color: '#D6E75B', order: 80 },
+  animal_incident: { label: 'Animal Incident', color: '#6DD6E8', order: 90 },
+  volcano: { label: 'Volcano', color: '#FF695B', order: 100 },
+  wildfire: { label: 'Wildfire', color: '#FFA142', order: 110 },
+  impact: { label: 'Impact', color: '#C7A8FF', order: 120 }
 };
 
 const DISASTER_COLORS = Object.fromEntries(
