@@ -74,8 +74,7 @@
   .brand-dim { color: rgba(255,255,255,0.6); font-style: italic; }
 
   .breadcrumb {
-    flex: 1;
-    min-width: 0;
+    grid-column: 2;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -87,7 +86,6 @@
     text-transform: uppercase;
     color: rgba(255,255,255,0.6);
     white-space: nowrap;
-    overflow: hidden;
   }
   .breadcrumb a { color: rgba(255,255,255,0.6); text-decoration: none; }
   .breadcrumb a:hover { color: rgba(255,255,255,0.9); }
@@ -244,8 +242,8 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  z-index: 1; /* Puts it behind your HUD */
-  pointer-events: auto; /* Allows clicking on the 3D cards */
+  z-index: 1;
+  pointer-events: auto;
 }
 
 .webgl-stage canvas {
@@ -885,7 +883,7 @@
 <div class="no-data" id="noData">
   <h2>No records found.</h2>
   <p>The archive holds no catalogued disasters for this country. Try another exhibit.</p>
-  <a href="index.html" class="pill-btn" style="margin-top:16px">← Back to Globe</a>
+  <a href="globe.html" class="pill-btn back-to-globe" style="margin-top:16px">← Back to Globe</a>
 </div>
 
 <header class="top-bar">
@@ -893,7 +891,7 @@
     <span class="brand-earth">Earth</span> Natural Disaster Museum<span class="brand-dim"> · est. 2026</span>
   </div>
   <nav class="breadcrumb">
-    <a href="globe.html">The Globe: Earth</a>
+    <a href="globe.html" class="back-to-globe">The Globe: Earth</a>
     <span class="sep">/</span>
     <span id="breadcrumbCountry">—</span>
   </nav>
