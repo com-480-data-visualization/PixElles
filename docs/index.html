@@ -6,7 +6,7 @@
   <title>Natural Disaster Museum · 1975–2025</title>
 
   <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600&family=Special+Elite&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inter:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Special+Elite&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
 
   <!-- Styles -->
   <link rel="stylesheet" href="css/style.css">
@@ -18,21 +18,15 @@
 </head>
 
 <body>
-  <header class="top-bar">
-  <div class="brand">Earth Natural Disasters Museum<span class="dim"> · est. 2026</span></div>
-  <nav class="breadcrumb">
-    <ul class="nav-menu">
-      <a href="#" >The Globe: Earth</a>
-    <span class="sep">/</span>
-    <a href="#" class="active">Japan Timeline</span>
-    <span class="sep">/</span>
-    <a href="#" >Overview</a>
-  </nav>
-  <a href="country_overview.html" class="pill-btn">
-    Open Overview
-    <span class="arrow">→</span>
-  </a>
-</header>
+  <header class="top-bar" id="top-bar">
+    <div class="brand">
+      <span class="brand-earth">Earth</span> Natural Disaster Museum<span class="brand-dim"> · est. 2026</span>
+    </div>
+    <nav class="breadcrumb" id="top-breadcrumb">
+      <span class="crumb">The Globe: Earth</span>
+    </nav>
+    <div class="top-bar-action" id="top-bar-action"></div>
+  </header>
 
 
   <div id="app">
@@ -205,42 +199,8 @@
         <p>How has the global profile of disasters shifted over time? Explore our Earth Story and uncover 50 years of striking trends.</p>
         <button type="button" id="earthStoryExplore" class="earth-story-button">Explore</button>
       </aside>
-
-      <!-- Tooltip (appears on hover over country) -->
-      <div class="globe-tooltip hidden" id="globeTooltip">
-        <div class="tooltip-country"></div>
-        <div class="tooltip-stat"></div>
-        <div class="tooltip-cta">Click to explore timeline &rarr;</div>
-      </div>
     </div>
 
-    <!-- SCENE 3: Country Timeline -->
-    <div id="scene-country" class="scene hidden">
-      <!-- Header with country name and navigation -->
-      <div class="timeline-header">
-        <button class="back-button" id="backToGlobe">&larr; Back to Globe</button>
-        <div class="timeline-country-title">
-          <h2 id="timelineCountryName">—</h2>
-          <p id="timelineCountryRegion">—</p>
-        </div>
-        <div class="view-toggle">
-          <button class="toggle-pill active" data-view="timeline">Timeline</button>
-          <button class="toggle-pill" data-view="overview">Overview</button>
-        </div>
-      </div>
-
-      <!-- TIMELINE VIEW: Museum-style timeline with exhibit cards -->
-      <div class="timeline-view" id="timelineView">
-        <div class="museum-timeline">
-          <!-- Central timeline axis -->
-          <div class="timeline-axis"></div>
-
-          <!-- Timeline events - will be populated by JS -->
-          <div class="timeline-events" id="timelineEvents">
-            <!-- Placeholder exhibit cards will be added here -->
-          </div>
-        </div>
-      </div>
 
       <!-- OVERVIEW VIEW: Visualizations and statistics -->
       <div class="overview-view hidden" id="overviewView">
@@ -352,12 +312,13 @@
     const App = {
       currentScene: 'scene-ticket',
 
-      showScene(id) {
+      _breadcrumbs: {
+        'scene-ticket': [],
+        'scene-globe':  [{ label: 'The Globe: Earth' }],
+        'scene-story':  [{ label: 'The Globe: Earth' }, { label: 'Earth Story' }],
+      },
 
-        document.querySelectorAll('.scene').forEach(s => {
-          s.classList.add('hidden');
-          s.classList.remove('active');
-        });
+      showScene(id) {
         document.querySelectorAll('.scene').forEach(s => {
           s.classList.add('hidden');
           s.classList.remove('active');
@@ -367,9 +328,19 @@
         scene.classList.remove('hidden');
         scene.classList.add('active');
 
-        // Toggle nav visibility
+        // Toggle header & bottom nav
+        const header = document.getElementById('top-bar');
         const nav = document.getElementById('museum-nav');
-        nav.classList.toggle('hidden', id === 'scene-ticket' || id === 'scene-globe');
+        const isWelcome = id === 'scene-ticket';
+        header.classList.toggle('hidden', isWelcome);
+        nav.classList.toggle('hidden', isWelcome || id === 'scene-globe');
+
+        // Update breadcrumb
+        const bc = document.getElementById('top-breadcrumb');
+        const crumbs = this._breadcrumbs[id] || [];
+        bc.innerHTML = crumbs.map((c, i) =>
+          (i > 0 ? '<span class="sep">/</span>' : '') + `<span class="crumb">${c.label}</span>`
+        ).join('');
 
         // Lazy init scenes
         if (id === 'scene-globe' && !Scene2._inited) {

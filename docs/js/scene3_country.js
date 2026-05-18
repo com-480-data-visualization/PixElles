@@ -1,19 +1,17 @@
 /* ============================================
-   SCENE 3: COUNTRY TIMELINE & OVERVIEW
+   SCENE 3: COUNTRY OVERVIEW
    ============================================ */
 
 const Scene3 = {
   currentCountry: null,
-  currentView: 'timeline',
 
   open(iso) {
-    console.log('Opening country timeline for:', iso);
+    console.log('Opening country overview for:', iso);
     this.currentCountry = iso;
 
     App.showScene('scene-country');
 
     this.renderView(iso);
-
     this.attachHandlers();
   },
 
@@ -27,98 +25,10 @@ const Scene3 = {
     document.getElementById('timelineCountryName').textContent = stats.country;
     document.getElementById('timelineCountryRegion').textContent = stats.region;
 
-    this.renderTimeline(iso);
-
-    this.renderOverview(iso);
-  },
-
-  renderTimeline(iso) {
-    const container = document.getElementById('timelineEvents');
-    container.innerHTML = '';
-
-    const events = COUNTRY_EVENTS[iso];
-    if (!events || events.length === 0) {
-      container.innerHTML = `
-        <div class="timeline-event-placeholder">
-          <div class="timeline-event-placeholder-text">
-            NO DISASTER DATA AVAILABLE FOR THIS COUNTRY
-          </div>
-        </div>
-      `;
-      return;
-    }
-
-    const sortedEvents = [...events].sort((a, b) => a.year - b.year);
-
-    const eventsByYear = d3.group(sortedEvents, d => d.year);
-
-    let eventIndex = 0;
-    eventsByYear.forEach((yearEvents, year) => {
-      // Find most significant event of the year (highest deaths)
-      const significantEvent = yearEvents.reduce((max, e) =>
-        (e.deaths || 0) > (max.deaths || 0) ? e : max
-      , yearEvents[0]);
-
-      const eventDiv = document.createElement('div');
-      eventDiv.className = 'timeline-event';
-      eventDiv.innerHTML = `
-        <div class="timeline-event-marker"></div>
-        <div class="timeline-event-year">${year}</div>
-        <div class="timeline-event-card">
-          <div class="timeline-event-title">${significantEvent.name || 'Unnamed Event'}</div>
-          <div class="timeline-event-type" style="color: ${getDisasterColor(significantEvent.type)}">
-            ${this.capitalize(significantEvent.type)}${yearEvents.length > 1 ? ` (+${yearEvents.length - 1} more)` : ''}
-          </div>
-          <div class="timeline-event-stats">
-            <div class="timeline-event-stat">
-              <div class="timeline-event-stat-value">${formatNumber(significantEvent.deaths || 0)}</div>
-              <div class="timeline-event-stat-label">Deaths</div>
-            </div>
-            <div class="timeline-event-stat">
-              <div class="timeline-event-stat-value">${formatNumber(significantEvent.affected || 0)}</div>
-              <div class="timeline-event-stat-label">Affected</div>
-            </div>
-            <div class="timeline-event-stat">
-              <div class="timeline-event-stat-value">$${formatNumber((significantEvent.damage_usd_thousands || 0) / 1000)}M</div>
-              <div class="timeline-event-stat-label">Damages</div>
-            </div>
-          </div>
-        </div>
-        <div class="timeline-event-placeholder timeline-event-card">
-          <div class="timeline-event-placeholder-text">EXHIBIT PLACEHOLDER</div>
-        </div>
-      `;
-      container.appendChild(eventDiv);
-      eventIndex++;
-    });
-
-    // Add some empty placeholder cards for museum effect
-    for (let i = 0; i < 2; i++) {
-      const placeholderDiv = document.createElement('div');
-      placeholderDiv.className = 'timeline-event';
-      placeholderDiv.innerHTML = `
-        <div class="timeline-event-marker"></div>
-        <div class="timeline-event-card timeline-event-placeholder">
-          <div class="timeline-event-placeholder-text">FUTURE EXHIBIT SPACE</div>
-        </div>
-        <div class="timeline-event-card timeline-event-placeholder">
-          <div class="timeline-event-placeholder-text">EXHIBIT PLACEHOLDER</div>
-        </div>
-      `;
-      container.appendChild(placeholderDiv);
-    }
-  },
-
-  renderOverview(iso) {
-    const stats = COUNTRY_STATS[iso];
-    const events = COUNTRY_EVENTS[iso] || [];
-
+    // Trigger all D3 Visualizations
     this.renderFrequencyChart(iso, events);
-
     this.renderTypeDistribution(iso, stats);
-
     this.renderDeathsChart(iso, events);
-
     this.renderEconomicChart(iso, events);
   },
 
@@ -400,37 +310,13 @@ const Scene3 = {
   },
 
   attachHandlers() {
-    // Back button
-    document.getElementById('backToGlobe').onclick = () => {
-      App.showScene('scene-globe');
+    // Return to the main Globe page
+  const backBtn = document.getElementById('backToGlobe');
+  if (backBtn) {
+    backBtn.onclick = () => {
+      window.location.href = 'coutry_timeline.html'; 
     };
-
-    // View toggle
-    const toggleButtons = document.querySelectorAll('.view-toggle .toggle-pill');
-    toggleButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        const view = btn.getAttribute('data-view');
-        this.switchView(view);
-
-        toggleButtons.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-      });
-    });
-  },
-
-  switchView(view) {
-    this.currentView = view;
-
-    const timelineView = document.getElementById('timelineView');
-    const overviewView = document.getElementById('overviewView');
-
-    if (view === 'timeline') {
-      timelineView.classList.remove('hidden');
-      overviewView.classList.add('hidden');
-    } else {
-      timelineView.classList.add('hidden');
-      overviewView.classList.remove('hidden');
-    }
+  }
   },
 
   capitalize(str) {
