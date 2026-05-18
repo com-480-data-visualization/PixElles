@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Natural Disaster Museum · The Globe</title>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inter:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Special+Elite&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/style.css">
+
+  <!-- Core Libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
+  <script src="https://unpkg.com/globe.gl"></script>
+</head>
+
+<body>
+  <header class="top-bar" id="top-bar">
+    <div class="brand">
+      <span class="brand-earth">Earth</span> Natural Disaster Museum<span class="brand-dim"> · est. 2026</span>
+    </div>
+    <nav class="breadcrumb" id="top-breadcrumb">
+      <span class="crumb">The Globe: Earth</span>
+    </nav>
+  </header>
+
+  <div id="app">
+    <!-- SCENE 2: 3D Globe -->
+    <div id="scene-globe" class="scene active">
+      <!-- Static starfield background -->
+      <canvas id="starfieldCanvas"></canvas>
+      <!-- 3D Globe Container -->
+      <div id="globeContainer"></div>
+
+      <!-- Filter Panel (Left) -->
+      <aside class="filter-panel globe-filter-panel" id="filterPanel" aria-label="Globe filters">
+        <section class="filter-section" aria-labelledby="timePeriodTitle">
+          <h2 class="filter-title" id="timePeriodTitle">Time period</h2>
+          <div class="year-range-control">
+            <div class="range-values" aria-hidden="true">
+              <span id="yearMinVal">1975</span>
+              <span id="yearMaxVal">2025</span>
+            </div>
+            <div class="range-slider" aria-label="Select event year range">
+              <div class="range-track">
+                <div class="range-fill" id="yearRangeFill"></div>
+              </div>
+              <input class="range-input range-input-min" type="range" id="yearStartSlider" min="1975" max="2025" value="1975" aria-label="Start year" />
+              <input class="range-input range-input-max" type="range" id="yearEndSlider" min="1975" max="2025" value="2025" aria-label="End year" />
+            </div>
+          </div>
+        </section>
+
+        <section class="filter-section" aria-labelledby="disasterTypesTitle">
+          <h2 class="filter-title" id="disasterTypesTitle">Disaster types</h2>
+          <div class="filter-chips" id="typeFilter"></div>
+        </section>
+
+        <div class="events-widget" aria-live="polite">
+          <div class="events-count" id="eventCount">0</div>
+          <div class="events-label">Events displayed</div>
+          <div class="data-status hidden" id="dataStatus"></div>
+        </div>
+      </aside>
+
+      <aside class="earth-story-card" aria-labelledby="earthStoryCardTitle">
+        <h2 id="earthStoryCardTitle">Earth Story</h2>
+        <p>How has the global profile of disasters shifted over time? Explore our Earth Story and uncover 50 years of striking trends.</p>
+        <button type="button" id="earthStoryExplore" class="earth-story-button">Explore</button>
+      </aside>
+    </div>
+
+  </div>
+
+  <!-- Static starfield -->
+  <script>
+    (function () {
+      const canvas = document.getElementById('starfieldCanvas');
+      const ctx    = canvas.getContext('2d');
+
+      function rng(seed) {
+        let s = seed;
+        return function () {
+          s = (s ^ (s << 13)) >>> 0;
+          s = (s ^ (s >>> 17)) >>> 0;
+          s = (s ^ (s << 5))  >>> 0;
+          return s / 0xffffffff;
+        };
+      }
+
+      function draw() {
+        const dpr = window.devicePixelRatio || 1;
+        const w   = window.innerWidth;
+        const h   = window.innerHeight;
+        canvas.width  = w * dpr;
+        canvas.height = h * dpr;
+        canvas.style.width  = w + 'px';
+        canvas.style.height = h + 'px';
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+        ctx.fillStyle = '#0C1116';
+        ctx.fillRect(0, 0, w, h);
+
+        const rand = rng(42);
+        const count = Math.round(w * h / 1400); /* ~850 stars on 1080p */
+
+        for (let i = 0; i < count; i++) {
+          const x     = rand() * w;
+          const y     = rand() * h;
+          const size  = rand() * 1.4 + 0.3;
+          const alpha = rand() * 0.7 + 0.15;
+
+          ctx.beginPath();
+          ctx.arc(x, y, size, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(255,255,255,${alpha.toFixed(2)})`;
+          ctx.fill();
+        }
+
+        /* faint radial vignette so the edges feel like deep space */
+        const grad = ctx.createRadialGradient(w/2, h/2, h * 0.2, w/2, h/2, h * 0.9);
+        grad.addColorStop(0, 'rgba(12,17,22,0)');
+        grad.addColorStop(1, 'rgba(12,17,22,0.55)');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, w, h);
+      }
+
+      draw();
+      window.addEventListener('resize', draw);
+    })();
+  </script>
+
+  <!-- JavaScript Modules -->
+  <script src="js/data.js"></script>
+  <script src="js/scene1_ticket.js"></script>
+  <script src="js/scene2_globe.js"></script>
+  <!-- App Initialization -->
+  <script>
+    document.getElementById('earthStoryExplore')?.addEventListener('click', () => {
+      window.location.href = 'earth_story.html';
+    });
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      await initData();
+      Scene2.init();
+    });
+  </script>
+</body>
+</html>
