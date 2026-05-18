@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Natural Disaster Museum · Earth Story</title>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inter:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Special+Elite&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/style.css">
+
+  <!-- D3 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+</head>
+
+<body>
+  <header class="top-bar" id="top-bar">
+    <div class="brand">
+      <span class="brand-earth">Earth</span> Natural Disaster Museum<span class="brand-dim"> · est. 2026</span>
+    </div>
+    <nav class="breadcrumb" id="top-breadcrumb">
+      <a class="crumb crumb-link" href="globe.html">The Globe: Earth</a>
+      <span class="sep">/</span>
+      <span class="crumb">Earth Story</span>
+    </nav>
+    <div class="top-bar-action" id="top-bar-action"></div>
+  </header>
+
+  <div id="app">
+    <div id="scene-story" class="scene active">
+      <div class="story-header">
+        <h2 class="story-title">EARTH STORY</h2>
+        <p class="story-subtitle">Analysing 50 years of global disaster trends</p>
+      </div>
+
+      <!-- 4 exhibit frames in a 2x2 grid -->
+      <div class="exhibits-hall" id="overviewHall">
+        <div class="wall-exhibit" id="exhibit-frequency">
+          <div class="exhibit-spotlight"></div>
+          <div class="exhibit-label">EXHIBIT I</div>
+          <div class="exhibit-wall-title">THE RISING TIDE</div>
+          <div class="exhibit-wall-subtitle">Disaster frequency by subgroup, 1975-2025</div>
+          <div class="exhibit-viz-area" id="viz-frequency"></div>
+          <div class="exhibit-caption">This stacked area chart reveals a dramatic increase in disaster frequency over five decades. Climate-related disasters (Meteorological, Hydrological, Climatological) show the steepest rise, while Geophysical events remain relatively stable, underscoring the growing impact of climate change.</div>
+        </div>
+
+        <div class="wall-exhibit" id="exhibit-mortality">
+          <div class="exhibit-spotlight"></div>
+          <div class="exhibit-label">EXHIBIT II</div>
+          <div class="exhibit-wall-title">THE MORTALITY CRISIS</div>
+          <div class="exhibit-wall-subtitle">Annual death toll from natural disasters, 1975-2025</div>
+          <div class="exhibit-viz-area" id="viz-mortality"></div>
+          <div class="exhibit-caption">Disaster mortality shows extreme variability over five decades, with devastating spikes marking catastrophic events like the 2004 Indian Ocean Tsunami and 2010 Haiti Earthquake. Despite advances in early warning systems, these peaks demonstrate the persistent vulnerability of populations in high-risk regions.</div>
+        </div>
+
+        <div class="wall-exhibit" id="exhibit-economic">
+          <div class="exhibit-spotlight"></div>
+          <div class="exhibit-label">EXHIBIT III</div>
+          <div class="exhibit-wall-title">THE HUMAN TOLL</div>
+          <div class="exhibit-wall-subtitle">Affected populations over time, 1975-2025</div>
+          <div class="exhibit-viz-area" id="viz-economic"></div>
+          <div class="exhibit-caption">The number of people affected by natural disasters has grown substantially, reflecting both population growth in hazard-prone areas and improved disaster reporting. Peak years show hundreds of millions impacted, underscoring the scale of displacement, injury, and disruption caused by major events.</div>
+        </div>
+
+        <div class="wall-exhibit" id="exhibit-geography">
+          <div class="exhibit-spotlight"></div>
+          <div class="exhibit-label">EXHIBIT IV</div>
+          <div class="exhibit-wall-title">REGIONAL VULNERABILITY</div>
+          <div class="exhibit-wall-subtitle">Disaster burden across continents</div>
+          <div class="exhibit-viz-area" id="viz-geography"></div>
+          <div class="exhibit-caption">Asia bears the brunt of global disaster impacts, experiencing over half of all natural disasters and the majority of casualties. This regional disparity reflects both geographic exposure to hazards and socioeconomic vulnerabilities that amplify disaster consequences in developing nations.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/scene4_story.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      await initData();
+      Scene4.init();
+    });
+  </script>
+</body>
+</html>

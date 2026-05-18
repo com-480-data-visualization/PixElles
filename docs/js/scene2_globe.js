@@ -130,8 +130,8 @@ const Scene2 = {
       .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
       .bumpImageUrl('https://unpkg.com/three-globe/example/img/earth-topology.png')
       .showAtmosphere(true)
-      .atmosphereColor('#4b7bff')
-      .atmosphereAltitude(0.15);
+      .atmosphereColor('rgb(37, 94, 150)')
+      .atmosphereAltitude(0.5);
 
     this.globe.pointOfView({ lat: 12, lng: 68, altitude: 2.35 });
 

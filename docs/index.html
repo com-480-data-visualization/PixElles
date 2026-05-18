@@ -10,29 +10,13 @@
 
   <!-- Styles -->
   <link rel="stylesheet" href="css/style.css">
-
-  <!-- Core Libraries -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
-  <script src="https://unpkg.com/globe.gl"></script>
 </head>
 
 <body>
-  <header class="top-bar" id="top-bar">
-    <div class="brand">
-      <span class="brand-earth">Earth</span> Natural Disaster Museum<span class="brand-dim"> · est. 2026</span>
-    </div>
-    <nav class="breadcrumb" id="top-breadcrumb">
-      <span class="crumb">The Globe: Earth</span>
-    </nav>
-    <div class="top-bar-action" id="top-bar-action"></div>
-  </header>
-
-
   <div id="app">
-    <!-- SCENE 1: Museum Entrance + Ticket -->
+    <!-- Museum Entrance + Ticket -->
     <div id="scene-ticket" class="frame scene active">
-      <!-- Background: Full screen time travel canvas -->
+      <!-- Background: Full screen starfield canvas -->
       <canvas id="timeTravel"></canvas>
 
       <main class="stage">
@@ -51,14 +35,14 @@
             <path d="M3 12 L12 10.5 L21 12 L12 13.5 Z" fill="#e6a3b8" opacity="0.85"/>
           </svg>
         </div>
- 
+
         <h1 class="reveal d2">
           Welcome to the<br>
           <span class="earth">Earth</span> <span class="gradient">NATURAL</span><br>
           <span class="gradient">DISASTERS</span><br>
           MUSEUM
         </h1>
- 
+
         <p class="lede reveal d3">
           Grab your ticket and explore the Earth History of global natural disasters
         </p>
@@ -94,7 +78,6 @@
           <div class="ticket-barcode">
             <svg viewBox="0 0 30 144" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
               <g fill="#ffffff">
-                <!-- your barcode rects, unchanged -->
                 <rect x="0" y="4"   width="30" height="1.2"/>
                 <rect x="0" y="7"   width="30" height="2"/>
                 <rect x="0" y="11"  width="30" height="0.8"/>
@@ -146,236 +129,18 @@
             <button class="enter-btn">ENTER <span class="arrow">→</span></button>
           </div>
         </div>
- 
+
         <p class="click-hint reveal d5">Click on the ticket to enter the museum</p>
       </section>
-     </main>
-     <footer class="reveal d6">
-      <span>Source · EM-DAT</span>
-      <span>50 Years · 1975 — 2025</span>
-    </footer>
+      </main>
 
-      
-    </div>
-
-    <!-- SCENE 2: 3D Globe -->
-    <div id="scene-globe" class="scene hidden">
-      <!-- 3D Globe Container -->
-      <div id="globeContainer"></div>
-
-      <!-- Filter Panel (Left) -->
-      <aside class="filter-panel globe-filter-panel" id="filterPanel" aria-label="Globe filters">
-        <section class="filter-section" aria-labelledby="timePeriodTitle">
-          <h2 class="filter-title" id="timePeriodTitle">Time period</h2>
-          <div class="year-range-control">
-            <div class="range-values" aria-hidden="true">
-              <span id="yearMinVal">1975</span>
-              <span id="yearMaxVal">2025</span>
-            </div>
-            <div class="range-slider" aria-label="Select event year range">
-              <div class="range-track">
-                <div class="range-fill" id="yearRangeFill"></div>
-              </div>
-              <input class="range-input range-input-min" type="range" id="yearStartSlider" min="1975" max="2025" value="1975" aria-label="Start year" />
-              <input class="range-input range-input-max" type="range" id="yearEndSlider" min="1975" max="2025" value="2025" aria-label="End year" />
-            </div>
-          </div>
-        </section>
-
-        <section class="filter-section" aria-labelledby="disasterTypesTitle">
-          <h2 class="filter-title" id="disasterTypesTitle">Disaster types</h2>
-          <div class="filter-chips" id="typeFilter"></div>
-        </section>
-
-        <div class="events-widget" aria-live="polite">
-          <div class="events-count" id="eventCount">0</div>
-          <div class="events-label">Events displayed</div>
-          <div class="data-status hidden" id="dataStatus"></div>
-        </div>
-      </aside>
-
-      <aside class="earth-story-card" aria-labelledby="earthStoryCardTitle">
-        <h2 id="earthStoryCardTitle">Earth Story</h2>
-        <p>How has the global profile of disasters shifted over time? Explore our Earth Story and uncover 50 years of striking trends.</p>
-        <button type="button" id="earthStoryExplore" class="earth-story-button">Explore</button>
-      </aside>
-    </div>
-
-
-      <!-- OVERVIEW VIEW: Visualizations and statistics -->
-      <div class="overview-view hidden" id="overviewView">
-        <div class="overview-grid">
-          <!-- Disaster Frequency -->
-          <div class="overview-card">
-            <div class="overview-card-header">
-              <h3>Disaster Frequency</h3>
-              <p>Events over time (1975-2025)</p>
-            </div>
-            <div class="overview-viz" id="overviewFrequency"></div>
-          </div>
-
-          <!-- Distribution by Type -->
-          <div class="overview-card">
-            <div class="overview-card-header">
-              <h3>Distribution by Type</h3>
-              <p>Breakdown of disaster types</p>
-            </div>
-            <div class="overview-viz" id="overviewDistribution"></div>
-          </div>
-
-          <!-- Impact: Deaths -->
-          <div class="overview-card">
-            <div class="overview-card-header">
-              <h3>Human Impact</h3>
-              <p>Deaths and affected populations</p>
-            </div>
-            <div class="overview-viz" id="overviewDeaths"></div>
-          </div>
-
-          <!-- Impact: Economic -->
-          <div class="overview-card">
-            <div class="overview-card-header">
-              <h3>Economic Impact</h3>
-              <p>Damages in USD (thousands)</p>
-            </div>
-            <div class="overview-viz" id="overviewDamages"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- SCENE 4: Earth Story — Trends Panel -->
-    <div id="scene-story" class="scene hidden">
-      <div class="story-header">
-        <h2 class="story-title">EARTH STORY</h2>
-        <p class="story-subtitle">Analysing 50 years of global disaster trends</p>
-      </div>
-
-      <!-- OVERVIEW: 4 exhibit frames in a 2×2 grid -->
-      <div class="exhibits-hall" id="overviewHall">
-        <div class="wall-exhibit" id="exhibit-frequency">
-          <div class="exhibit-spotlight"></div>
-          <div class="exhibit-label">EXHIBIT I</div>
-          <div class="exhibit-wall-title">THE RISING TIDE</div>
-          <div class="exhibit-wall-subtitle">Disaster frequency by subgroup, 1975–2025</div>
-          <div class="exhibit-viz-area" id="viz-frequency"></div>
-          <div class="exhibit-caption">This stacked area chart reveals a dramatic increase in disaster frequency over five decades. Climate-related disasters (Meteorological, Hydrological, Climatological) show the steepest rise, while Geophysical events remain relatively stable, underscoring the growing impact of climate change.</div>
-        </div>
-
-        <div class="wall-exhibit" id="exhibit-mortality">
-          <div class="exhibit-spotlight"></div>
-          <div class="exhibit-label">EXHIBIT II</div>
-          <div class="exhibit-wall-title">THE MORTALITY CRISIS</div>
-          <div class="exhibit-wall-subtitle">Annual death toll from natural disasters, 1975–2025</div>
-          <div class="exhibit-viz-area" id="viz-mortality"></div>
-          <div class="exhibit-caption">Disaster mortality shows extreme variability over five decades, with devastating spikes marking catastrophic events like the 2004 Indian Ocean Tsunami and 2010 Haiti Earthquake. Despite advances in early warning systems, these peaks demonstrate the persistent vulnerability of populations in high-risk regions.</div>
-        </div>
-
-        <div class="wall-exhibit" id="exhibit-economic">
-          <div class="exhibit-spotlight"></div>
-          <div class="exhibit-label">EXHIBIT III</div>
-          <div class="exhibit-wall-title">THE HUMAN TOLL</div>
-          <div class="exhibit-wall-subtitle">Affected populations over time, 1975–2025</div>
-          <div class="exhibit-viz-area" id="viz-economic"></div>
-          <div class="exhibit-caption">The number of people affected by natural disasters has grown substantially, reflecting both population growth in hazard-prone areas and improved disaster reporting. Peak years show hundreds of millions impacted, underscoring the scale of displacement, injury, and disruption caused by major events.</div>
-        </div>
-
-        <div class="wall-exhibit" id="exhibit-geography">
-          <div class="exhibit-spotlight"></div>
-          <div class="exhibit-label">EXHIBIT IV</div>
-          <div class="exhibit-wall-title">REGIONAL VULNERABILITY</div>
-          <div class="exhibit-wall-subtitle">Disaster burden across continents</div>
-          <div class="exhibit-viz-area" id="viz-geography"></div>
-          <div class="exhibit-caption">Asia bears the brunt of global disaster impacts, experiencing over half of all natural disasters and the majority of casualties. This regional disparity reflects both geographic exposure to hazards and socioeconomic vulnerabilities that amplify disaster consequences in developing nations.</div>
-        </div>
-      </div>
-
+      <footer class="reveal d6">
+        <span>Source · EM-DAT</span>
+        <span>50 Years · 1975 — 2025</span>
+      </footer>
     </div>
   </div>
 
-  <!-- Persistent bottom nav (hidden in scene-ticket) -->
-  <nav id="museum-nav" class="hidden">
-    <button data-scene="scene-globe" class="nav-btn">World Map</button>
-    <button data-scene="scene-story" class="nav-btn">Earth Story</button>
-  </nav>
-
-  <!-- JavaScript Modules -->
-  <script src="js/data.js"></script>
   <script src="js/scene1_ticket.js"></script>
-  <script src="js/scene2_globe.js"></script>
-  <script src="js/scene3_country.js"></script>
-  <script src="js/scene4_story.js"></script>
-
-  <!-- App Initialization -->
-  <script>
-    // App state and navigation
-    const App = {
-      currentScene: 'scene-ticket',
-
-      _breadcrumbs: {
-        'scene-ticket': [],
-        'scene-globe':  [{ label: 'The Globe: Earth' }],
-        'scene-story':  [{ label: 'The Globe: Earth' }, { label: 'Earth Story' }],
-      },
-
-      showScene(id) {
-        document.querySelectorAll('.scene').forEach(s => {
-          s.classList.add('hidden');
-          s.classList.remove('active');
-        });
-
-        const scene = document.getElementById(id);
-        scene.classList.remove('hidden');
-        scene.classList.add('active');
-
-        // Toggle header & bottom nav
-        const header = document.getElementById('top-bar');
-        const nav = document.getElementById('museum-nav');
-        const isWelcome = id === 'scene-ticket';
-        header.classList.toggle('hidden', isWelcome);
-        nav.classList.toggle('hidden', isWelcome || id === 'scene-globe');
-
-        // Update breadcrumb
-        const bc = document.getElementById('top-breadcrumb');
-        const crumbs = this._breadcrumbs[id] || [];
-        bc.innerHTML = crumbs.map((c, i) =>
-          (i > 0 ? '<span class="sep">/</span>' : '') + `<span class="crumb">${c.label}</span>`
-        ).join('');
-
-        // Lazy init scenes
-        if (id === 'scene-globe' && !Scene2._inited) {
-          Scene2.init();
-          Scene2._inited = true;
-        }
-        if (id === 'scene-story' && !Scene4._inited) {
-          Scene4.init();
-          Scene4._inited = true;
-        }
-
-        this.currentScene = id;
-      }
-    };
-
-    // Navigation button handlers
-    document.querySelectorAll('.nav-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const scene = btn.getAttribute('data-scene');
-        App.showScene(scene);
-      });
-    });
-
-    document.getElementById('earthStoryExplore')?.addEventListener('click', () => {
-      App.showScene('scene-story');
-    });
-
-    document.addEventListener('DOMContentLoaded', async () => {
-      console.log('Natural Disaster Museum initializing...');
-
-      await initData();
-      App.showScene('scene-ticket');
-
-      console.log('Museum ready');
-    });
-  </script>
 </body>
 </html>

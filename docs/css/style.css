@@ -430,11 +430,11 @@ button {
 }
 
 .breadcrumb {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
+  flex: 1;
+  min-width: 0;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 0;
   font-family: 'Inter', sans-serif;
   font-size: 11px;
@@ -444,6 +444,7 @@ button {
   text-transform: uppercase;
   color: rgba(255, 255, 255, 0.6);
   white-space: nowrap;
+  overflow: hidden;
 }
 
 .breadcrumb .sep {
@@ -481,6 +482,32 @@ button {
 }
 .pill-btn .arrow { transition: transform .3s ease; }
 .pill-btn:hover .arrow { transform: translateX(3px); }
+
+@media (max-width: 640px) {
+  .top-bar {
+    height: auto;
+    padding: 12px 16px;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+  .brand {
+    text-align: center;
+    white-space: normal;
+  }
+  .breadcrumb {
+    display: none;
+  }
+  .top-bar-action {
+    min-width: 0;
+    justify-content: center;
+  }
+  /* direct pill-btn child (country_timeline.html) */
+  .top-bar > .pill-btn {
+    font-size: 14px;
+    padding: 7px 20px;
+  }
+}
 
 #museum-nav {
   position: fixed;
@@ -537,7 +564,7 @@ button {
    ============================================ */
 
 #scene-globe {
-  background: var(--void);
+  background: var(--bgcolor);
 }
 
 #globeCanvas {
@@ -1250,30 +1277,19 @@ button {
    SCENE 2: 3D GLOBE WITH SPACE BACKGROUND
    ============================================ */
 
+#starfieldCanvas {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
 #globeContainer {
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse at center, #0a0e27 0%, #020308 100%);
+  background: transparent;
   overflow: hidden;
-  z-index: 1;
-}
-
-/* Starfield background */
-#globeContainer::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image:
-    radial-gradient(2px 2px at 20px 30px, white, transparent),
-    radial-gradient(2px 2px at 60px 70px, white, transparent),
-    radial-gradient(1px 1px at 50px 50px, white, transparent),
-    radial-gradient(1px 1px at 130px 80px, white, transparent),
-    radial-gradient(2px 2px at 90px 10px, white, transparent);
-  background-repeat: repeat;
-  background-size: 200px 200px;
-  opacity: 0.5;
-  animation: twinkle 100s linear infinite;
-  pointer-events: none;
+  z-index: 2;
 }
 
 @keyframes twinkle {
@@ -1290,7 +1306,7 @@ button {
 
 .globe-filter-panel {
   position: absolute;
-  top: 18px;
+  top: calc(74px + 18px);
   left: 22px;
   bottom: auto;
   width: 285px;
@@ -1302,7 +1318,7 @@ button {
   border: 1px solid #353738;
   border-radius: 20px;
   color: var(--text);
-  max-height: calc(100vh - 36px);
+  max-height: calc(100vh - 74px - 36px);
   overflow-x: hidden;
   overflow-y: auto;
   z-index: 80;
@@ -1614,7 +1630,7 @@ button {
 @media (max-width: 900px) {
   .globe-filter-panel {
     left: 16px;
-    top: 16px;
+    top: calc(74px + 16px);
     width: min(285px, calc(100vw - 32px));
   }
 
@@ -1627,7 +1643,8 @@ button {
 
 @media (max-width: 640px) {
   .globe-filter-panel {
-    max-height: calc(100vh - 32px);
+    top: calc(92px + 16px);
+    max-height: calc(100vh - 92px - 32px);
     overflow-y: auto;
   }
 
