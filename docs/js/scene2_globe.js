@@ -580,16 +580,6 @@ const Scene2 = {
     return Math.round(5 + scale * 27);
   },
 
-  getCountryBubbleLabel(marker) {
-    return `
-      <div class="globe-point-tooltip">
-        <div class="tooltip-kicker">${this.escapeHTML(marker.typeLabel)}</div>
-        <div class="tooltip-country">${this.escapeHTML(marker.country)}</div>
-        <div class="tooltip-stat">${formatNumber(marker.count)} events · ${formatNumber(marker.deaths)} deaths</div>
-      </div>
-    `;
-  },
-
   createCountryBubbleElement(marker) {
     const element = document.createElement('button');
     element.type = 'button';
@@ -652,7 +642,6 @@ const Scene2 = {
     const tooltip = document.getElementById('globeTooltip');
     if (!tooltip) return;
 
-    tooltip.innerHTML = this.getCountryBubbleLabel(marker);
     tooltip.classList.remove('hidden');
     this.positionBubbleDetail(tooltip, event.clientX, event.clientY);
   },
@@ -699,7 +688,6 @@ const Scene2 = {
   },
 
   handleCountryClick(iso) {
-    console.log('Country clicked:', iso);
-    Scene3.open(iso);
+    window.location.href = `country_timeline.html?iso=${iso}`;
   }
 };

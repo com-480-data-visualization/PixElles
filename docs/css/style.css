@@ -54,7 +54,7 @@ body {
 }
 
 /* very subtle starfield */
-body::before {
+/* body::before {
   content: "";
   position: fixed;
   inset: 0;
@@ -73,7 +73,7 @@ body::before {
   pointer-events: none;
   z-index: 0;
   opacity: 0.85;
-} 
+}  */
 
 button {
   cursor: pointer;
@@ -393,6 +393,94 @@ button {
 /* ============================================
    MUSEUM NAVIGATION
    ============================================ */
+
+/* ---------- Top bar ---------- */
+.top-bar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  height: 74px;
+  padding: 0 26px 0 50px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgb(12, 17, 22);
+}
+
+.top-bar.hidden {
+  display: none !important;
+}
+
+.brand {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 16px;
+  font-weight: 300;
+  color: var(--text);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.brand-earth {
+  font-style: italic;
+}
+
+.brand-dim {
+  color: rgba(255, 255, 255, 0.6);
+  font-style: italic;
+}
+
+.breadcrumb {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 0;
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  font-style: italic;
+  font-weight: 300;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.6);
+  white-space: nowrap;
+}
+
+.breadcrumb .sep {
+  margin: 0 10px;
+  opacity: 0.5;
+}
+
+.top-bar-action {
+  flex-shrink: 0;
+  min-width: 213px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.pill-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 28px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 999px;
+  color: var(--text);
+  background: rgba(12, 17, 22, 0.2);
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  letter-spacing: 0;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+.pill-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.8);
+}
+.pill-btn .arrow { transition: transform .3s ease; }
+.pill-btn:hover .arrow { transform: translateX(3px); }
 
 #museum-nav {
   position: fixed;

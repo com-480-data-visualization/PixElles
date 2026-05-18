@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Country Timeline | Earth Natural Disasters Museum</title>
+
+<link rel="stylesheet" href="css/style.css">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inter:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<style>
+  :root {
+    --bluegrey:    #97AEC4;
+    --bluesky:     #6EB6FF;
+    --orange:      #FF8775;
+    --bgcolor:     #0C1116;
+    --text:        #FFF;
+    --text-bright: #FFF;
+    --text-mid:    #97AEC4;
+    --text-dim:    rgba(151,174,196,0.58);
+    --gold:        #97AEC4;
+    --gradient-primary: linear-gradient(90deg, #97AEC4 0%, #6EB6FF 50%, #FF8775 100%);
+
+    --line:        rgba(151,174,196,0.18);
+    --line-soft:   rgba(151,174,196,0.10);
+    --bg-card:     #131922;
+    --bg-card-2:   #181f2a;
+
+    --card-spacing: 600px;
+    --hall-depth:   2200px;
+    --wall-x:       420px;
+    --wall-rotate:  22deg;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body { height: 100%; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bgcolor);
+    color: var(--text);
+    overflow-x: hidden;
+    overflow-y: auto;  /* override style.css "overflow: hidden" — window.scrollY drives the hallway camera */
+  }
+
+  /* ---------- Top bar ---------- */
+  .top-bar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    height: 74px;
+    padding: 0 26px 0 50px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgb(12, 17, 22);
+  }
+  .brand {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 16px;
+    font-weight: 300;
+    color: var(--text);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .brand-earth { font-style: italic; }
+  .brand-dim { color: rgba(255,255,255,0.6); font-style: italic; }
+
+  .breadcrumb {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-style: italic;
+    font-weight: 300;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.6);
+    white-space: nowrap;
+  }
+  .breadcrumb a { color: rgba(255,255,255,0.6); text-decoration: none; }
+  .breadcrumb a:hover { color: rgba(255,255,255,0.9); }
+  .breadcrumb .sep { margin: 0 10px; opacity: 0.5; }
+
+  .pill-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 28px;
+    border: 1px solid rgba(255,255,255,0.5);
+    border-radius: 999px;
+    color: var(--text);
+    background: rgba(12,17,22,0.2);
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.3s ease, border-color 0.3s ease;
+  }
+  .pill-btn:hover {
+    background: rgba(255,255,255,0.1);
+    border-color: rgba(255,255,255,0.8);
+  }
+  .pill-btn .arrow { transition: transform .3s ease; }
+  .pill-btn:hover .arrow { transform: translateX(3px); }
+
+  /* ---------- Loading overlay ---------- */
+  .loading-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--bgcolor);
+    gap: 20px;
+    transition: opacity .6s ease;
+  }
+  .loading-overlay.done { opacity: 0; pointer-events: none; }
+  .loading-overlay .spinner {
+    width: 36px; height: 36px;
+    border: 2px solid var(--line);
+    border-top-color: var(--bluegrey);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-overlay p {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 18px;
+    color: var(--text-mid);
+  }
+
+  /* ---------- No-data state ---------- */
+  .no-data {
+    position: fixed;
+    inset: 0;
+    z-index: 150;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 40px;
+    gap: 20px;
+  }
+  .no-data.show { display: flex; }
+  .no-data h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 48px;
+    font-weight: 400;
+  }
+  .no-data p {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 20px;
+    color: var(--text-mid);
+    max-width: 480px;
+  }
+
+  /* ---------- Intro splash ---------- */
+  .intro {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 0 40px;
+    pointer-events: none;
+    transition: opacity .6s ease;
+  }
+  .intro .kicker {
+    font-size: 11px;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 24px;
+  }
+  .intro h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 400;
+    font-size: 110px;
+    line-height: .92;
+    letter-spacing: -0.02em;
+  }
+  .intro h1 em {
+    font-style: italic;
+    font-weight: 300;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .intro .lede {
+    margin-top: 28px;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 22px;
+    color: var(--text-mid);
+    max-width: 560px;
+    font-weight: 300;
+    line-height: 1.5;
+  }
+  .intro .scroll-hint {
+    margin-top: 56px;
+    font-size: 10.5px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .intro .scroll-hint .arr {
+    display: inline-block;
+    animation: bob 2.2s ease-in-out infinite;
+  }
+  @keyframes bob {
+    0%,100% { transform: translateY(0); }
+    50%     { transform: translateY(6px); }
+  }
+
+  /* ---------- The Hallway ---------- */
+  .webgl-stage {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1; /* Puts it behind your HUD */
+  pointer-events: auto; /* Allows clicking on the 3D cards */
+}
+
+.webgl-stage canvas {
+  display: block;
+  outline: none;
+}
+
+.hallway {
+    position: fixed;
+    inset: 0;
+    perspective: var(--hall-depth);
+    perspective-origin: 50% 50%;
+    /* no overflow:hidden — clipping 3D-projected planes at a rect boundary
+       creates triangular seam artifacts; the viewport handles clipping */
+    z-index: 1;
+  }
+  .hallway .stage {
+    position: absolute;
+    inset: 0;
+    transform-style: preserve-3d;
+    will-change: transform;
+  }
+
+  /* ---------- Year cards ---------- */
+  .year-card {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 480px;
+    height: 600px;
+    margin-left: -240px;
+    margin-top: -300px;
+    transform-style: preserve-3d;
+    transform:
+      translateZ(calc(var(--depth) * -1px))
+      translateX(calc(var(--side) * var(--wall-x)))
+      rotateY(calc(var(--side) * var(--wall-rotate) * -1));
+    transform-origin: 50% 50%;
+    cursor: pointer;
+    will-change: transform, opacity;
+    transition: filter .35s ease, opacity .15s ease;
+    backface-visibility: hidden;
+  }
+
+  .year-card.behind { opacity: 0 !important; pointer-events: none; }
+
+  .year-card .frame {
+    /* reset any globals (e.g. style.css .frame has padding/display: grid) */
+    display: block;
+    padding: 0;
+    grid-template-rows: unset;
+    width: 100%;
+    height: 100%;
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    overflow: hidden;
+    position: relative;
+    box-shadow:
+      0 1px 0 rgba(255,255,255,.04) inset,
+      0 30px 80px -20px rgba(0,0,0,.85);
+    transition: box-shadow .35s ease, border-color .35s ease;
+  }
+
+  .year-card.active .frame {
+    border-color: var(--text-mid);
+    box-shadow:
+      0 1px 0 rgba(255,255,255,.06) inset,
+      0 40px 100px -20px rgba(0,0,0,.9),
+      0 0 80px rgba(110,182,255,.20);
+  }
+  .year-card.highlighted.active .frame {
+    box-shadow:
+      0 1px 0 rgba(255,255,255,.06) inset,
+      0 40px 100px -20px rgba(0,0,0,.9),
+      0 0 80px rgba(255,135,117,.30);
+    border-color: rgba(255,135,117,.5);
+  }
+  .year-card:hover .frame { border-color: var(--text); }
+
+  .photo-wrap {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    border-radius: 16px;
+  }
+  .photo-wrap .photo {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    filter: grayscale(.55) brightness(.55) contrast(1.05) hue-rotate(-15deg);
+    transition: filter .6s ease, transform 4s ease;
+  }
+  .year-card.active .photo {
+    filter: grayscale(.35) brightness(.78) contrast(1.1) hue-rotate(-15deg);
+    transform: scale(1.04);
+  }
+  .photo-wrap::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(180deg, rgba(12,17,22,.4) 0%, transparent 25%, transparent 50%, rgba(12,17,22,.95) 100%),
+      radial-gradient(ellipse at center, transparent 30%, rgba(12,17,22,.4) 100%);
+    pointer-events: none;
+  }
+
+  .card-head {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    padding: 30px 36px 26px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    z-index: 2;
+  }
+  .card-head .file-no {
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--text-mid);
+    font-weight: 400;
+  }
+  .card-head .title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: var(--text);
+    text-align: right;
+    line-height: 1.05;
+    text-transform: uppercase;
+  }
+  .card-head .title .yr {
+    font-style: italic;
+    font-weight: 400;
+    letter-spacing: 0.01em;
+  }
+  .year-card.highlighted .card-head .title { color: var(--orange); }
+
+  .card-tagline {
+    position: absolute;
+    top: 96px;
+    left: 36px;
+    right: 36px;
+    z-index: 2;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 17px;
+    color: var(--text-mid);
+    line-height: 1.4;
+    opacity: 0;
+    transition: opacity .5s ease;
+    text-align: right;
+    max-width: 65%;
+    margin-left: auto;
+  }
+  .year-card.active .card-tagline { opacity: 1; }
+
+  .card-info {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    padding: 32px 36px 30px;
+    z-index: 2;
+  }
+  .card-info .stats-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 22px;
+    padding-bottom: 22px;
+    border-bottom: 1px solid var(--line);
+  }
+  .card-info .stat .lbl {
+    font-size: 9.5px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 6px;
+  }
+  .card-info .stat .v {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 30px;
+    font-weight: 400;
+    line-height: 1;
+    color: var(--text);
+    letter-spacing: -0.01em;
+  }
+  .card-info .stat .v em { font-style: italic; color: var(--orange); }
+  .card-info .stat .v .unit {
+    font-size: 13px;
+    color: var(--text-dim);
+    font-style: italic;
+    margin-left: 4px;
+    font-weight: 300;
+  }
+  .card-info .glyphs-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .card-info .glyph-label {
+    font-size: 9.5px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+  .card-info .glyphs {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .card-info .glyphs span {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    box-shadow: 0 0 0 1px rgba(255,255,255,.15);
+  }
+
+  /* Disaster type glyph colors — matches data.js DISASTER_COLORS */
+  .g-drought            { background: #F2B44D; }
+  .g-earthquake         { background: #8A4E24; }
+  .g-extreme_temperature{ background: #F45FA8; }
+  .g-flood              { background: #5F9CF5; }
+  .g-landslide          { background: #7D9D67; }
+  .g-storm              { background: #7870D8; }
+  .g-epidemic           { background: #70C7A8; }
+  .g-infestation        { background: #B8C96B; }
+  .g-animal_incident    { background: #66BFD2; }
+  .g-volcano            { background: #D85745; }
+  .g-wildfire           { background: #F39A3C; }
+  .g-impact             { background: #C7B2FF; }
+
+  .card-action-hint {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 3;
+    padding: 10px 20px;
+    border: 1px solid var(--text-mid);
+    border-radius: 999px;
+    background: rgba(12,17,22,.6);
+    backdrop-filter: blur(6px);
+    font-size: 10.5px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--text);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .4s ease;
+    white-space: nowrap;
+  }
+  .year-card.active:hover .card-action-hint { opacity: 1; }
+
+  /* ---------- HUD ---------- */
+  .hud {
+    position: fixed;
+    z-index: 50;
+    pointer-events: none;
+  }
+  .hud-year {
+    bottom: 60px;
+    left: 56px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .hud-year .lbl {
+    font-size: 10.5px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+  .hud-year .yr {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 400;
+    font-size: 96px;
+    line-height: 1;
+    color: var(--text);
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+  }
+  .hud-year .yr em {
+    font-style: italic;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .hud-year .era {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 18px;
+    color: var(--text-mid);
+    margin-top: 4px;
+    transition: opacity .4s ease;
+  }
+
+  .hud-progress {
+    bottom: 60px;
+    right: 56px;
+    width: 280px;
+  }
+  .hud-progress .lbl {
+    font-size: 10.5px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 14px;
+    text-align: right;
+  }
+  .hud-progress .track {
+    height: 1px;
+    background: var(--line);
+    position: relative;
+  }
+  .hud-progress .progress {
+    position: absolute;
+    left: 0; top: 0;
+    height: 100%;
+    background: var(--gradient-primary);
+    width: 0%;
+    transition: width .12s linear;
+  }
+  .hud-progress .ticks {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--text-dim);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .end-card {
+    position: fixed;
+    inset: 0;
+    z-index: 70;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity .6s ease;
+  }
+  .end-card.show { opacity: 1; pointer-events: auto; }
+  .end-card .panel {
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 50px 60px;
+    max-width: 560px;
+    text-align: center;
+    backdrop-filter: blur(10px);
+  }
+  .end-card .panel h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 400;
+    font-size: 48px;
+    line-height: 1;
+    margin-bottom: 20px;
+  }
+  .end-card .panel h2 em {
+    font-style: italic;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .end-card .panel p {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 18px;
+    color: var(--text-mid);
+    margin-bottom: 32px;
+    line-height: 1.5;
+  }
+  .end-card .panel .actions {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .scroll-spacer {
+    position: relative;
+    z-index: 10;
+    pointer-events: none;
+  }
+
+  /* ---------- Detail modal ---------- */
+  .detail-panel {
+    position: fixed;
+    inset: 0;
+    background: rgba(8, 11, 15, .85);
+    backdrop-filter: blur(10px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+    padding: 40px;
+    animation: fadeIn .35s ease;
+  }
+  .detail-panel.open { display: flex; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  .detail-card {
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    width: min(960px, 100%);
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    animation: slideUp .55s cubic-bezier(.2,.7,.2,1);
+    box-shadow: 0 60px 120px rgba(0,0,0,.7);
+  }
+  @keyframes slideUp {
+    from { transform: translateY(40px) scale(.98); opacity: 0; }
+    to   { transform: translateY(0) scale(1);      opacity: 1; }
+  }
+  .detail-card .close {
+    position: absolute;
+    top: 22px; right: 22px;
+    width: 36px; height: 36px;
+    background: rgba(12,17,22,.6);
+    backdrop-filter: blur(4px);
+    border: 1px solid var(--text-mid);
+    border-radius: 50%;
+    color: var(--text);
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 36px;
+    text-align: center;
+    transition: all .25s ease;
+    z-index: 10;
+  }
+  .detail-card .close:hover { background: var(--text); color: var(--bgcolor); }
+
+  .detail-hero {
+    height: 280px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 16px 16px 0 0;
+  }
+  .detail-hero .photo {
+    position: absolute;
+    inset: 0;
+    width: 100%; height: 100%;
+    background-size: cover;
+    background-position: center;
+    filter: grayscale(.6) brightness(.5) contrast(1.05) hue-rotate(-15deg);
+  }
+  .detail-hero::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(12,17,22,.4) 0%, transparent 40%, var(--bg-card) 100%);
+  }
+  .detail-hero .titles {
+    position: absolute;
+    bottom: 28px;
+    left: 48px; right: 48px;
+    z-index: 2;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+  .detail-hero .titles .left .file-no {
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--text-mid);
+    margin-bottom: 8px;
+  }
+  .detail-hero .titles h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 400;
+    font-size: 64px;
+    line-height: 1;
+    color: var(--text);
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+  }
+  .detail-hero .titles h2 em { font-style: italic; color: var(--orange); font-weight: 400; }
+  .detail-hero .titles .right {
+    text-align: right;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--text-mid);
+    line-height: 1.8;
+  }
+
+  .detail-body {
+    padding: 50px 56px 56px;
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 56px;
+    align-items: start;
+  }
+  .pie-wrap { display: flex; flex-direction: column; align-items: center; gap: 18px; }
+  .pie-wrap .lbl {
+    font-size: 10.5px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+  .pie { width: 240px; height: 240px; position: relative; }
+  .pie-svg { width: 100%; height: 100%; }
+  .pie-svg circle { fill: none; stroke-width: 28; }
+  .pie-center {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+  }
+  .pie-center .num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 56px;
+    font-weight: 400;
+    line-height: 1;
+    color: var(--text);
+  }
+  .pie-center .lbl {
+    font-size: 9.5px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-top: 6px;
+  }
+  .pie-legend { display: flex; flex-direction: column; gap: 8px; width: 100%; margin-top: 8px; }
+  .pie-legend .item {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 12px;
+    color: var(--text-mid);
+    padding: 6px 0;
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .pie-legend .swatch { width: 9px; height: 9px; border-radius: 2px; }
+  .pie-legend .item .ct { margin-left: auto; color: var(--text); font-weight: 500; font-variant-numeric: tabular-nums; }
+
+  .ledger { display: flex; flex-direction: column; gap: 32px; }
+  .ledger-row .lbl {
+    font-size: 10.5px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 10px;
+  }
+  .ledger-row .val {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 56px;
+    font-weight: 400;
+    line-height: 1;
+    color: var(--text);
+    letter-spacing: -0.02em;
+  }
+  .ledger-row .val em { font-style: italic; color: var(--orange); font-weight: 400; }
+  .ledger-row .unit {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 18px;
+    color: var(--text-dim);
+    margin-left: 8px;
+    font-weight: 300;
+  }
+  .ledger-row .ctx {
+    margin-top: 10px;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 16px;
+    color: var(--text-mid);
+    line-height: 1.5;
+    font-weight: 300;
+  }
+  .narrative {
+    grid-column: 1 / -1;
+    margin-top: 8px;
+    padding-top: 32px;
+    border-top: 1px solid var(--line);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    line-height: 1.65;
+    color: var(--text-mid);
+    column-count: 2;
+    column-gap: 40px;
+    font-weight: 300;
+  }
+  .narrative::first-letter {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 64px;
+    font-weight: 400;
+    float: left;
+    line-height: 0.85;
+    margin: 4px 10px 0 0;
+    color: var(--bluesky);
+    font-style: italic;
+  }
+
+  @media (max-width: 980px) {
+    :root { --card-spacing: 460px; --hall-depth: 1300px; --wall-x: 260px; }
+    .top-bar { padding: 0 16px 0 20px; }
+    .breadcrumb { display: none; }
+    .intro h1 { font-size: 64px; }
+    .intro .lede { font-size: 17px; }
+    .year-card { width: 320px; height: 420px; margin-left: -160px; margin-top: -210px; }
+    .card-head .title { font-size: 22px; }
+    .card-info { padding: 22px; }
+    .card-info .stats-row { gap: 12px; }
+    .card-info .stat .v { font-size: 22px; }
+    .hud-year { left: 20px; bottom: 30px; }
+    .hud-year .yr { font-size: 64px; }
+    .hud-progress { right: 20px; bottom: 30px; width: 200px; }
+    .detail-body { grid-template-columns: 1fr; padding: 30px 24px; gap: 30px; }
+    .detail-hero .titles { left: 24px; right: 24px; flex-direction: column; align-items: flex-start; gap: 14px; }
+    .detail-hero .titles h2 { font-size: 42px; }
+    .narrative { column-count: 1; }
+  }
+</style>
+</head>
+<body>
+
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="spinner"></div>
+  <p>Loading the archive…</p>
+</div>
+
+<div class="no-data" id="noData">
+  <h2>No records found.</h2>
+  <p>The archive holds no catalogued disasters for this country. Try another exhibit.</p>
+  <a href="index.html" class="pill-btn" style="margin-top:16px">← Back to Globe</a>
+</div>
+
+<header class="top-bar">
+  <div class="brand">
+    <span class="brand-earth">Earth</span> Natural Disaster Museum<span class="brand-dim"> · est. 2026</span>
+  </div>
+  <nav class="breadcrumb">
+    <a href="index.html">The Globe: Earth</a>
+    <span class="sep">/</span>
+    <span id="breadcrumbCountry">—</span>
+  </nav>
+  <a id="overviewBtn" href="country_overview.html" class="pill-btn">
+    Open Overview <span class="arrow">→</span>
+  </a>
+</header>
+
+<div class="intro" id="intro">
+  <div class="kicker">Exhibit ⅱ · Country Timeline</div>
+  <h1 id="introTitle">—<br><em>over fifty years.</em></h1>
+  <p class="lede" id="introLede">A walk down the museum hallway. Exhibits flank both walls — each year drifts toward you, presents itself, and steps aside for the next.</p>
+  <div class="scroll-hint">
+    <span class="arr">↓</span>
+    Scroll to walk forward
+  </div>
+</div>
+
+<!-- The Three.js WebGL canvas will be injected inside here -->
+<div id="stage" class="webgl-stage"></div>
+
+<div class="hud hud-year">
+  <div class="lbl">You are in</div>
+  <div class="yr"><em id="hudYear">—</em></div>
+  <div class="era" id="hudEra"></div>
+</div>
+
+<div class="hud hud-progress">
+  <div class="lbl">Progress</div>
+  <div class="track">
+    <div class="progress" id="hudProgress"></div>
+  </div>
+  <div class="ticks">
+    <span id="tickStart">—</span>
+    <span id="tickMid">—</span>
+    <span id="tickEnd">—</span>
+  </div>
+</div>
+
+<div class="end-card" id="endCard">
+  <div class="panel">
+    <h2>The hall <em>continues</em>.</h2>
+    <p id="endCardText">You've walked through the full record. Step into the country overview to see it all at once, or walk the corridor again.</p>
+    <div class="actions">
+      <a id="endOverviewBtn" href="country_overview.html" class="pill-btn">Open Overview <span class="arrow">→</span></a>
+      <button class="pill-btn" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">Walk back</button>
+    </div>
+  </div>
+</div>
+
+<div class="scroll-spacer" id="spacer"></div>
+
+<div class="detail-panel" id="detailPanel" role="dialog" aria-modal="true">
+  <article class="detail-card">
+    <button class="close" id="closeDetail" aria-label="Close">×</button>
+    <div class="detail-hero">
+      <div class="photo" id="detailPhoto"></div>
+      <div class="titles">
+        <div class="left">
+          <div class="file-no" id="fileNo">—</div>
+          <h2 id="detailTitle">—</h2>
+        </div>
+        <div class="right" id="detailMeta">—</div>
+      </div>
+    </div>
+    <div class="detail-body">
+      <div class="pie-wrap">
+        <div class="lbl">Disasters by Type</div>
+        <div class="pie">
+          <svg class="pie-svg" viewBox="0 0 100 100" id="pieSvg"></svg>
+          <div class="pie-center">
+            <div class="num" id="pieTotal">—</div>
+            <div class="lbl">Events</div>
+          </div>
+        </div>
+        <div class="pie-legend" id="pieLegend"></div>
+      </div>
+      <div class="ledger">
+        <div class="ledger-row">
+          <div class="lbl">Total Deaths</div>
+          <div class="val" id="statDeaths">—</div>
+          <div class="ctx" id="ctxDeaths">—</div>
+        </div>
+        <div class="ledger-row">
+          <div class="lbl">People Affected</div>
+          <div class="val" id="statAffected">—</div>
+          <div class="ctx" id="ctxAffected">—</div>
+        </div>
+        <div class="ledger-row">
+          <div class="lbl">Economic Damage</div>
+          <div class="val" id="statDamage">—</div>
+          <div class="ctx" id="ctxDamage">—</div>
+        </div>
+      </div>
+      <p class="narrative" id="narrative"></p>
+    </div>
+  </article>
+</div>
+
+<script src="js/scene3_timeline.js"></script>
+</body>
+</html>
