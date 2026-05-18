@@ -54,7 +54,7 @@ body {
 }
 
 /* very subtle starfield */
-body::before {
+/* body::before {
   content: "";
   position: fixed;
   inset: 0;
@@ -73,7 +73,7 @@ body::before {
   pointer-events: none;
   z-index: 0;
   opacity: 0.85;
-} 
+}  */
 
 button {
   cursor: pointer;
