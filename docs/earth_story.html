@@ -21,7 +21,7 @@
       <span class="brand-earth">Earth</span> Natural Disaster Museum<span class="brand-dim"> · est. 2026</span>
     </div>
     <nav class="breadcrumb" id="top-breadcrumb">
-      <a class="crumb crumb-link" href="globe.html">The Globe: Earth</a>
+      <a class="crumb crumb-link back-to-globe" href="globe.html">The Globe: Earth</a>
       <span class="sep">/</span>
       <span class="crumb">Earth Story</span>
     </nav>
@@ -82,6 +82,18 @@
     document.addEventListener('DOMContentLoaded', async () => {
       await initData();
       Scene4.init();
+    });
+
+    /* Pop the story overlay on the parent globe page instead of hard-navigating */
+    document.querySelectorAll('a.back-to-globe').forEach(function (a) {
+      a.addEventListener('click', function (e) {
+        e.preventDefault();
+        if (window.parent !== window && typeof window.parent.closeStory === 'function') {
+          window.parent.closeStory();
+        } else {
+          window.location.href = 'globe.html';
+        }
+      });
     });
   </script>
 </body>

@@ -75,6 +75,11 @@
 
   </div>
 
+  <!-- Earth Story overlay — stacked on top of globe -->
+  <div id="story-overlay" class="timeline-overlay" aria-hidden="true">
+    <iframe id="storyFrame" title="Earth Story" src="about:blank"></iframe>
+  </div>
+
   <!-- Static starfield -->
   <script>
     (function () {
@@ -138,8 +143,39 @@
   <script src="js/scene2_globe.js"></script>
   <!-- App Initialization -->
   <script>
+    /* ── Earth Story overlay stack ───────────────────────────────── */
+    window.openStory = function () {
+      const overlay = document.getElementById('story-overlay');
+      const frame   = document.getElementById('storyFrame');
+      frame.src = 'earth_story.html';
+      overlay.classList.add('visible');
+      overlay.setAttribute('aria-hidden', 'false');
+      history.pushState({ story: true }, '', '?story');
+    };
+
+    window.closeStory = function () {
+      const overlay = document.getElementById('story-overlay');
+      overlay.classList.remove('visible');
+      overlay.setAttribute('aria-hidden', 'true');
+      setTimeout(() => {
+        document.getElementById('storyFrame').src = 'about:blank';
+      }, 380);
+      if (history.state && history.state.story) history.back();
+    };
+
+    window.addEventListener('popstate', () => {
+      const story = document.getElementById('story-overlay');
+      if (!history.state?.story && story.classList.contains('visible')) {
+        story.classList.remove('visible');
+        story.setAttribute('aria-hidden', 'true');
+        setTimeout(() => {
+          document.getElementById('storyFrame').src = 'about:blank';
+        }, 380);
+      }
+    });
+
     document.getElementById('earthStoryExplore')?.addEventListener('click', () => {
-      window.location.href = 'earth_story.html';
+      window.openStory();
     });
 
     document.addEventListener('DOMContentLoaded', async () => {
