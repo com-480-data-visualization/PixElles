@@ -74,11 +74,11 @@
   .brand-dim { color: rgba(255,255,255,0.6); font-style: italic; }
 
   .breadcrumb {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
+    flex: 1;
+    min-width: 0;
     display: flex;
     align-items: center;
+    justify-content: center;
     font-family: 'Inter', sans-serif;
     font-size: 11px;
     font-style: italic;
@@ -87,6 +87,7 @@
     text-transform: uppercase;
     color: rgba(255,255,255,0.6);
     white-space: nowrap;
+    overflow: hidden;
   }
   .breadcrumb a { color: rgba(255,255,255,0.6); text-decoration: none; }
   .breadcrumb a:hover { color: rgba(255,255,255,0.9); }
@@ -892,7 +893,7 @@
     <span class="brand-earth">Earth</span> Natural Disaster Museum<span class="brand-dim"> · est. 2026</span>
   </div>
   <nav class="breadcrumb">
-    <a href="index.html">The Globe: Earth</a>
+    <a href="globe.html">The Globe: Earth</a>
     <span class="sep">/</span>
     <span id="breadcrumbCountry">—</span>
   </nav>
