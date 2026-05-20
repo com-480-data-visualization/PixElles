@@ -238,7 +238,11 @@ function createCardTexture(yd) {
     ctx.clip();
 
     // ── HEADER  (y 0 – 272) ───────────────────────────
-    ctx.fillStyle = 'rgba(8, 12, 18, 0.55)';
+    // ctx.fillStyle = 'rgba(36, 49, 68, 0.55)';
+    const grad = ctx.createLinearGradient(0, 0, 0, 272);
+    grad.addColorStop(0, '#2c384a');
+    grad.addColorStop(1, '#0e1924');
+    ctx.fillStyle = grad;
     ctx.fillRect(0, 0, 960, 272);
 
     ctx.textBaseline  = 'alphabetic';
