@@ -1,0 +1,26 @@
+{
+  "1979": {
+    "tagline": "Calm Waters on the Horizon",
+    "narrative": [
+      "A quiet year for Anguilla, with no recorded loss of life.",
+      "No significant economic damage reported, a rare respite from the forces of nature.",
+      "The island's inhabitants experienced a rare sense of tranquility, as the threat of natural disasters was nonexistent."
+    ]
+  },
+  "1999": {
+    "tagline": "Turbulent Skies, Serene Response",
+    "narrative": [
+      "In 1999, Anguilla faced a storm that brought destruction and chaos.",
+      "Despite the severity of the disaster, there were no reported fatalities.",
+      "The estimated damage totalled $94,000, a significant financial blow to the island's infrastructure."
+    ]
+  },
+  "2017": {
+    "tagline": "Turbulent Tempests Tested Tiny Territory",
+    "narrative": [
+      "In 2017, Anguilla was ravaged by a powerful storm that left a lasting impact.",
+      "The storm caused significant damage, estimated at $255,948,000, and resulted in the loss of 4 lives.",
+      "The disaster was a stark reminder of the importance of disaster preparedness and response in the face of nature's fury."
+    ]
+  }
+}

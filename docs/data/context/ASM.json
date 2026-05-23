@@ -1,0 +1,36 @@
+{
+  "1989": {
+    "tagline": "Pacific Peace, Stormy Surprise",
+    "narrative": [
+      "In 1989, American Samoa was hit by a storm that caused significant damage but no loss of life.",
+      "The storm brought strong winds and heavy rain, resulting in estimated damages of $12.65 million.",
+      "Despite the severity of the event, the community emerged unscathed, a testament to their resilience."
+    ]
+  },
+  "2003": {
+    "tagline": "Waters Rise, Lives Are Shaped",
+    "narrative": [
+      "In 2003, American Samoa was hit by a devastating flood that left a trail of destruction and loss of life.",
+      "The disaster claimed the lives of 6 people and caused estimated damages of $85,261,000 thousand USD.",
+      "The flood had a profound impact on the island's infrastructure, economy, and community, leading to a long-term recovery process."
+    ]
+  },
+  "2004": {
+    "tagline": "Tropical Tempests Touch Tiny Territory",
+    "narrative": "In 2004, American Samoa faced a severe storm that brought strong winds and heavy rainfall, causing widespread damage and disruptions. Despite the intensity of the storm, fortunately, no lives were lost. The estimated damage from the storm was approximately $249,113,000, highlighting the significant impact on the small Pacific island community."
+  },
+  "2005": {
+    "tagline": "Island tranquility untouched by turmoil",
+    "narrative": [
+      "American Samoa remained unscathed by storms in 2005.",
+      "The tropical island group experienced no recorded fatalities or damage.",
+      "In a rare instance, the natural world seemed to conspire to preserve the serenity of this Pacific paradise."
+    ]
+  },
+  "2009": {
+    "tagline": "Earth's Fury on America's Shore",
+    "narrative": [
+      "American Samoa was struck by a powerful earthquake in 2009, causing widespread destruction and loss of life. The earthquake, which had a magnitude of [insert magnitude], struck on [insert date] and left a trail of devastation in its wake. The impact was felt across the island, with [insert number] people losing their lives and [insert number] homes and buildings damaged or destroyed."
+    ]
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "1983": {
+    "tagline": "Turbulent Tides of Turmoil",
+    "narrative": "In 1983, the Pacific Ocean unleashed its fury upon French Polynesia, bringing forth a devastating storm that claimed the lives of 7 people and wrought destruction upon the islands. The tempest's powerful gusts and torrential rains left a trail of devastation, causing an estimated $116,531,000 in damages. As the storm subsided, the people of French Polynesia were left to pick up the pieces and rebuild in its aftermath."
+  },
+  "1987": {
+    "tagline": "Tides of Turmoil in the Pacific",
+    "narrative": "In 1987, French Polynesia was struck by a devastating landslide, claiming the lives of 10 people and leaving no material damage. The disaster was a sobering reminder of the power of nature's forces in the Pacific. The impact of the landslide was felt deeply by the affected communities, who struggled to rebuild and recover in its aftermath."
+  },
+  "1998": {
+    "tagline": "Terra's gentle whispers, 13 souls gone",
+    "narrative": [
+      "The year 1998 bore witness to the unforgiving power of nature in French Polynesia. On [date], a devastating landslide struck, claiming the lives of 13 individuals and leaving a trail of destruction in its wake. The event served as a poignant reminder of the ever-present threat of natural disasters and the importance of preparedness and resilience."
+    ]
+  },
+  "2010": {
+    "tagline": "Turmoil in the South Pacific Skies",
+    "narrative": [
+      "In 2010, French Polynesia was ravaged by a storm that left a trail of destruction.",
+      "The storm claimed a single life, but the economic impact was significant, with estimated damages totaling $15,824,000.",
+      "The disaster was a sobering reminder of the power of nature and the importance of preparedness."
+    ]
+  },
+  "2017": {
+    "tagline": "Tides of tranquility tested, resilience proven",
+    "narrative": [
+      {
+        "event": "Flood",
+        "description": "In 2017, French Polynesia experienced a flood that resulted in no recorded fatalities. Despite the calm, the financial toll was substantial, with estimated damages reaching $2559.0 thousand USD. The event served as a reminder of the importance of preparedness and mitigation strategies in the face of natural disasters."
+      },
+      {
+        "date": "2017-01-01",
+        "type": "start",
+        "tag": "start-of-year"
+      },
+      {
+        "date": "2017-03-01",
+        "type": "end",
+        "tag": "end-of-event"
+      }
+    ]
+  }
+}

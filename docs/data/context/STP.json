@@ -1,0 +1,41 @@
+{
+  "1983": {
+    "tagline": "A year of parched yet peaceful skies",
+    "narrative": "In 1983, Sao Tome and Principe was struck by a severe drought that lasted throughout the year. Despite the dry conditions, the country escaped any recorded fatalities or significant economic damage. This rare occurrence of a drought without consequence served as a reminder of the importance of resilience in the face of natural challenges."
+  },
+  "1986": {
+    "tagline": "Silent Vigilance: Echoes of Epidemic",
+    "narrative": "In 1986, Sao Tome and Principe was beset by a devastating epidemic, claiming the lives of 150 people and causing widespread disruption. The epidemic's impact was felt across the nation, leaving a lasting legacy of loss and resilience. As the dust settled, the people of Sao Tome and Principe emerged, scarred but determined to rebuild and move forward."
+  },
+  "1989": {
+    "tagline": "Silent Struggle: Epidemic's Gentle Grip",
+    "narrative": [
+      "In 1989, Sao Tome and Principe was struck by an epidemic that silently took its toll on the population.",
+      "A total of 31 people lost their lives to the outbreak, leaving families and communities shaken.",
+      "Despite the minimal economic damage, the human toll was profound, and the country was left to mourn the loss of loved ones."
+    ]
+  },
+  "2005": {
+    "tagline": "Tides of tragedy beset the coast",
+    "narrative": [
+      "In 2005, Sao Tome and Principe faced a devastating epidemic that claimed 25 lives.",
+      "The crisis had a profound impact on the community, leaving a trail of suffering in its wake.",
+      "Despite the significant human toll, the economic damage was minimal, with estimated losses of $0."
+    ]
+  },
+  "2021": {
+    "tagline": "Water's gentle touch, devastating grasp",
+    "narrative": [
+      "The island nation of Sao Tome and Principe was struck by floods in 2021, leaving a trail of destruction and sorrow. The event claimed 8 lives and caused estimated damages of $0, a harsh reminder of nature's unpredictability. As the nation mourns the loss, it also looks forward to rebuilding and resilience."
+    ]
+  },
+  "2022": {
+    "tagline": "Silent Vigilance, Unbroken Resilience",
+    "narrative": [
+      {
+        "type": "epidemic",
+        "summary": "Sao Tome and Principe navigated a COVID-19 epidemic with zero reported fatalities and minimal economic disruption."
+      }
+    ]
+  }
+}

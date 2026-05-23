@@ -1,0 +1,38 @@
+{
+  "1989": {
+    "tagline": "Island's Fury, Nature's Wrath",
+    "narrative": [
+      "Montserrat was struck by a severe storm in 1989, causing widespread destruction.",
+      "The intense winds and rain resulted in 11 fatalities and an estimated $607,303,000 in damage.",
+      "The disaster left a lasting impact on the island's infrastructure and its people."
+    ]
+  },
+  "1990": {
+    "tagline": "Calm Prevails on Montserrat's Shores",
+    "narrative": "In 1990, Montserrat faced a quiet period with regards to natural disasters. The year passed without any significant storms or earthquakes, resulting in zero recorded fatalities and zero estimated damage. The island's residents were able to breathe a sigh of relief as the year came to a close without any major disruptions."
+  },
+  "1995": {
+    "tagline": "Quietly, the land stirred beneath",
+    "narrative": [
+      "Montserrat faced a dual threat in 1995 as volcanic ash fell from Soufri\u00e8re Hills and a storm brought heavy rain, causing widespread damage. Despite the intensity of the events, no recorded fatalities occurred. The estimated damage was $41,171 thousand USD, a testament to the resilience of the island's residents and infrastructure."
+    ]
+  },
+  "1996": {
+    "tagline": "Silent fury beneath the surface",
+    "narrative": "In 1996, the Soufri\u00e8re Hills volcano on Montserrat awakened from a centuries-long slumber, spewing ash and rock into the air. Although no recorded fatalities or significant damage occurred, the volcano's reactivation sent shockwaves through the island's residents, disrupting daily life and forcing evacuations. The event marked the beginning of a prolonged and devastating volcanic crisis that would reshape the island's landscape and its people's lives."
+  },
+  "1997": {
+    "tagline": "Inferno's Fury, Island's Resilience",
+    "narrative": [
+      "In 1997, the Soufri\u00e8re Hills volcano on Montserrat erupted, releasing a torrent of ash and pyroclastic flows that destroyed entire communities and left a trail of devastation.",
+      "The eruption caused widespread damage and resulted in the loss of 32 lives, with many more affected by the displacement and disruption it caused.",
+      "The estimated cost of the damage was $15,634,000, a staggering blow to the island's economy and its people's way of life."
+    ]
+  },
+  "2006": {
+    "tagline": "Island of tranquility, mountain of might",
+    "narrative": [
+      "The Soufri\u00e8re Hills volcano on the Caribbean island of Montserrat erupted in 2006, causing widespread destruction and displacement. Although no human lives were lost, the volcano's eruptions continued to affect the island's infrastructure and economy. The pyroclastic flows and ashfall significantly impacted the environment and way of life on the island."
+    ]
+  }
+}
