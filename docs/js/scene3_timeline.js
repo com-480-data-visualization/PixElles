@@ -264,9 +264,9 @@ function createCardTexture(yd) {
     ctx.fillStyle = '#ffffff';
     ctx.fillText(nameStr, 880, 118);
 
-    ctx.font      = 'italic 300 56px "Cormorant Garamond", serif';
+    ctx.font      = 'italic 300 74px "Cormorant Garamond", serif';
     ctx.fillStyle = '#ffffff';
-    ctx.fillText(`IN ${yd.year}`, 880, 190);
+    ctx.fillText(`IN ${yd.year}`, 880, 195);
 
     // Header divider
     ctx.fillStyle = 'rgba(151,174,196,0.18)';
@@ -275,9 +275,9 @@ function createCardTexture(yd) {
     // Click hint
     ctx.textAlign     = 'right';
     ctx.letterSpacing = '2px';
-    ctx.font          = '300 20px "Cormorant Garamond", serif';
+    ctx.font          = '300 28px "Cormorant Garamond", serif';
     ctx.fillStyle     = 'rgba(151,174,196,0.38)';
-    ctx.fillText('Click to see more details', 880, 240);
+    ctx.fillText('Click to see more details', 880, 248);
 
     // ── CHART SECTION  (y 270 – 882) ─────────────────
 
@@ -286,7 +286,7 @@ function createCardTexture(yd) {
     ctx.letterSpacing = '3px';
     ctx.font          = '300 20px "Inter", sans-serif';
     ctx.fillStyle     = 'rgba(151,174,196,0.60)';
-    ctx.fillText('DISASTERS  CATALOGUED', 80, 318);
+    ctx.fillText('DISASTERS  TYPES', 80, 318);
 
     ctx.letterSpacing = '1px';
     ctx.font          = '300 20px "Inter", sans-serif';
@@ -497,6 +497,103 @@ function createStarTexture() {
 }
 
 /* =============================================
+   MILKY WAY PATH TEXTURE
+   ============================================= */
+function createPathTexture() {
+  const W = 512, H = 1024;
+  const canvas = document.createElement('canvas');
+  canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, W, H);
+
+  // Gaussian envelope: sigma=0.14 → alpha is < 0.002 at t=0 and t=1 (invisible edges)
+  function env(t) {
+    const d = (t - 0.5) / 0.14;
+    return Math.exp(-d * d * 0.5);
+  }
+
+  // Build gradient stops by sampling the Gaussian curve — guarantees true zero at edges
+  function makeGrad(peakAlpha) {
+    const g = ctx.createLinearGradient(0, 0, W, 0);
+    for (let i = 0; i <= 24; i++) {
+      const t = i / 24;
+      const a = (env(t) * peakAlpha).toFixed(4);
+      g.addColorStop(t, `rgba(120,170,240,${a})`);
+    }
+    return g;
+  }
+
+  // Layer 1 – wide outer haze (blueish)
+  ctx.fillStyle = makeGrad(0.10);
+  ctx.fillRect(0, 0, W, H);
+
+  // Layer 2 – inner glow (cooler blue-white), narrower sigma
+  const g2 = ctx.createLinearGradient(0, 0, W, 0);
+  for (let i = 0; i <= 24; i++) {
+    const t = i / 24;
+    const d = (t - 0.5) / 0.09;
+    const a = (Math.exp(-d * d * 0.5) * 0.20).toFixed(4);
+    g2.addColorStop(t, `rgba(190,220,255,${a})`);
+  }
+  ctx.fillStyle = g2;
+  ctx.fillRect(0, 0, W, H);
+
+  // Layer 3 – bright core strip
+  const g3 = ctx.createLinearGradient(0, 0, W, 0);
+  for (let i = 0; i <= 24; i++) {
+    const t = i / 24;
+    const d = (t - 0.5) / 0.045;
+    const a = (Math.exp(-d * d * 0.5) * 0.32).toFixed(4);
+    g3.addColorStop(t, `rgba(235,248,255,${a})`);
+  }
+  ctx.fillStyle = g3;
+  ctx.fillRect(0, 0, W, H);
+
+  const rng = mulberry32(137);
+
+  // Nebula blobs – organic dusty patches
+  for (let i = 0; i < 18; i++) {
+    const t  = 0.25 + rng() * 0.5;
+    const e  = env(t);
+    const cx = t * W;
+    const cy = rng() * H;
+    const r  = 18 + rng() * 70;
+    const a  = e * (0.04 + rng() * 0.07);
+    const warm = rng() > 0.55;
+    const col  = warm ? `rgba(255,210,140,${a.toFixed(3)})` : `rgba(150,195,255,${a.toFixed(3)})`;
+    const sg = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
+    sg.addColorStop(0, col);
+    sg.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = sg;
+    ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.fill();
+  }
+
+  // Stars – density and brightness follow the Gaussian envelope
+  for (let i = 0; i < 600; i++) {
+    const t = rng();
+    const e = env(t);
+    if (rng() > e) continue;             // thin out toward edges
+    const px = t * W;
+    const py = rng() * H;
+    const r  = 0.4 + rng() * 1.4;
+    const a  = e * (0.25 + rng() * 0.70);
+    const warm = rng() > 0.65;
+    const sg = ctx.createRadialGradient(px, py, 0, px, py, r * 3);
+    sg.addColorStop(0, warm ? `rgba(255,228,170,${a.toFixed(3)})` : `rgba(220,242,255,${a.toFixed(3)})`);
+    sg.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = sg;
+    ctx.beginPath(); ctx.arc(px, py, r * 3, 0, Math.PI * 2); ctx.fill();
+  }
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.minFilter = THREE.LinearMipmapLinearFilter;
+  texture.generateMipmaps = true;
+  texture.wrapS = THREE.ClampToEdgeWrapping;
+  texture.wrapT = THREE.RepeatWrapping;
+  return texture;
+}
+
+/* =============================================
    HINT OVERLAY TEXTURE (white "click" hint for hover)
    ============================================= */
 function createHintOverlayTexture() {
@@ -508,9 +605,9 @@ function createHintOverlayTexture() {
   ctx.textAlign     = 'right';
   ctx.textBaseline  = 'alphabetic';
   ctx.letterSpacing = '2px';
-  ctx.font          = '300 20px "Cormorant Garamond", serif';
+  ctx.font          = '300 28px "Cormorant Garamond", serif';
   ctx.fillStyle     = 'rgba(255,255,255,0.90)';
-  ctx.fillText('Click to see more details', 880, 240);
+  ctx.fillText('Click to see more details', 880, 248);
   const texture = new THREE.CanvasTexture(canvas);
   texture.minFilter = THREE.LinearFilter;
   return texture;
@@ -595,6 +692,22 @@ async function buildCards(yearDataArr) {
   const starMesh = new THREE.Points(starGeo, starMat);
   scene.add(starMesh);
 
+  // Milky Way ground path
+  const pathLength = totalDepth + START_OFFSET + 40;
+  const pathTex = createPathTexture();
+  pathTex.repeat.set(1, Math.ceil(pathLength / 14));
+  const pathMat = new THREE.MeshBasicMaterial({
+    map: pathTex,
+    transparent: true,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+    side: THREE.DoubleSide
+  });
+  const pathGeo = new THREE.PlaneGeometry(20, pathLength);
+  const pathMesh = new THREE.Mesh(pathGeo, pathMat);
+  pathMesh.rotation.x = -Math.PI / 2;
+  pathMesh.position.set(0, -5.2, START_OFFSET - pathLength / 2);
+  scene.add(pathMesh);
 
   const scrollSpacer = document.getElementById('spacer');
   scrollSpacer.style.height = `${maxScrollPixels + window.innerHeight + 200}px`;

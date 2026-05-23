@@ -643,36 +643,83 @@
   .detail-panel {
     position: fixed;
     inset: 0;
-    background: rgba(8, 11, 15, .85);
+    background: rgba(8,11,15,.88);
     backdrop-filter: blur(10px);
     display: none;
     align-items: center;
     justify-content: center;
     z-index: 200;
-    padding: 40px;
+    padding: 24px;
     animation: fadeIn .35s ease;
   }
   .detail-panel.open { display: flex; }
   @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes slideUp {
+    from { transform: translateY(40px) scale(.98); opacity: 0; }
+    to   { transform: translateY(0) scale(1);      opacity: 1; }
+  }
 
   .detail-card {
     background: var(--bg-card);
     border: 1px solid var(--line);
     border-radius: 16px;
-    width: min(960px, 100%);
-    max-height: 90vh;
+    width: min(1100px, 100%);
+    max-height: 92vh;
     overflow-y: auto;
     position: relative;
     animation: slideUp .55s cubic-bezier(.2,.7,.2,1);
-    box-shadow: 0 60px 120px rgba(0,0,0,.7);
+    box-shadow: 0 60px 120px rgba(0,0,0,.75);
   }
-  @keyframes slideUp {
-    from { transform: translateY(40px) scale(.98); opacity: 0; }
-    to   { transform: translateY(0) scale(1);      opacity: 1; }
+
+  /* ── Header ── */
+  .dc-header {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 16px;
+    padding: 26px 32px 22px;
+    border-bottom: 1px solid var(--line);
   }
-  .detail-card .close {
-    position: absolute;
-    top: 22px; right: 22px;
+  .dc-file {
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--text-mid);
+  }
+  .dc-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 54px;
+    font-weight: 400;
+    letter-spacing: 0.05em;
+    color: var(--text);
+    text-transform: uppercase;
+    white-space: nowrap;
+    text-align: center;
+    line-height: 1;
+  }
+  .dc-title em {
+    font-style: italic;
+    font-weight: 300;
+    color: var(--orange);
+    margin-left: 14px;
+  }
+  .dc-meta-group {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 20px;
+  }
+  .dc-meta {
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-mid);
+    text-align: right;
+    line-height: 1.9;
+  }
+  .dc-meta div:last-child { font-style: italic; }
+  .dc-close {
+    flex-shrink: 0;
     width: 36px; height: 36px;
     background: rgba(12,17,22,.6);
     backdrop-filter: blur(4px);
@@ -681,175 +728,112 @@
     color: var(--text);
     cursor: pointer;
     font-size: 16px;
-    line-height: 36px;
-    text-align: center;
+    display: flex; align-items: center; justify-content: center;
     transition: all .25s ease;
-    z-index: 10;
   }
-  .detail-card .close:hover { background: var(--text); color: var(--bgcolor); }
+  .dc-close:hover { background: var(--text); color: var(--bgcolor); }
 
-  .detail-hero {
-    height: 280px;
-    position: relative;
-    overflow: hidden;
-    border-radius: 16px 16px 0 0;
-  }
-  .detail-hero .photo {
-    position: absolute;
-    inset: 0;
-    width: 100%; height: 100%;
-    background-size: cover;
-    background-position: center;
-    filter: grayscale(.6) brightness(.5) contrast(1.05) hue-rotate(-15deg);
-  }
-  .detail-hero::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(180deg, rgba(12,17,22,.4) 0%, transparent 40%, var(--bg-card) 100%);
-  }
-  .detail-hero .titles {
-    position: absolute;
-    bottom: 28px;
-    left: 48px; right: 48px;
-    z-index: 2;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-  }
-  .detail-hero .titles .left .file-no {
-    font-size: 11px;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: var(--text-mid);
-    margin-bottom: 8px;
-  }
-  .detail-hero .titles h2 {
-    font-family: 'Cormorant Garamond', serif;
-    font-weight: 400;
-    font-size: 64px;
-    line-height: 1;
-    color: var(--text);
-    letter-spacing: 0.01em;
-    text-transform: uppercase;
-  }
-  .detail-hero .titles h2 em { font-style: italic; color: var(--orange); font-weight: 400; }
-  .detail-hero .titles .right {
-    text-align: right;
-    font-size: 11px;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: var(--text-mid);
-    line-height: 1.8;
-  }
-
-  .detail-body {
-    padding: 50px 56px 56px;
+  /* ── Body: 2 columns ── */
+  .dc-body {
     display: grid;
-    grid-template-columns: 320px 1fr;
-    gap: 56px;
-    align-items: start;
+    grid-template-columns: 1fr 1px 1fr;
+    border-bottom: 1px solid var(--line);
   }
-  .pie-wrap { display: flex; flex-direction: column; align-items: center; gap: 18px; }
-  .pie-wrap .lbl {
-    font-size: 10.5px;
-    letter-spacing: 0.25em;
+  .dc-col { padding: 32px 40px 36px; }
+  .dc-vdivider { background: var(--line); }
+  .dc-section-lbl {
+    font-size: 10px;
+    letter-spacing: 0.22em;
     text-transform: uppercase;
     color: var(--text-dim);
+    margin-bottom: 28px;
+    font-style: italic;
   }
-  .pie { width: 240px; height: 240px; position: relative; }
-  .pie-svg { width: 100%; height: 100%; }
-  .pie-svg circle { fill: none; stroke-width: 28; }
-  .pie-center {
-    position: absolute;
-    inset: 0;
+
+  /* Chart col: pie + legend side by side */
+  .dc-chart-inner {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    align-items: flex-start;
+    gap: 28px;
+  }
+  .pie { width: 200px; height: 200px; flex-shrink: 0; position: relative; }
+  .pie-svg { width: 100%; height: 100%; }
+  .pie-center {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
     pointer-events: none;
   }
   .pie-center .num {
     font-family: 'Cormorant Garamond', serif;
-    font-size: 56px;
-    font-weight: 400;
-    line-height: 1;
-    color: var(--text);
+    font-size: 48px; font-weight: 400; line-height: 1; color: var(--text);
   }
   .pie-center .lbl {
-    font-size: 9.5px;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    color: var(--text-dim);
-    margin-top: 6px;
+    font-size: 9.5px; letter-spacing: 0.25em;
+    text-transform: uppercase; color: var(--text-dim); margin-top: 4px;
   }
-  .pie-legend { display: flex; flex-direction: column; gap: 8px; width: 100%; margin-top: 8px; }
+  .pie-legend { display: flex; flex-direction: column; flex: 1; align-self: center; }
   .pie-legend .item {
     display: flex; align-items: center; gap: 10px;
-    font-size: 12px;
+    font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
     color: var(--text-mid);
-    padding: 6px 0;
+    padding: 9px 0;
     border-bottom: 1px solid var(--line-soft);
   }
-  .pie-legend .swatch { width: 9px; height: 9px; border-radius: 2px; }
-  .pie-legend .item .ct { margin-left: auto; color: var(--text); font-weight: 500; font-variant-numeric: tabular-nums; }
+  .pie-legend .swatch { width: 9px; height: 9px; border-radius: 2px; flex-shrink: 0; }
+  .pie-legend .item .ct {
+    margin-left: auto;
+    color: var(--text);
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 20px;
+    font-weight: 400;
+  }
 
-  .ledger { display: flex; flex-direction: column; gap: 32px; }
+  /* Numbers col */
+  .ledger { display: flex; flex-direction: column; gap: 28px; }
   .ledger-row .lbl {
-    font-size: 10.5px;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    color: var(--text-dim);
-    margin-bottom: 10px;
+    font-size: 10.5px; letter-spacing: 0.25em;
+    text-transform: uppercase; color: var(--text-dim); margin-bottom: 8px;
   }
   .ledger-row .val {
     font-family: 'Cormorant Garamond', serif;
-    font-size: 56px;
-    font-weight: 400;
-    line-height: 1;
-    color: var(--text);
-    letter-spacing: -0.02em;
+    font-size: 60px; font-weight: 400; line-height: 1;
+    color: var(--text); letter-spacing: -0.02em;
   }
   .ledger-row .val em { font-style: italic; color: var(--orange); font-weight: 400; }
   .ledger-row .unit {
     font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-size: 18px;
-    color: var(--text-dim);
-    margin-left: 8px;
-    font-weight: 300;
+    font-style: italic; font-size: 18px;
+    color: var(--text-dim); margin-left: 6px; font-weight: 300;
   }
   .ledger-row .ctx {
-    margin-top: 10px;
+    margin-top: 8px;
     font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-size: 16px;
-    color: var(--text-mid);
-    line-height: 1.5;
-    font-weight: 300;
+    font-style: italic; font-size: 15px;
+    color: var(--text-mid); line-height: 1.5; font-weight: 300;
+  }
+
+  /* ── Curator's Note ── */
+  .dc-curator { padding: 32px 48px 44px; }
+  .dc-curator-lbl {
+    font-size: 10.5px; letter-spacing: 0.32em;
+    text-transform: uppercase; color: var(--text-dim);
+    text-align: center; margin-bottom: 24px;
   }
   .narrative {
-    grid-column: 1 / -1;
-    margin-top: 8px;
-    padding-top: 32px;
-    border-top: 1px solid var(--line);
     font-family: 'Cormorant Garamond', serif;
-    font-size: 18px;
-    line-height: 1.65;
+    font-size: 18px; line-height: 1.65;
     color: var(--text-mid);
-    column-count: 2;
-    column-gap: 40px;
+    column-count: 2; column-gap: 48px;
     font-weight: 300;
   }
   .narrative::first-letter {
     font-family: 'Cormorant Garamond', serif;
-    font-size: 64px;
-    font-weight: 400;
-    float: left;
-    line-height: 0.85;
+    font-size: 64px; font-weight: 400;
+    float: left; line-height: 0.85;
     margin: 4px 10px 0 0;
-    color: var(--bluesky);
-    font-style: italic;
+    color: var(--bluesky); font-style: italic;
   }
 
   @media (max-width: 980px) {
@@ -866,9 +850,14 @@
     .hud-year { left: 20px; bottom: 30px; }
     .hud-year .yr { font-size: 64px; }
     .hud-progress { right: 20px; bottom: 30px; width: 200px; }
-    .detail-body { grid-template-columns: 1fr; padding: 30px 24px; gap: 30px; }
-    .detail-hero .titles { left: 24px; right: 24px; flex-direction: column; align-items: flex-start; gap: 14px; }
-    .detail-hero .titles h2 { font-size: 42px; }
+    .dc-header { grid-template-columns: 1fr; gap: 8px; padding: 20px 20px 16px; }
+    .dc-title { font-size: 38px; text-align: left; }
+    .dc-meta-group { justify-content: space-between; }
+    .dc-body { grid-template-columns: 1fr; }
+    .dc-vdivider { height: 1px; width: auto; }
+    .dc-col { padding: 24px 20px; }
+    .dc-chart-inner { flex-direction: column; align-items: center; }
+    .dc-curator { padding: 24px 20px 32px; }
     .narrative { column-count: 1; }
   }
 </style>
@@ -946,46 +935,58 @@
 
 <div class="detail-panel" id="detailPanel" role="dialog" aria-modal="true">
   <article class="detail-card">
-    <button class="close" id="closeDetail" aria-label="Close">×</button>
-    <div class="detail-hero">
-      <div class="photo" id="detailPhoto"></div>
-      <div class="titles">
-        <div class="left">
-          <div class="file-no" id="fileNo">—</div>
-          <h2 id="detailTitle">—</h2>
-        </div>
-        <div class="right" id="detailMeta">—</div>
+    <div id="detailPhoto" style="display:none"></div>
+
+    <header class="dc-header">
+      <div class="dc-file" id="fileNo">—</div>
+      <h2 class="dc-title" id="detailTitle">—</h2>
+      <div class="dc-meta-group">
+        <div class="dc-meta" id="detailMeta">—</div>
+        <button class="dc-close" id="closeDetail" aria-label="Close">×</button>
       </div>
-    </div>
-    <div class="detail-body">
-      <div class="pie-wrap">
-        <div class="lbl">Disasters by Type</div>
-        <div class="pie">
-          <svg class="pie-svg" viewBox="0 0 100 100" id="pieSvg"></svg>
-          <div class="pie-center">
-            <div class="num" id="pieTotal">—</div>
-            <div class="lbl">Events</div>
+    </header>
+
+    <div class="dc-body">
+      <div class="dc-col dc-col-chart">
+        <div class="dc-section-lbl">-- Object &nbsp;·&nbsp; Distribution of Events --</div>
+        <div class="dc-chart-inner">
+          <div class="pie">
+            <svg class="pie-svg" viewBox="0 0 100 100" id="pieSvg"></svg>
+            <div class="pie-center">
+              <div class="num" id="pieTotal">—</div>
+              <div class="lbl">Events</div>
+            </div>
+          </div>
+          <div class="pie-legend" id="pieLegend"></div>
+        </div>
+      </div>
+
+      <div class="dc-vdivider"></div>
+
+      <div class="dc-col dc-col-numbers">
+        <div class="dc-section-lbl">-- Object &nbsp;·&nbsp; Numbers --</div>
+        <div class="ledger">
+          <div class="ledger-row">
+            <div class="lbl">Total Deaths</div>
+            <div class="val" id="statDeaths">—</div>
+            <div class="ctx" id="ctxDeaths">—</div>
+          </div>
+          <div class="ledger-row">
+            <div class="lbl">People Affected</div>
+            <div class="val" id="statAffected">—</div>
+            <div class="ctx" id="ctxAffected">—</div>
+          </div>
+          <div class="ledger-row">
+            <div class="lbl">Economic Damage</div>
+            <div class="val" id="statDamage">—</div>
+            <div class="ctx" id="ctxDamage">—</div>
           </div>
         </div>
-        <div class="pie-legend" id="pieLegend"></div>
       </div>
-      <div class="ledger">
-        <div class="ledger-row">
-          <div class="lbl">Total Deaths</div>
-          <div class="val" id="statDeaths">—</div>
-          <div class="ctx" id="ctxDeaths">—</div>
-        </div>
-        <div class="ledger-row">
-          <div class="lbl">People Affected</div>
-          <div class="val" id="statAffected">—</div>
-          <div class="ctx" id="ctxAffected">—</div>
-        </div>
-        <div class="ledger-row">
-          <div class="lbl">Economic Damage</div>
-          <div class="val" id="statDamage">—</div>
-          <div class="ctx" id="ctxDamage">—</div>
-        </div>
-      </div>
+    </div>
+
+    <div class="dc-curator">
+      <div class="dc-curator-lbl">Curator's Note</div>
       <p class="narrative" id="narrative"></p>
     </div>
   </article>
