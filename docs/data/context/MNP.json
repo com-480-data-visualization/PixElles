@@ -1,0 +1,32 @@
+{
+  "2002": {
+    "tagline": "Calm Waters, Serene Skies",
+    "narrative": "In 2002, the Northern Mariana Islands were spared from the wrath of natural disasters. The absence of recorded deaths and estimated damage of $0,000 thousand USD underscores the tranquility of the year. The region's tranquility was a blessing, allowing the community to thrive and prosper without the devastating effects of catastrophes."
+  },
+  "2003": {
+    "tagline": "Silent Fury Unleashed",
+    "narrative": [
+      "The year 2003 saw the Anatahan volcano in the Northern Mariana Islands erupt in a series of powerful explosions, releasing pent-up energy into the atmosphere. Despite the intensity of the event, no recorded fatalities or damage were reported. The incident marked a significant geological event in the region, highlighting the importance of continued monitoring and preparedness for future volcanic activity."
+    ]
+  },
+  "2004": {
+    "tagline": "Calm waters, quiet storm",
+    "narrative": [
+      "2004 was a year of relative calm for the Northern Mariana Islands, with only one recorded natural disaster.",
+      "A tropical storm brought brief but intense rain and strong winds to the islands, resulting in three recorded fatalities and zero estimated damage.",
+      "The storm was a stark reminder of the region's vulnerability to natural hazards, and the importance of preparedness and resilience in the face of adversity."
+    ]
+  },
+  "2015": {
+    "tagline": "Calming calm in the Pacific's eye",
+    "narrative": "The Northern Mariana Islands were spared from the fury of the storm in 2015, a rare respite from the forces of nature. This quiet reprieve allowed the region to breathe a collective sigh of relief as the devastating impact of such disasters was averted. The islands emerged unscathed, a testament to the power of serendipity and the unpredictable nature of the storms that roam the Pacific."
+  },
+  "2018": {
+    "tagline": "Serenity in the Wake of Turbulence",
+    "narrative": [
+      "Pacific storms brought intense rain and winds to the Northern Mariana Islands in 2018, resulting in 2 recorded fatalities.",
+      "The storms caused zero estimated damage, a testament to the resilience of the local community.",
+      "The region's unique geography and weather patterns continued to shape the lives of its inhabitants."
+    ]
+  }
+}

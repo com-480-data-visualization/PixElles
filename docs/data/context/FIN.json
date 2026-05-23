@@ -1,0 +1,40 @@
+{
+  "1990": {
+    "tagline": "Finland's Stormy Year of Resilience",
+    "narrative": [
+      "Finland faced severe weather conditions in 1990 as a powerful storm struck the country, causing widespread damage.",
+      "Despite the destruction, the nation's infrastructure and emergency services proved capable of handling the disaster, resulting in zero recorded fatalities.",
+      "The total estimated damage from the storm reached $24,008,000, a significant financial blow to the region's economy."
+    ]
+  },
+  "2005": {
+    "tagline": "The Silent Flood of Serenity",
+    "narrative": [
+      "Despite the absence of recorded fatalities, the flood of 2005 had a profound impact on Finland's ecosystems.",
+      "The unassuming event brought much-needed water to parched lands, reviving the country's natural balance.",
+      "Though the damage was minimal, the flood's subtle influence will be felt for generations to come."
+    ]
+  },
+  "2022": {
+    "tagline": "Frosty grip on Finland's frozen year",
+    "narrative": [
+      "Finland faced a series of extreme temperature fluctuations in 2022, resulting in 225 recorded deaths.",
+      "The unseasonable warmth and subsequent freezing caused widespread disruption and loss of life.",
+      "No estimated damage was reported, but the emotional toll on the nation remains."
+    ]
+  },
+  "2023": {
+    "tagline": "Frosty Grip on Finland's Temperatures",
+    "narrative": [
+      "The year 2023 brought a record-breaking chill to Finland, with temperatures plummeting to -30\u00b0C (-22\u00b0F) in some areas. The extreme cold claimed 138 lives and left a trail of economic devastation, with estimated damages reaching $0. The country's usually resilient infrastructure was pushed to the limit, as the unrelenting cold exacted a heavy toll on its people and resources."
+    ]
+  },
+  "2024": {
+    "tagline": "Temperature Tipping Points Tested Finnish Resolve",
+    "narrative": [
+      "In 2024, Finland faced an unprecedented extreme temperature event,",
+      "resulting in 152 fatalities and remarkably, no reported damage.",
+      "The nation's resilience was put to the test as the country struggled"
+    ]
+  }
+}

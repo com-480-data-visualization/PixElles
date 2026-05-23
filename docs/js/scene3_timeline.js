@@ -4,6 +4,8 @@
 const ISO = new URLSearchParams(location.search).get('iso') || 'JPN';
 let COUNTRY_NAME = ISO;
 let YEAR_MAP = {};
+let globalAvgMap = {};   // [year][type] = count / 220
+let contextData  = {};   // [year] = { tagline, narrative } from data/context/ISO.json
 
 const TYPES = {
   drought:             { color: '#F2B44D', label: 'Drought' },
@@ -14,10 +16,8 @@ const TYPES = {
   storm:               { color: '#7870D8', label: 'Storm / Typhoon' },
   epidemic:            { color: '#70C7A8', label: 'Epidemic' },
   infestation:         { color: '#B8C96B', label: 'Infestation' },
-  animal_incident:     { color: '#66BFD2', label: 'Animal Incident' },
   volcano:             { color: '#D85745', label: 'Volcano' },
   wildfire:            { color: '#F39A3C', label: 'Wildfire' },
-  impact:              { color: '#C7B2FF', label: 'Impact' },
 };
 
 function typeColor(type) { return TYPES[type]?.color || '#97AEC4'; }
@@ -78,6 +78,22 @@ function makePhoto(seed) {
 }
 
 /* =============================================
+   SHORT LABELS FOR BAR CHART
+   ============================================= */
+const LABEL = {
+  drought:             'DROUGHT',
+  earthquake:          'EARTHQUAKE',
+  extreme_temperature: 'EXTR TEMP',
+  flood:               'FLOOD',
+  landslide:           'LANDSLIDE',
+  storm:               'STORM',
+  epidemic:            'EPIDEMIC',
+  infestation:         'INFESTATION',
+  volcano:             'VOLCANO',
+  wildfire:            'WILDFIRE',
+};
+
+/* =============================================
    CONTEXT TEXT & NARRATIVE
    ============================================= */
 function eraOf(year) {
@@ -98,6 +114,7 @@ const JAPAN_TAGLINES = {
 };
 
 function taglineFor(yd) {
+  if (contextData[String(yd.year)]?.tagline) return contextData[String(yd.year)].tagline;
   if (ISO === 'JPN' && JAPAN_TAGLINES[yd.year]) return JAPAN_TAGLINES[yd.year];
   const topEntry = Object.entries(yd.breakdown).sort((a, b) => b[1] - a[1])[0];
   if (!topEntry) return `${yd.total} event${yd.total !== 1 ? 's' : ''} catalogued.`;
@@ -121,7 +138,9 @@ function curatedContext(year, yd) {
   const damageCtx = yd.damage > 5 ? 'Significant economic losses triggered reconstruction programmes.' : yd.damage > 0 ? 'Estimated direct economic losses, adjusted to USD.' : 'Economic damage figures were not available for this period.';
   const deathStr  = yd.deaths  > 0 ? ` The cumulative death toll reached ${yd.deaths.toLocaleString('en-US')}.` : '';
   const damageStr = yd.damage  > 0 ? ` Economic losses were estimated at ${formatDamage(yd.damage)}.` : '';
-  return { deaths: deathCtx, affected: affectedCtx, damage: damageCtx, narrative: `${year} recorded ${yd.total} catalogued event${yd.total !== 1 ? 's' : ''} in ${COUNTRY_NAME}, dominated by ${typeName} incidents.${deathStr}${damageStr} The year sits within the broader pattern of ${era}.` };
+  const generatedNarrative = `${year} recorded ${yd.total} catalogued event${yd.total !== 1 ? 's' : ''} in ${COUNTRY_NAME}, dominated by ${typeName} incidents.${deathStr}${damageStr} The year sits within the broader pattern of ${era}.`;
+  const narrative = contextData[String(year)]?.narrative || generatedNarrative;
+  return { deaths: deathCtx, affected: affectedCtx, damage: damageCtx, narrative };
 }
 
 /* =============================================
@@ -191,98 +210,265 @@ function createGlowTexture() {
   return texture;
 }
 
-async function createCardTexture(yd) {
+function createCardTexture(yd) {
   try {
     const canvas = document.createElement('canvas');
-    canvas.width = 960; canvas.height = 1200; 
+    canvas.width = 960; canvas.height = 1200;
     const ctx = canvas.getContext('2d');
 
-    ctx.fillStyle = 'rgba(18, 24, 33, 0.4)';
-    ctx.beginPath();
-    ctx.moveTo(32, 0);
-    ctx.arcTo(960, 0, 960, 1200, 32);
-    ctx.arcTo(960, 1200, 0, 1200, 32);
-    ctx.arcTo(0, 1200, 0, 0, 32);
-    ctx.arcTo(0, 0, 960, 0, 32);
-    ctx.closePath();
+    // Rounded-rect path helper
+    const rr = (x, y, w, h, r) => {
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.arcTo(x + w, y,     x + w, y + h, r);
+      ctx.arcTo(x + w, y + h, x,     y + h, r);
+      ctx.arcTo(x,     y + h, x,     y,     r);
+      ctx.arcTo(x,     y,     x + w, y,     r);
+      ctx.closePath();
+    };
+
+    // ── Card base: gradient background ───────────────
+    rr(0, 0, 960, 1200, 32);
+    const cardBg = ctx.createLinearGradient(0, 0, 0, 1200);
+    cardBg.addColorStop(0, '#141e2d');
+    cardBg.addColorStop(1, '#0c1521');
+    ctx.fillStyle = cardBg;
     ctx.fill();
     ctx.save();
-    ctx.clip(); 
+    ctx.clip();
 
-    // REAL PHOTO LOGIC (With SVG Fallback)
-    await new Promise((resolve) => {
-      const img = new Image();
-      img.onload = () => { ctx.drawImage(img, 0, 0, 960, 864); resolve(); };
-      img.onerror = () => {
-         const fallback = new Image();
-         fallback.onload = () => { ctx.drawImage(fallback, 0, 0, 960, 864); resolve(); };
-         fallback.onerror = () => resolve();
-         fallback.src = makePhoto(yd.year);
-      };
-      img.src = `images/archive/${ISO}/${yd.year}.jpg`;
+    // ── HEADER  (y 0 – 272) ───────────────────────────
+    // ctx.fillStyle = 'rgba(36, 49, 68, 0.55)';
+    const grad = ctx.createLinearGradient(0, 0, 0, 272);
+    grad.addColorStop(0, '#2c384a');
+    grad.addColorStop(1, '#0e1924');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, 960, 272);
+
+    ctx.textBaseline  = 'alphabetic';
+    ctx.textAlign     = 'left';
+    ctx.font          = '300 21px "Inter", sans-serif';
+    ctx.fillStyle     = '#97AEC4';
+    ctx.fillText(`N° ${yd.year - 1974}  ·  FILE ${ISO} / ${yd.year}`, 80, 90);
+
+
+    // Country name — right, auto-shrink for long names
+    ctx.textAlign = 'right';
+    const nameStr = COUNTRY_NAME.toUpperCase();
+    let nameSz = 72;
+    ctx.font = `400 ${nameSz}px "Cormorant Garamond", serif`;
+    while (ctx.measureText(nameStr).width > 560 && nameSz > 34) {
+      nameSz -= 4;
+      ctx.font = `400 ${nameSz}px "Cormorant Garamond", serif`;
+    }
+    ctx.fillStyle = '#ffffff';
+    ctx.fillText(nameStr, 880, 118);
+
+    ctx.font      = 'italic 300 74px "Cormorant Garamond", serif';
+    ctx.fillStyle = '#ffffff';
+    ctx.fillText(`IN ${yd.year}`, 880, 195);
+
+    // Header divider
+    ctx.fillStyle = 'rgba(151,174,196,0.18)';
+    ctx.fillRect(80, 270, 800, 1);
+
+    // Click hint
+    ctx.textAlign     = 'right';
+    ctx.letterSpacing = '2px';
+    ctx.font          = '300 28px "Cormorant Garamond", serif';
+    ctx.fillStyle     = 'rgba(151,174,196,0.38)';
+    ctx.fillText('Click to see more details', 880, 248);
+
+    // ── CHART SECTION  (y 270 – 882) ─────────────────
+
+    // Section heading + legend
+    ctx.textAlign     = 'left';
+    ctx.letterSpacing = '3px';
+    ctx.font          = '300 20px "Inter", sans-serif';
+    ctx.fillStyle     = 'rgba(151,174,196,0.60)';
+    ctx.fillText('DISASTERS  TYPES', 80, 318);
+
+    ctx.letterSpacing = '1px';
+    ctx.font          = '300 20px "Inter", sans-serif';
+
+    // solid-line legend swatch
+    const lgX = 576;
+    ctx.strokeStyle = '#97AEC4';
+    ctx.lineWidth   = 2.5;
+    ctx.setLineDash([]);
+    ctx.beginPath(); ctx.moveTo(lgX, 314); ctx.lineTo(lgX + 26, 314); ctx.stroke();
+    ctx.fillStyle = 'rgba(255,255,255,0.72)';
+    ctx.fillText(ISO, lgX + 34, 318);
+
+    // dashed-line legend swatch
+    const lgX2 = lgX + 34 + ctx.measureText(ISO).width + 22;
+    ctx.setLineDash([5, 4]);
+    ctx.strokeStyle = 'rgba(255,255,255,0.40)';
+    ctx.lineWidth   = 2;
+    ctx.beginPath(); ctx.moveTo(lgX2, 314); ctx.lineTo(lgX2 + 26, 314); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = 'rgba(151,174,196,0.58)';
+    ctx.fillText('WORLD AVG.', lgX2 + 34, 318);
+
+    // ── Bar rows ──────────────────────────────────────
+    const yearAvgs = globalAvgMap[yd.year] || {};
+    const allTypeKeys = Object.keys(TYPES);
+
+    const withCount   = allTypeKeys
+      .filter(t => (yd.breakdown[t] || 0) > 0)
+      .sort((a, b) => (yd.breakdown[b] || 0) - (yd.breakdown[a] || 0));
+    const withAvgOnly = allTypeKeys
+      .filter(t => (yd.breakdown[t] || 0) === 0 && (yearAvgs[t] || 0) >= 0.05)
+      .sort((a, b) => (yearAvgs[b] || 0) - (yearAvgs[a] || 0));
+    const rows = [...withCount, ...withAvgOnly].slice(0, 6);
+
+    const CL         = 288;          // chart left x
+    const CR         = 828;          // chart right x
+    const TW         = CR - CL;      // track width px
+    const VX         = 880;          // value col right edge
+    const CHART_TOP  = 345;
+    const CHART_BOT  = 880;
+    const ROW_H      = (CHART_BOT - CHART_TOP) / Math.max(rows.length, 1);
+
+    const B1_H   = 25;  // country bar height
+    const B2_H   = 25;  // avg bar height
+    const B1_OFF = 28;  // px below rowTop for country bar centre
+    const B2_OFF = 65;  // px below rowTop for avg bar centre
+
+    const maxCount = Math.max(...rows.map(t => yd.breakdown[t] || 0), 1);
+    const maxAvg   = Math.max(...rows.map(t => yearAvgs[t] || 0), 0.01);
+    const maxScale = Math.max(maxCount, maxAvg) * 1.12;
+
+    rows.forEach((type, i) => {
+      const count   = yd.breakdown[type] || 0;
+      const avg     = yearAvgs[type]     || 0;
+      const rowTop  = CHART_TOP + i * ROW_H;
+      const b1Y     = rowTop + B1_OFF;
+      const b2Y     = rowTop + B2_OFF;
+      const color   = typeColor(type);
+      const hasData = count || 0;
+
+      // Type label
+      ctx.textAlign     = 'left';
+      ctx.textBaseline  = 'middle';
+      ctx.letterSpacing = '2px';
+      ctx.font          = '300 25px "Inter", sans-serif';
+      ctx.fillStyle     = hasData ? 'rgba(255,255,255,0.86)' : 'rgba(151,174,196,0.30)';
+      const labelY = (b1Y + b2Y) / 2;   // midpoint between country and avg bar centres
+      ctx.fillText(LABEL[type] || type.toUpperCase(), 80, labelY);
+
+      // Track background – country bar
+      ctx.fillStyle = 'rgba(255,255,255,0.04)';
+      ctx.fillRect(CL, b1Y - B1_H / 2, TW, B1_H);
+
+      // Track background – avg bar
+      ctx.fillStyle = 'rgba(255,255,255,0.04)';
+      ctx.fillRect(CL, b2Y - B2_H / 2, TW, B2_H);
+
+      // Avg value
+      if (avg > 0) {
+        const avgW = Math.min(TW, (avg / maxScale) * TW);
+        ctx.textAlign     = 'left';
+        ctx.textBaseline  = 'middle';
+        ctx.letterSpacing = '1px';
+        ctx.font          = '300 25px "Inter", sans-serif';
+        ctx.fillStyle     = 'rgba(151,174,196,0.65)';
+        ctx.fillText(`${avg.toFixed(1)} avg`, CL + avgW + 8, b2Y + 4);
+      }
+
+      // Solid country bar + inline count label
+      if (count > 0) {
+        const barW = Math.min(TW, (count / maxScale) * TW);
+        ctx.globalAlpha = 0.88;
+        ctx.fillStyle   = color;
+        ctx.fillRect(CL, b1Y - B1_H / 2, barW, B1_H);
+        ctx.globalAlpha = 1;
+
+        ctx.textAlign     = 'left';
+        ctx.textBaseline  = 'middle';
+        ctx.letterSpacing = '1px';
+        ctx.font          = '300 25px "Inter", sans-serif';
+        ctx.fillStyle     = 'rgba(255,255,255,0.72)';
+        ctx.fillText(String(count), CL + barW + 8, b1Y);
+      }
+
+      // Dashed world-avg bar
+      if (avg > 0) {
+        const avgW = Math.min(TW, (avg / maxScale) * TW);
+        ctx.save();
+        ctx.setLineDash([6, 5]);
+        ctx.strokeStyle = 'rgba(255,255,255,0.38)';
+        ctx.lineWidth   = B2_H;
+        ctx.lineCap     = 'butt';
+        ctx.beginPath();
+        ctx.moveTo(CL, b2Y);
+        ctx.lineTo(CL + avgW, b2Y);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.restore();
+      }
+
+      // Row separator
+      if (i < rows.length - 1) {
+        ctx.fillStyle = 'rgba(151,174,196,0.055)';
+        ctx.fillRect(80, rowTop + ROW_H - 0.5, 800, 1);
+      }
     });
 
-    const grad = ctx.createLinearGradient(0, 500, 0, 900);
-    grad.addColorStop(0, 'rgba(18, 24, 33, 0)');
-    grad.addColorStop(1, 'rgba(18, 24, 33, 1)');
-    ctx.fillStyle = grad;
-    ctx.fillRect(0, 500, 960, 700);
+    // Chart–footer divider
+    ctx.fillStyle = 'rgba(151,174,196,0.18)';
+    ctx.fillRect(80, 892, 800, 1);
 
-    ctx.fillStyle = '#ffffff';
-    ctx.font = '400 64px "Cormorant Garamond", serif';
-    ctx.textAlign = 'right';
-    ctx.fillText(`${COUNTRY_NAME.toUpperCase()}`, 880, 120);
-    ctx.font = 'italic 300 56px "Cormorant Garamond", serif';
-    ctx.fillText(`IN ${yd.year}`, 880, 190);
-    ctx.fillStyle = '#97AEC4';
-    ctx.font = 'italic 300 32px "Cormorant Garamond", serif';
-    ctx.fillText(taglineFor(yd), 880, 250);
+    // ── FOOTER  (y 882 – 1200) ────────────────────────
+    const dmgDisplay = (b) => {
+      if (!b || b < 0.001) return { main: '—', unit: '' };
+      if (b < 1)  return { main: `$${(b * 1000).toFixed(0)}`, unit: 'M' };
+      if (b < 10) return { main: `$${b.toFixed(2)}`,          unit: 'B' };
+      return            { main: `$${b.toFixed(1)}`,           unit: 'B' };
+    };
+    const deathFmt = n => n > 999 ? `${(n / 1000).toFixed(1)}k` : String(n);
 
-    ctx.textAlign = 'left';
-    ctx.font = '300 22px "Inter", sans-serif';
-    ctx.fillText(`№ ${yd.year - 1974} · FILE ${ISO}/${yd.year}`, 80, 120);
+    const footerCols = [
+      { label: 'EVENTS', main: String(yd.total),                           color: '#ffffff' },
+      { label: 'DEATHS', main: yd.deaths > 0 ? deathFmt(yd.deaths) : '—', color: '#FF8775' },
+      { label: 'DAMAGE', ...dmgDisplay(yd.damage),                         color: '#ffffff' },
+    ];
 
-    ctx.font = '300 18px "Inter", sans-serif';
-    ctx.fillStyle = '#97AEC4';
-    ctx.fillText('E V E N T S', 80, 1000);
-    ctx.fillText('D E A T H S', 400, 1000);
-    ctx.fillText('D A M A G E', 720, 1000);
+    footerCols.forEach(({ label, main, unit = '', color }, i) => {
+      const fx = 80 + i * 293;
 
-    ctx.font = '400 64px "Cormorant Garamond", serif';
-    ctx.fillStyle = '#ffffff';
-    ctx.fillText(yd.total, 80, 1070);
+      ctx.textAlign     = 'left';
+      ctx.letterSpacing = '2px';
+      ctx.font          = '300 28px "Inter", sans-serif';
+      ctx.fillStyle     = 'rgba(151,174,196,0.50)';
+      ctx.fillText(label, fx, 950);
 
-    ctx.fillStyle = '#FF8775'; 
-    const deathText = yd.deaths > 1000 ? (yd.deaths/1000).toFixed(1) + 'k' : yd.deaths;
-    ctx.fillText(deathText, 400, 1070);
+      ctx.letterSpacing = '0px';
+      ctx.font          = '400 72px "Cormorant Garamond", serif';
+      ctx.fillStyle     = color;
+      ctx.fillText(main, fx, 1060);
 
-    ctx.fillStyle = '#ffffff';
-    const dmgText = yd.damage > 0 ? `$${yd.damage}` : '—';
-    ctx.fillText(dmgText, 720, 1070);
-    if(yd.damage > 0) {
-        ctx.font = 'italic 30px "Cormorant Garamond", serif';
-        ctx.fillStyle = '#97AEC4';
-        ctx.fillText('B', 720 + ctx.measureText(dmgText).width + 8, 1070);
-    }
+      if (unit) {
+        const mw = ctx.measureText(main).width;
+        ctx.font      = 'italic 300 28px "Cormorant Garamond", serif';
+        ctx.fillStyle = 'rgba(151,174,196,0.55)';
+        ctx.fillText(unit, fx + mw + 8, 1060);
+      }
+    });
+
+    // ── Border ring ───────────────────────────────────
     ctx.restore();
-
-    ctx.strokeStyle = 'rgba(151, 174, 196, 0.3)';
-    ctx.lineWidth = 4;
-    ctx.beginPath();
-    ctx.moveTo(34, 2);
-    ctx.arcTo(958, 2, 958, 1198, 32);
-    ctx.arcTo(958, 1198, 2, 1198, 32);
-    ctx.arcTo(2, 1198, 2, 2, 32);
-    ctx.arcTo(2, 2, 958, 2, 32);
-    ctx.closePath();
+    rr(0, 0, 960, 1200, 32);
+    ctx.strokeStyle = 'rgba(255,255,255,0.18)';
+    ctx.lineWidth   = 5.5;
     ctx.stroke();
 
     const texture = new THREE.CanvasTexture(canvas);
     texture.minFilter = THREE.LinearFilter;
-    if (renderer && renderer.capabilities) texture.anisotropy = renderer.capabilities.getMaxAnisotropy(); 
+    if (renderer && renderer.capabilities) texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
     return texture;
   } catch (e) {
-    console.error("Error building card", e);
+    console.error('Error building card', e);
     return new THREE.CanvasTexture(document.createElement('canvas'));
   }
 }
@@ -291,24 +477,62 @@ async function createCardTexture(yd) {
    GLOWING ROUND STAR TEXTURE
    ============================================= */
 function createStarTexture() {
+  const S = 128;
   const canvas = document.createElement('canvas');
-  canvas.width = 32;
-  canvas.height = 32;
+  canvas.width = S; canvas.height = S;
   const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, S, S);
+  const half = S / 2;
+  ctx.globalCompositeOperation = 'lighter';
 
-  // Create a radial gradient for a glowing core and soft edges
-  const grad = ctx.createRadialGradient(16, 16, 0, 16, 16, 16);
-  grad.addColorStop(0, 'rgba(255, 255, 255, 1)');   // Bright solid core
-  grad.addColorStop(0.3, 'rgba(255, 255, 255, 0.8)'); // Inner glow
-  grad.addColorStop(0.7, 'rgba(255, 255, 255, 0.2)'); // Outer glow
-  grad.addColorStop(1, 'rgba(255, 255, 255, 0)');     // Fades into darkness completely
+  // Wide white outer halo
+  ctx.fillStyle = 'rgba(200, 220, 255, 1)';
+  ctx.shadowColor = 'rgba(200, 220, 255, 1)';
+  ctx.shadowBlur = 48;
+  ctx.beginPath(); ctx.arc(half, half, 3, 0, Math.PI * 2); ctx.fill();
 
-  ctx.fillStyle = grad;
-  ctx.beginPath();
-  ctx.arc(16, 16, 16, 0, Math.PI * 2);
-  ctx.fill();
+  // Mid white glow
+  ctx.fillStyle = 'rgba(240, 245, 255, 1)';
+  ctx.shadowColor = 'rgba(240, 245, 255, 1)';
+  ctx.shadowBlur = 22;
+  ctx.beginPath(); ctx.arc(half, half, 2, 0, Math.PI * 2); ctx.fill();
 
-  return new THREE.CanvasTexture(canvas);
+  // Inner intense white
+  ctx.fillStyle = 'rgba(255, 255, 255, 1)';
+  ctx.shadowColor = 'rgba(255, 255, 255, 1)';
+  ctx.shadowBlur = 10;
+  ctx.beginPath(); ctx.arc(half, half, 1.5, 0, Math.PI * 2); ctx.fill();
+
+  // Pinpoint core
+  ctx.shadowBlur = 0;
+  ctx.fillStyle = 'rgba(255, 255, 255, 1)';
+  ctx.beginPath(); ctx.arc(half, half, 1.0, 0, Math.PI * 2); ctx.fill();
+
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.minFilter = THREE.LinearFilter;
+  tex.magFilter = THREE.LinearFilter;
+  tex.generateMipmaps = false;
+  return tex;
+}
+
+/* =============================================
+   HINT OVERLAY TEXTURE (white "click" hint for hover)
+   ============================================= */
+function createHintOverlayTexture() {
+  const canvas = document.createElement('canvas');
+  canvas.width  = 960;
+  canvas.height = 1200;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, 960, 1200);
+  ctx.textAlign     = 'right';
+  ctx.textBaseline  = 'alphabetic';
+  ctx.letterSpacing = '2px';
+  ctx.font          = '300 28px "Cormorant Garamond", serif';
+  ctx.fillStyle     = 'rgba(255,255,255,0.90)';
+  ctx.fillText('Click to see more details', 880, 248);
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.minFilter = THREE.LinearFilter;
+  return texture;
 }
 
 /* =============================================
@@ -316,29 +540,37 @@ function createStarTexture() {
    ============================================= */
 async function buildCards(yearDataArr) {
   initThreeJS();
-  const texturePromises = yearDataArr.map(yd => createCardTexture(yd));
-  const textures = await Promise.all(texturePromises);
+  const textures = yearDataArr.map(yd => createCardTexture(yd));
   const glowTexture = createGlowTexture();
+  const hintTexture = createHintOverlayTexture();
+
+  const isMobile = window.innerWidth <= 880;
 
   yearDataArr.forEach((yd, i) => {
     const zPos = -(i * SPACING);
-    const side = i % 2 === 0 ? -8 : 8; 
+    const side = isMobile ? 0 : (i % 2 === 0 ? -8 : 8);
 
     const material = new THREE.MeshBasicMaterial({ map: textures[i], transparent: true, side: THREE.DoubleSide });
-    const geometry = new THREE.PlaneGeometry(8, 10); 
+    const geometry = new THREE.PlaneGeometry(8, 10);
     const mesh = new THREE.Mesh(geometry, material);
     mesh.position.set(side, 0, zPos);
-    mesh.rotation.y = i % 2 === 0 ? 0.20 : -0.20;
+    mesh.rotation.y = isMobile ? 0 : (i % 2 === 0 ? 0.20 : -0.20);
     mesh.userData = { year: yd.year, isCard: true };
 
     const glowMaterial = new THREE.MeshBasicMaterial({ map: glowTexture, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false });
     const glowMesh = new THREE.Mesh(geometry, glowMaterial);
-    glowMesh.position.z = 0.02; 
-    glowMesh.userData = { targetOpacity: 0 }; 
+    glowMesh.position.z = 0.02;
+    glowMesh.userData = { targetOpacity: 0 };
     mesh.add(glowMesh);
 
+    const hintMaterial = new THREE.MeshBasicMaterial({ map: hintTexture, transparent: true, opacity: 0, depthWrite: false });
+    const hintMesh = new THREE.Mesh(geometry, hintMaterial);
+    hintMesh.position.z = 0.03;
+    hintMesh.userData = { targetOpacity: 0 };
+    mesh.add(hintMesh);
+
     scene.add(mesh);
-    stageCards.push({ mesh: mesh, glowMesh: glowMesh, zPos: zPos, year: yd.year, data: yd });
+    stageCards.push({ mesh: mesh, glowMesh: glowMesh, hintMesh: hintMesh, zPos: zPos, year: yd.year, data: yd });
   });
 
   totalDepth = (yearDataArr.length - 1) * SPACING;
@@ -370,20 +602,59 @@ async function buildCards(yearDataArr) {
 
   starGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
   
-  // FIX: Apply the round glowing texture and increase the size
+  const bgStarTex = createStarTexture();
   const starMat = new THREE.PointsMaterial({
-    size: 0.4, // Increased size because the texture is soft and fades out
-    map: createStarTexture(), // Applies our round, glowing canvas
-    color: 0xffffff,
-    transparent: true,
-    opacity: 0.8,
-    blending: THREE.AdditiveBlending,
-    depthWrite: false
-  });
+  size: 4.4,
+  map: bgStarTex,
+  alphaTest: 0.001,
+  color: 0xffffff,
+  transparent: true,
+  opacity: 0.8,
+  blending: THREE.AdditiveBlending,
+  depthWrite: false,
+  sizeAttenuation: true
+});
   
   const starMesh = new THREE.Points(starGeo, starMat);
   scene.add(starMesh);
 
+  // Milky Way path — star particles along the hallway floor
+  const pathDepth = totalDepth + START_OFFSET + 30;
+  const prng = mulberry32(888);
+  function gauss() { return (prng() + prng() + prng() - 1.5) * 0.667; }
+  const pathStarTex = createStarTexture();
+
+  // Layer 1: scattered fine stars — wide corridor
+  const N1 = 1400;
+  const pos1 = new Float32Array(N1 * 3);
+  for (let i = 0; i < N1; i++) {
+    pos1[i*3]   = gauss() * 3.5;
+    pos1[i*3+1] = -5 + (prng() - 0.5) * 0.5;
+    pos1[i*3+2] = START_OFFSET + 2 - prng() * pathDepth;
+  }
+  const pathGeo1 = new THREE.BufferGeometry();
+  pathGeo1.setAttribute('position', new THREE.BufferAttribute(pos1, 3));
+  scene.add(new THREE.Points(pathGeo1, new THREE.PointsMaterial({
+    size: 0.55, map: pathStarTex, transparent: true, alphaTest: 0.01, opacity: 0.90,
+    blending: THREE.AdditiveBlending, depthWrite: false, sizeAttenuation: true,
+    color: new THREE.Color(1.0, 1.0, 1.0)
+  })));
+
+  // Layer 2: bright glow accents — tighter center band
+  const N2 = 300;
+  const pos2 = new Float32Array(N2 * 3);
+  for (let i = 0; i < N2; i++) {
+    pos2[i*3]   = gauss() * 2.0;
+    pos2[i*3+1] = -5 + (prng() - 0.5) * 0.3;
+    pos2[i*3+2] = START_OFFSET + 2 - prng() * pathDepth;
+  }
+  const pathGeo2 = new THREE.BufferGeometry();
+  pathGeo2.setAttribute('position', new THREE.BufferAttribute(pos2, 3));
+  scene.add(new THREE.Points(pathGeo2, new THREE.PointsMaterial({
+    size: 1.4, map: pathStarTex, transparent: true, alphaTest: 0.01, opacity: 0.70,
+    blending: THREE.AdditiveBlending, depthWrite: false, sizeAttenuation: true,
+    color: new THREE.Color(1.0, 1.0, 1.0)
+  })));
 
   const scrollSpacer = document.getElementById('spacer');
   scrollSpacer.style.height = `${maxScrollPixels + window.innerHeight + 200}px`;
@@ -421,14 +692,19 @@ function setupRaycaster() {
       document.body.style.cursor = 'pointer';
       const object = intersects[0].object;
       if (hoveredCard !== object) {
-        if (hoveredCard) hoveredCard.children[0].userData.targetOpacity = 0;
+        if (hoveredCard) {
+          hoveredCard.children[0].userData.targetOpacity = 0;
+          hoveredCard.children[1].userData.targetOpacity = 0;
+        }
         hoveredCard = object;
         hoveredCard.children[0].userData.targetOpacity = 0.5;
+        hoveredCard.children[1].userData.targetOpacity = 1;
       }
     } else {
       document.body.style.cursor = 'default';
       if (hoveredCard) {
         hoveredCard.children[0].userData.targetOpacity = 0;
+        hoveredCard.children[1].userData.targetOpacity = 0;
         hoveredCard = null;
       }
     }
@@ -458,27 +734,26 @@ function tick() {
   let bestDist = Infinity;
 
   for (const c of stageCards) {
-    const relZ = c.zPos - cameraZ; 
-    const fadeStart = -12; 
-    const fadeEnd = -6;    
+    const relZ = c.zPos - cameraZ;
+    const fadeStart = -12;
+    const fadeEnd = -6;
 
     if (relZ > fadeEnd) {
       c.mesh.material.opacity = 0;
       c.glowMesh.material.opacity = 0;
-      c.mesh.visible = false; 
+      c.mesh.visible = false;
     } else {
       c.mesh.visible = true;
       c.glowMesh.material.opacity += (c.glowMesh.userData.targetOpacity - c.glowMesh.material.opacity) * 0.1;
-
+      c.hintMesh.material.opacity += (c.hintMesh.userData.targetOpacity - c.hintMesh.material.opacity) * 0.1;
       if (relZ > fadeStart) {
-        let fadeAmount = (relZ - fadeStart) / (fadeEnd - fadeStart);
-        c.mesh.material.opacity = 1 - fadeAmount;
+        c.mesh.material.opacity = 1 - (relZ - fadeStart) / (fadeEnd - fadeStart);
       } else {
         c.mesh.material.opacity = 1;
       }
     }
 
-    const absDist = Math.abs(relZ);
+    const absDist = Math.abs(relZ + 14);
     if (absDist < bestDist) {
       bestDist = absDist;
       closest = c;
@@ -627,7 +902,7 @@ async function init() {
 
   YEAR_MAP = Object.fromEntries(yearDataArr.map(d => [d.year, d]));
 
-  document.title = `${COUNTRY_NAME} — Country Timeline | Natural Disasters Museum`;
+  document.title = `${COUNTRY_NAME} — Country Timeline | Earth Natural Disasters Museum`;
   document.getElementById('breadcrumbCountry').textContent = `${COUNTRY_NAME} Timeline`;
   document.getElementById('introTitle').innerHTML = `${COUNTRY_NAME},<br><em>over fifty years.</em>`;
   document.getElementById('introLede').textContent = `A walk down the museum hallway — ${yearDataArr.length} years of recorded disasters in ${COUNTRY_NAME}. Each exhibit drifts toward you, presents itself, and steps aside.`;
@@ -640,6 +915,25 @@ async function init() {
   document.getElementById('tickStart').textContent = allYears[0];
   document.getElementById('tickMid').textContent   = allYears[Math.floor(allYears.length / 2)];
   document.getElementById('tickEnd').textContent   = allYears[allYears.length - 1];
+
+  // Build globalAvgMap from all rows (before ISO filter): [year][type] = count / 220
+  const _gc = {};
+  rawRows.forEach(d => {
+    const y = +d.year, t = d.type || 'unknown';
+    if (!_gc[y]) _gc[y] = {};
+    _gc[y][t] = (_gc[y][t] || 0) + 1;
+  });
+  Object.entries(_gc).forEach(([y, tc]) => {
+    globalAvgMap[+y] = {};
+    Object.entries(tc).forEach(([t, c]) => { globalAvgMap[+y][t] = +(c / 220).toFixed(4); });
+  });
+
+  for (const jp of [`data/context/${ISO}.json`, `../docs/data/context/${ISO}.json`]) {
+    try {
+      const resp = await fetch(jp);
+      if (resp.ok) { contextData = await resp.json(); break; }
+    } catch (e) { /* try next */ }
+  }
 
   buildCards(yearDataArr);
   requestAnimationFrame(tick);

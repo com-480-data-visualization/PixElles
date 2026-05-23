@@ -1,0 +1,77 @@
+{
+  "1979": {
+    "tagline": "Turbulent Skies, Devastating Winds",
+    "narrative": "In 1979, Dominica was struck by a fierce storm, leaving 40 lives lost and an estimated $192.989 million in damage. The powerful winds and heavy rainfall devastated the island's infrastructure and communities. This natural disaster had a profound impact on the country's development and left a lasting scar."
+  },
+  "1980": {
+    "tagline": "Calm in the Caribbean",
+    "narrative": [
+      "The island nation of Dominica experienced a rare calm in 1980, with no recorded fatalities and zero economic damage from natural disasters. The absence of significant storms allowed the country to breathe a collective sigh of relief. The year's tranquility provided a brief respite from the forces of nature that can so often shape the lives of Dominicans."
+    ]
+  },
+  "1984": {
+    "tagline": "Calm Prevails Amidst Turbulent Skies",
+    "narrative": [
+      "The island nation of Dominica was struck by a storm in 1984, causing widespread destruction and loss of life. Despite the devastation, the resilience of the people was on full display as they worked together to rebuild and recover. The storm's impact was significant, with an estimated 2 deaths and $6.039 million in damages."
+    ]
+  },
+  "1989": {
+    "tagline": "Dominica's tranquil veil lifted by fury",
+    "narrative": [
+      "On October 29, 1989, a storm struck Dominica, bringing forth torrential rains and powerful winds that left a trail of destruction.",
+      "The fury of the storm caused estimated damages of $50,609 thousand USD, a testament to the devastating power of nature.",
+      "Miraculously, the storm claimed zero recorded deaths, a blessing for the resilient people of Dominica."
+    ]
+  },
+  "1995": {
+    "tagline": "Fragile Island Weathered the Storm's Fury",
+    "narrative": [
+      "The island nation of Dominica was struck by a powerful storm in 1995, leaving a trail of destruction and loss in its wake. The disaster resulted in the loss of 2 lives and an estimated $401,418,000 in damages. The storm's impact was felt deeply across the island, leaving a lasting impact on the people and communities affected."
+    ]
+  },
+  "1999": {
+    "tagline": "Serenity Unbroken on the Rose Island",
+    "narrative": [
+      "Despite the arrival of a storm, Dominica's resilient nature and preparedness allowed for zero recorded fatalities and a negligible impact on the island's economy.",
+      "Thanks to swift action and effective emergency response systems, the island's communities were able to adapt and recover quickly.",
+      "The year 1999 was a testament to the Dominican people's ability to face natural disasters with courage and determination."
+    ]
+  },
+  "2004": {
+    "tagline": "Tremors beneath the tropical skies",
+    "narrative": [
+      "The Caribbean island of Dominica was shaken but not stirred by a minor earthquake in 2004, mercifully causing no reported fatalities or damage. The island's lush rainforests and mountainous terrain withstood the seismic activity, a testament to nature's resilience. This quiet event would remain a footnote in the region's rich geological history."
+    ]
+  },
+  "2007": {
+    "tagline": "Nature's Fury on Dominica's Shore",
+    "narrative": [
+      {
+        "year": 2007,
+        "event": "Storm",
+        "deaths": 2,
+        "damage": "$30,258,000 USD"
+      }
+    ]
+  },
+  "2011": {
+    "tagline": "Island of serenity, untouched by turmoil",
+    "narrative": [
+      "In 2011, Dominica was spared from the fury of nature, experiencing a year with zero recorded deaths and zero estimated damage.",
+      "The island's lush vegetation and mountainous terrain seemed to shield it from the devastating effects of storms that affected other parts of the world.",
+      "This period of tranquility allowed the island's inhabitants to focus on rebuilding and preserving their natural beauty."
+    ]
+  },
+  "2015": {
+    "tagline": "Island of Beauty, Besieged by Storm",
+    "narrative": "In 2015, Dominica, known as the 'Nature Island', faced its own nature's fury. A powerful storm struck the island, claiming 30 lives and causing an estimated $638,993,000 in damages. The disaster left a lasting impact on the island's infrastructure, economy, and community, a testament to the resilience of its people."
+  },
+  "2017": {
+    "tagline": "Turbulent Skies, Shattered Dreams",
+    "narrative": [
+      "In 2017, Dominica faced unprecedented destruction as Hurricane Maria made landfall, leaving a trail of devastation in its wake.",
+      "The storm brought torrential rains and powerful winds, causing widespread damage and loss of life, with a total of 64 people reported dead.",
+      "The estimated economic loss was staggering, with damages totaling $1,863,298 thousand USD, a significant blow to the island's already fragile economy."
+    ]
+  }
+}

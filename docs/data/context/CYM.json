@@ -1,0 +1,30 @@
+{
+  "2001": {
+    "tagline": "Islands of Serenity, Tested by Tempests",
+    "narrative": [
+      "The Cayman Islands, known for their tranquil beauty, were beset by a powerful storm in 2001. The tempest brought strong winds and heavy rains, causing widespread damage and disruption to the community. Despite the intensity of the storm, fortunately, no lives were lost, but the economic impact was significant, with estimated damages reaching $106,295,000."
+    ]
+  },
+  "2002": {
+    "tagline": "Turbulent Seas, Serene Islands",
+    "narrative": [
+      "The Cayman Islands were buffeted by a storm in 2002, causing significant damage but miraculously no loss of life. The tempest's impact was felt across the islands, with estimated damages totaling $2.616 million. Despite the turmoil, the storm's passage left the islands' natural beauty intact, a testament to their resilience."
+    ]
+  },
+  "2004": {
+    "tagline": "Turbulent Tides Tested the Islands' Fortitude",
+    "narrative": [
+      "In 2004, the Cayman Islands faced a powerful storm that brought destruction and loss.",
+      "The storm's ferocity resulted in 2 recorded fatalities and an estimated damage of $5.7 million.",
+      "The disaster tested the islands' resilience, but also highlighted their ability to respond and recover."
+    ]
+  },
+  "2008": {
+    "tagline": "Island calm, stormy eye",
+    "narrative": [
+      "In 2008, the Cayman Islands were affected by a storm that caused no recorded fatalities.",
+      "Despite the lack of significant human loss, the storm still had a profound impact on the islands' infrastructure and economy.",
+      "The storm's total estimated damage was $0, highlighting the resilience of the islands' residents and their ability to recover from such events."
+    ]
+  }
+}

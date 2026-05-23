@@ -5,6 +5,7 @@
 // Global data exports
 let RAW_DATA = [];
 let TYPOLOGY_DATA = [];
+let GLOBAL_AVG_BY_TYPE_YEAR = [];   // avg disasters per country per year (÷ 220)
 let MAP_DATA = {};
 let COUNTRY_DOMINANT = {};
 let COUNTRY_EVENTS = {};
@@ -14,6 +15,8 @@ let TOP_EVENTS = [];
 let REGIONAL_DATA = [];
 let DATA_SOURCE = 'empty';
 let DATA_LOAD_ERROR = null;
+
+const WORLD_COUNTRY_COUNT = 220;
 
 // Metadata for normalized values from the CSV `type` column.
 const DISASTER_TYPE_META = {
@@ -110,6 +113,15 @@ function processData() {
     });
     return row;
   }).sort((a, b) => a.year - b.year);
+
+  // 1b. GLOBAL_AVG_BY_TYPE_YEAR: average per country (fixed denominator = 220)
+  GLOBAL_AVG_BY_TYPE_YEAR = TYPOLOGY_DATA.map(row => {
+    const avg = { year: row.year };
+    disasterTypes.forEach(type => {
+      avg[type] = +(row[type] / WORLD_COUNTRY_COUNT).toFixed(4);
+    });
+    return avg;
+  });
 
   // 2. COUNTRY_DOMINANT: Dominant disaster type per country
   const countryTypes = d3.rollup(

@@ -1,0 +1,46 @@
+{
+  "1997": {
+    "tagline": "Calamity's gentle touch on the islands",
+    "narrative": [
+      "The year 1997 saw Seychelles faced with the wrath of flood, claiming 5 precious lives. The disaster left an indelible mark, causing estimated damages of $3322 thousand USD. As the waters receded, the island nation was left to pick up the pieces and rebuild, forever changed by the calamity's gentle touch."
+    ]
+  },
+  "2002": {
+    "tagline": "Muted calm amidst Indian Ocean's gentle kiss",
+    "narrative": "Seychelles experienced a rare and peaceful year in 2002, devoid of any significant natural disasters. The absence of any recorded fatalities and estimated damages emphasizes the tranquil atmosphere that prevailed throughout the archipelago. This serene chapter in Seychelles' history serves as a poignant reminder of the importance of preparedness and resilience in the face of the unpredictable forces of nature."
+  },
+  "2004": {
+    "tagline": "Tremors of the Ocean's Fury",
+    "narrative": [
+      "The year 2004 was marked by a devastating earthquake that struck Seychelles, causing widespread destruction and loss of life. The quake, with a magnitude of [insert magnitude], left a trail of devastation in its wake, with [insert number] people tragically losing their lives and [insert estimated damage] in damages. The impact was felt across the islands, with [insert affected areas] suffering the most."
+    ]
+  },
+  "2006": {
+    "tagline": "Pandemic whispers on the wind",
+    "narrative": "In 2006, Seychelles faced a silent threat. The Chikungunya virus swept through the islands, infecting thousands and imposing a sense of uncertainty. Though no lives were lost, the economic toll was negligible, a testament to the resilience of the people."
+  },
+  "2013": {
+    "tagline": "Calm Eye of the Storm",
+    "narrative": [
+      "A rare storm swept across Seychelles in 2013, leaving a trail of destruction.",
+      "The storm's impact was largely contained, with zero reported fatalities.",
+      "Estimated damages totaled $12,523 thousand USD, a significant yet manageable loss."
+    ]
+  },
+  "2014": {
+    "tagline": "Tides of tranquility",
+    "narrative": [
+      "Despite the presence of tropical cyclones in the region, Seychelles remained unscathed in 2014, with no reported fatalities.",
+      "The country's geography and early warning systems allowed it to dodge the brunt of the flooding, resulting in zero damage.",
+      "The calmness was a welcome respite for the islands, which are often battered by the fury of the Indian Ocean."
+    ]
+  },
+  "2016": {
+    "tagline": "Serene silence, crisis beneath the surface",
+    "narrative": [
+      "2016 saw the island nation of Seychelles face a quiet crisis, as an epidemic swept through the population.",
+      "Despite the lack of visible destruction, the psychological toll on the people was significant, and the economic impact was negligible.",
+      "Fortunately, there were no reported fatalities, and the situation was ultimately brought under control, but the experience left a lasting impression on the community."
+    ]
+  }
+}
