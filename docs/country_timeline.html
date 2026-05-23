@@ -244,11 +244,13 @@
   height: 100vh;
   z-index: 1;
   pointer-events: auto;
+  touch-action: pan-y;
 }
 
 .webgl-stage canvas {
   display: block;
   outline: none;
+  touch-action: pan-y;
 }
 
 .hallway {
@@ -859,6 +861,20 @@
     .dc-chart-inner { flex-direction: column; align-items: center; }
     .dc-curator { padding: 24px 20px 32px; }
     .narrative { column-count: 1; }
+  }
+
+  @media (max-width: 768px) {
+    .intro h1 { font-size: 44px; line-height: 1; }
+    .intro .lede { font-size: 15px; max-width: 90vw; }
+    .intro { padding: 0 24px; }
+    .hud-year { left: 16px; bottom: 20px; }
+    .hud-year .yr { font-size: 48px; }
+    .hud-year .era { font-size: 10px; }
+    .hud-progress { right: 16px; bottom: 20px; width: 140px; }
+    .top-bar { padding: 0 12px; }
+    .breadcrumb { display: none; }
+    .dc-title { font-size: 28px; }
+    .detail-card { max-height: 100dvh; overflow-y: auto; }
   }
 </style>
 </head>

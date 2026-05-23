@@ -231,7 +231,7 @@ function createCardTexture(yd) {
     rr(0, 0, 960, 1200, 32);
     const cardBg = ctx.createLinearGradient(0, 0, 0, 1200);
     cardBg.addColorStop(0, '#141e2d');
-    cardBg.addColorStop(1, '#0c1116');
+    cardBg.addColorStop(1, '#0c1521');
     ctx.fillStyle = cardBg;
     ctx.fill();
     ctx.save();
@@ -330,10 +330,10 @@ function createCardTexture(yd) {
     const CHART_BOT  = 880;
     const ROW_H      = (CHART_BOT - CHART_TOP) / Math.max(rows.length, 1);
 
-    const B1_H   = 15;  // country bar height
-    const B2_H   = 15;   // avg bar height
+    const B1_H   = 25;  // country bar height
+    const B2_H   = 25;  // avg bar height
     const B1_OFF = 28;  // px below rowTop for country bar centre
-    const B2_OFF = 47;  // px below rowTop for avg bar centre
+    const B2_OFF = 65;  // px below rowTop for avg bar centre
 
     const maxCount = Math.max(...rows.map(t => yd.breakdown[t] || 0), 1);
     const maxAvg   = Math.max(...rows.map(t => yearAvgs[t] || 0), 0.01);
@@ -369,8 +369,9 @@ function createCardTexture(yd) {
       if (avg > 0) {
         const avgW = Math.min(TW, (avg / maxScale) * TW);
         ctx.textAlign     = 'left';
+        ctx.textBaseline  = 'middle';
         ctx.letterSpacing = '1px';
-        ctx.font          = '300 15px "Inter", sans-serif';
+        ctx.font          = '300 25px "Inter", sans-serif';
         ctx.fillStyle     = 'rgba(151,174,196,0.65)';
         ctx.fillText(`${avg.toFixed(1)} avg`, CL + avgW + 8, b2Y + 4);
       }
@@ -386,7 +387,7 @@ function createCardTexture(yd) {
         ctx.textAlign     = 'left';
         ctx.textBaseline  = 'middle';
         ctx.letterSpacing = '1px';
-        ctx.font          = '300 15px "Inter", sans-serif';
+        ctx.font          = '300 25px "Inter", sans-serif';
         ctx.fillStyle     = 'rgba(255,255,255,0.72)';
         ctx.fillText(String(count), CL + barW + 8, b1Y);
       }
@@ -416,7 +417,7 @@ function createCardTexture(yd) {
 
     // Chart–footer divider
     ctx.fillStyle = 'rgba(151,174,196,0.18)';
-    ctx.fillRect(80, 882, 800, 1);
+    ctx.fillRect(80, 892, 800, 1);
 
     // ── FOOTER  (y 882 – 1200) ────────────────────────
     const dmgDisplay = (b) => {
@@ -458,8 +459,8 @@ function createCardTexture(yd) {
     // ── Border ring ───────────────────────────────────
     ctx.restore();
     rr(0, 0, 960, 1200, 32);
-    ctx.strokeStyle = 'rgba(151,174,196,0.20)';
-    ctx.lineWidth   = 3;
+    ctx.strokeStyle = 'rgba(255,255,255,0.18)';
+    ctx.lineWidth   = 5.5;
     ctx.stroke();
 
     const texture = new THREE.CanvasTexture(canvas);
@@ -476,121 +477,42 @@ function createCardTexture(yd) {
    GLOWING ROUND STAR TEXTURE
    ============================================= */
 function createStarTexture() {
+  const S = 128;
   const canvas = document.createElement('canvas');
-  canvas.width = 32;
-  canvas.height = 32;
+  canvas.width = S; canvas.height = S;
   const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, S, S);
+  const half = S / 2;
+  ctx.globalCompositeOperation = 'lighter';
 
-  // Create a radial gradient for a glowing core and soft edges
-  const grad = ctx.createRadialGradient(16, 16, 0, 16, 16, 16);
-  grad.addColorStop(0, 'rgba(255, 255, 255, 1)');   // Bright solid core
-  grad.addColorStop(0.3, 'rgba(255, 255, 255, 0.8)'); // Inner glow
-  grad.addColorStop(0.7, 'rgba(255, 255, 255, 0.2)'); // Outer glow
-  grad.addColorStop(1, 'rgba(255, 255, 255, 0)');     // Fades into darkness completely
+  // Wide white outer halo
+  ctx.fillStyle = 'rgba(200, 220, 255, 1)';
+  ctx.shadowColor = 'rgba(200, 220, 255, 1)';
+  ctx.shadowBlur = 48;
+  ctx.beginPath(); ctx.arc(half, half, 3, 0, Math.PI * 2); ctx.fill();
 
-  ctx.fillStyle = grad;
-  ctx.beginPath();
-  ctx.arc(16, 16, 16, 0, Math.PI * 2);
-  ctx.fill();
+  // Mid white glow
+  ctx.fillStyle = 'rgba(240, 245, 255, 1)';
+  ctx.shadowColor = 'rgba(240, 245, 255, 1)';
+  ctx.shadowBlur = 22;
+  ctx.beginPath(); ctx.arc(half, half, 2, 0, Math.PI * 2); ctx.fill();
 
-  return new THREE.CanvasTexture(canvas);
-}
+  // Inner intense white
+  ctx.fillStyle = 'rgba(255, 255, 255, 1)';
+  ctx.shadowColor = 'rgba(255, 255, 255, 1)';
+  ctx.shadowBlur = 10;
+  ctx.beginPath(); ctx.arc(half, half, 1.5, 0, Math.PI * 2); ctx.fill();
 
-/* =============================================
-   MILKY WAY PATH TEXTURE
-   ============================================= */
-function createPathTexture() {
-  const W = 512, H = 1024;
-  const canvas = document.createElement('canvas');
-  canvas.width = W; canvas.height = H;
-  const ctx = canvas.getContext('2d');
-  ctx.clearRect(0, 0, W, H);
+  // Pinpoint core
+  ctx.shadowBlur = 0;
+  ctx.fillStyle = 'rgba(255, 255, 255, 1)';
+  ctx.beginPath(); ctx.arc(half, half, 1.0, 0, Math.PI * 2); ctx.fill();
 
-  // Gaussian envelope: sigma=0.14 → alpha is < 0.002 at t=0 and t=1 (invisible edges)
-  function env(t) {
-    const d = (t - 0.5) / 0.14;
-    return Math.exp(-d * d * 0.5);
-  }
-
-  // Build gradient stops by sampling the Gaussian curve — guarantees true zero at edges
-  function makeGrad(peakAlpha) {
-    const g = ctx.createLinearGradient(0, 0, W, 0);
-    for (let i = 0; i <= 24; i++) {
-      const t = i / 24;
-      const a = (env(t) * peakAlpha).toFixed(4);
-      g.addColorStop(t, `rgba(120,170,240,${a})`);
-    }
-    return g;
-  }
-
-  // Layer 1 – wide outer haze (blueish)
-  ctx.fillStyle = makeGrad(0.10);
-  ctx.fillRect(0, 0, W, H);
-
-  // Layer 2 – inner glow (cooler blue-white), narrower sigma
-  const g2 = ctx.createLinearGradient(0, 0, W, 0);
-  for (let i = 0; i <= 24; i++) {
-    const t = i / 24;
-    const d = (t - 0.5) / 0.09;
-    const a = (Math.exp(-d * d * 0.5) * 0.20).toFixed(4);
-    g2.addColorStop(t, `rgba(190,220,255,${a})`);
-  }
-  ctx.fillStyle = g2;
-  ctx.fillRect(0, 0, W, H);
-
-  // Layer 3 – bright core strip
-  const g3 = ctx.createLinearGradient(0, 0, W, 0);
-  for (let i = 0; i <= 24; i++) {
-    const t = i / 24;
-    const d = (t - 0.5) / 0.045;
-    const a = (Math.exp(-d * d * 0.5) * 0.32).toFixed(4);
-    g3.addColorStop(t, `rgba(235,248,255,${a})`);
-  }
-  ctx.fillStyle = g3;
-  ctx.fillRect(0, 0, W, H);
-
-  const rng = mulberry32(137);
-
-  // Nebula blobs – organic dusty patches
-  for (let i = 0; i < 18; i++) {
-    const t  = 0.25 + rng() * 0.5;
-    const e  = env(t);
-    const cx = t * W;
-    const cy = rng() * H;
-    const r  = 18 + rng() * 70;
-    const a  = e * (0.04 + rng() * 0.07);
-    const warm = rng() > 0.55;
-    const col  = warm ? `rgba(255,210,140,${a.toFixed(3)})` : `rgba(150,195,255,${a.toFixed(3)})`;
-    const sg = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
-    sg.addColorStop(0, col);
-    sg.addColorStop(1, 'rgba(0,0,0,0)');
-    ctx.fillStyle = sg;
-    ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.fill();
-  }
-
-  // Stars – density and brightness follow the Gaussian envelope
-  for (let i = 0; i < 600; i++) {
-    const t = rng();
-    const e = env(t);
-    if (rng() > e) continue;             // thin out toward edges
-    const px = t * W;
-    const py = rng() * H;
-    const r  = 0.4 + rng() * 1.4;
-    const a  = e * (0.25 + rng() * 0.70);
-    const warm = rng() > 0.65;
-    const sg = ctx.createRadialGradient(px, py, 0, px, py, r * 3);
-    sg.addColorStop(0, warm ? `rgba(255,228,170,${a.toFixed(3)})` : `rgba(220,242,255,${a.toFixed(3)})`);
-    sg.addColorStop(1, 'rgba(0,0,0,0)');
-    ctx.fillStyle = sg;
-    ctx.beginPath(); ctx.arc(px, py, r * 3, 0, Math.PI * 2); ctx.fill();
-  }
-
-  const texture = new THREE.CanvasTexture(canvas);
-  texture.minFilter = THREE.LinearMipmapLinearFilter;
-  texture.generateMipmaps = true;
-  texture.wrapS = THREE.ClampToEdgeWrapping;
-  texture.wrapT = THREE.RepeatWrapping;
-  return texture;
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.minFilter = THREE.LinearFilter;
+  tex.magFilter = THREE.LinearFilter;
+  tex.generateMipmaps = false;
+  return tex;
 }
 
 /* =============================================
@@ -622,15 +544,17 @@ async function buildCards(yearDataArr) {
   const glowTexture = createGlowTexture();
   const hintTexture = createHintOverlayTexture();
 
+  const isMobile = window.innerWidth <= 880;
+
   yearDataArr.forEach((yd, i) => {
     const zPos = -(i * SPACING);
-    const side = i % 2 === 0 ? -8 : 8; 
+    const side = isMobile ? 0 : (i % 2 === 0 ? -8 : 8);
 
     const material = new THREE.MeshBasicMaterial({ map: textures[i], transparent: true, side: THREE.DoubleSide });
-    const geometry = new THREE.PlaneGeometry(8, 10); 
+    const geometry = new THREE.PlaneGeometry(8, 10);
     const mesh = new THREE.Mesh(geometry, material);
     mesh.position.set(side, 0, zPos);
-    mesh.rotation.y = i % 2 === 0 ? 0.20 : -0.20;
+    mesh.rotation.y = isMobile ? 0 : (i % 2 === 0 ? 0.20 : -0.20);
     mesh.userData = { year: yd.year, isCard: true };
 
     const glowMaterial = new THREE.MeshBasicMaterial({ map: glowTexture, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false });
@@ -678,36 +602,59 @@ async function buildCards(yearDataArr) {
 
   starGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
   
-  // FIX: Apply the round glowing texture and increase the size
+  const bgStarTex = createStarTexture();
   const starMat = new THREE.PointsMaterial({
-    size: 0.4, // Increased size because the texture is soft and fades out
-    map: createStarTexture(), // Applies our round, glowing canvas
-    color: 0xffffff,
-    transparent: true,
-    opacity: 0.8,
-    blending: THREE.AdditiveBlending,
-    depthWrite: false
-  });
+  size: 4.4,
+  map: bgStarTex,
+  alphaTest: 0.001,
+  color: 0xffffff,
+  transparent: true,
+  opacity: 0.8,
+  blending: THREE.AdditiveBlending,
+  depthWrite: false,
+  sizeAttenuation: true
+});
   
   const starMesh = new THREE.Points(starGeo, starMat);
   scene.add(starMesh);
 
-  // Milky Way ground path
-  const pathLength = totalDepth + START_OFFSET + 40;
-  const pathTex = createPathTexture();
-  pathTex.repeat.set(1, Math.ceil(pathLength / 14));
-  const pathMat = new THREE.MeshBasicMaterial({
-    map: pathTex,
-    transparent: true,
-    blending: THREE.AdditiveBlending,
-    depthWrite: false,
-    side: THREE.DoubleSide
-  });
-  const pathGeo = new THREE.PlaneGeometry(20, pathLength);
-  const pathMesh = new THREE.Mesh(pathGeo, pathMat);
-  pathMesh.rotation.x = -Math.PI / 2;
-  pathMesh.position.set(0, -5.2, START_OFFSET - pathLength / 2);
-  scene.add(pathMesh);
+  // Milky Way path — star particles along the hallway floor
+  const pathDepth = totalDepth + START_OFFSET + 30;
+  const prng = mulberry32(888);
+  function gauss() { return (prng() + prng() + prng() - 1.5) * 0.667; }
+  const pathStarTex = createStarTexture();
+
+  // Layer 1: scattered fine stars — wide corridor
+  const N1 = 1400;
+  const pos1 = new Float32Array(N1 * 3);
+  for (let i = 0; i < N1; i++) {
+    pos1[i*3]   = gauss() * 3.5;
+    pos1[i*3+1] = -5 + (prng() - 0.5) * 0.5;
+    pos1[i*3+2] = START_OFFSET + 2 - prng() * pathDepth;
+  }
+  const pathGeo1 = new THREE.BufferGeometry();
+  pathGeo1.setAttribute('position', new THREE.BufferAttribute(pos1, 3));
+  scene.add(new THREE.Points(pathGeo1, new THREE.PointsMaterial({
+    size: 0.55, map: pathStarTex, transparent: true, alphaTest: 0.01, opacity: 0.90,
+    blending: THREE.AdditiveBlending, depthWrite: false, sizeAttenuation: true,
+    color: new THREE.Color(1.0, 1.0, 1.0)
+  })));
+
+  // Layer 2: bright glow accents — tighter center band
+  const N2 = 300;
+  const pos2 = new Float32Array(N2 * 3);
+  for (let i = 0; i < N2; i++) {
+    pos2[i*3]   = gauss() * 2.0;
+    pos2[i*3+1] = -5 + (prng() - 0.5) * 0.3;
+    pos2[i*3+2] = START_OFFSET + 2 - prng() * pathDepth;
+  }
+  const pathGeo2 = new THREE.BufferGeometry();
+  pathGeo2.setAttribute('position', new THREE.BufferAttribute(pos2, 3));
+  scene.add(new THREE.Points(pathGeo2, new THREE.PointsMaterial({
+    size: 1.4, map: pathStarTex, transparent: true, alphaTest: 0.01, opacity: 0.70,
+    blending: THREE.AdditiveBlending, depthWrite: false, sizeAttenuation: true,
+    color: new THREE.Color(1.0, 1.0, 1.0)
+  })));
 
   const scrollSpacer = document.getElementById('spacer');
   scrollSpacer.style.height = `${maxScrollPixels + window.innerHeight + 200}px`;
@@ -787,28 +734,26 @@ function tick() {
   let bestDist = Infinity;
 
   for (const c of stageCards) {
-    const relZ = c.zPos - cameraZ; 
-    const fadeStart = -12; 
-    const fadeEnd = -6;    
+    const relZ = c.zPos - cameraZ;
+    const fadeStart = -12;
+    const fadeEnd = -6;
 
     if (relZ > fadeEnd) {
       c.mesh.material.opacity = 0;
       c.glowMesh.material.opacity = 0;
-      c.mesh.visible = false; 
+      c.mesh.visible = false;
     } else {
       c.mesh.visible = true;
       c.glowMesh.material.opacity += (c.glowMesh.userData.targetOpacity - c.glowMesh.material.opacity) * 0.1;
       c.hintMesh.material.opacity += (c.hintMesh.userData.targetOpacity - c.hintMesh.material.opacity) * 0.1;
-
       if (relZ > fadeStart) {
-        let fadeAmount = (relZ - fadeStart) / (fadeEnd - fadeStart);
-        c.mesh.material.opacity = 1 - fadeAmount;
+        c.mesh.material.opacity = 1 - (relZ - fadeStart) / (fadeEnd - fadeStart);
       } else {
         c.mesh.material.opacity = 1;
       }
     }
 
-    const absDist = Math.abs(relZ + 14);   // target cards ~14 units ahead (fully visible zone)
+    const absDist = Math.abs(relZ + 14);
     if (absDist < bestDist) {
       bestDist = absDist;
       closest = c;
