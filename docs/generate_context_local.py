@@ -1,0 +1,89 @@
+import pandas as pd
+import json
+import os
+import ollama # The official local Ollama library
+
+# --- CONFIGURATION ---
+CSV_PATH = 'docs/data/emdat_clean.csv'
+OUTPUT_DIR = 'docs/data/context' # New folder for our individual files!
+
+def main():
+    # Create the output directory if it doesn't exist
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
+    
+    print("Loading EM-DAT dataset...")
+    df = pd.read_csv(CSV_PATH, engine='python')
+    
+    # Group data by Country and Year
+    grouped = df.groupby(['iso', 'country', 'year'])
+    
+    for (iso, country, year), group in grouped:
+        country_file = os.path.join(OUTPUT_DIR, f"{iso}.json")
+        
+        # Load existing data for this country (so we can pause and resume!)
+        if os.path.exists(country_file):
+            with open(country_file, 'r') as f:
+                country_data = json.load(f)
+        else:
+            country_data = {}
+            
+        # Skip if we already generated this specific year
+        if str(year) in country_data:
+            continue
+            
+        # Summarize the data for the LLM
+        total_deaths = group['deaths'].sum()
+        total_damage = group['damage_usd_thousands'].sum()
+        disaster_types = ", ".join(group['type'].unique())
+        
+        prompt = f"""
+        You are a curator for a Natural Disasters Museum. 
+        In {year}, {country} experienced the following natural disasters: {disaster_types}.
+        Total recorded deaths: {total_deaths}.
+        Total estimated damage: ${total_damage} thousand USD.
+        Get real information of the important events that happened.
+        
+        Write a JSON response with two keys:
+        1. "tagline": A short, poetic, 5-to-8 word summary of the year.
+        2. "narrative": A solemn, historical, 3-sentence description of the impact.
+        
+        Output strictly valid JSON.
+        """
+        
+        print(f"Generating context for {iso} ({country}) in {year}...")
+        
+        try:
+            # Ask your local Ollama AI!
+            # Note: Make sure 'llama3' matches the model you actually downloaded
+            response = ollama.chat(
+                model='llama3', 
+                format='json', # Forces the output to be JSON
+                messages=[{'role': 'user', 'content': prompt}]
+            )
+            
+            # Extract just the raw text the AI wrote
+            raw_ai_text = response['message']['content']
+            
+            # Turn the AI's string into a proper Python dictionary
+            data = json.loads(raw_ai_text)
+            
+            # Add the new year to this country's dictionary
+            country_data[str(year)] = data
+            
+            # Save the specific country file immediately
+            with open(country_file, 'w') as f:
+                json.dump(country_data, f, indent=2)
+                
+            print(f"  ✅ Saved to {iso}.json")
+            
+        except json.JSONDecodeError:
+            print(f"  ❌ AI didn't return valid JSON for {country} {year}. Skipping...")
+        except Exception as e:
+            print(f"  ❌ Failed on {country} {year}: {e}")
+            
+        # Notice: No time.sleep() needed! The loop immediately continues.
+        
+    print("\n🎉 All country contexts generated successfully!")
+
+if __name__ == "__main__":
+    main()
