@@ -418,6 +418,12 @@ button {
   white-space: nowrap;
   flex-shrink: 0;
 }
+.brand a {
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}
+.brand a:hover { opacity: 0.75; }
 
 .brand-earth {
   font-style: italic;
