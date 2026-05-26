@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Meet the Curators · Earth Natural Disaster Museum</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Inter:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<style>
+  :root {
+    --bluegrey:    #97AEC4;
+    --bluesky:     #6EB6FF;
+    --orange:      #FF8775;
+    --bgcolor:     #0C1116;
+    --text:        #FFF;
+    --text-mid:    #97AEC4;
+    --text-dim:    rgba(151,174,196,0.58);
+    --gradient:    linear-gradient(90deg, #97AEC4 0%, #6EB6FF 50%, #FF8775 100%);
+    --line:        rgba(151,174,196,0.18);
+    --line-soft:   rgba(151,174,196,0.10);
+    --bg-card:     #131922;
+    --bg-card-2:   #181f2a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--bgcolor); color: var(--text); }
+  body {
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+  #starfieldCanvas {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* top-bar, brand, breadcrumb come from css/style.css */
+
+  /* Hero */
+  .hero {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 110px 56px 60px;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+  }
+  .kicker {
+    font-size: 11px;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 28px;
+    display: inline-flex;
+    align-items: center;
+    gap: 18px;
+  }
+  .kicker::before,
+  .kicker::after {
+    content: "";
+    width: 36px; height: 1px;
+    background: var(--text-dim);
+  }
+  .hero h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 400;
+    font-size: 88px;
+    line-height: .98;
+    letter-spacing: -0.02em;
+    margin-bottom: 24px;
+  }
+  .hero h1 em {
+    font-style: italic;
+    font-weight: 300;
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .hero .lede {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 22px;
+    line-height: 1.55;
+    color: var(--text-mid);
+    max-width: 640px;
+    margin: 0 auto;
+    font-weight: 300;
+  }
+
+  /* Gallery */
+  .gallery {
+    max-width: 1380px;
+    margin: 0 auto;
+    padding: 40px 56px 120px;
+    position: relative;
+    z-index: 2;
+  }
+  .floor {
+    position: absolute;
+    left: 56px; right: 56px;
+    bottom: 80px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, var(--line) 15%, var(--line) 85%, transparent 100%);
+    pointer-events: none;
+  }
+  .alcoves {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+    align-items: end;
+  }
+
+  .alcove {
+    position: relative;
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 48px 36px 40px;
+    text-align: center;
+    transition: transform .5s cubic-bezier(.2,.7,.2,1), border-color .35s ease, box-shadow .35s ease;
+    overflow: hidden;
+  }
+  .alcove::before {
+    content: "";
+    position: absolute;
+    top: -100px; left: 50%;
+    width: 320px; height: 280px;
+    transform: translateX(-50%);
+    background: radial-gradient(ellipse at 50% 0%, rgba(151,174,196,.12) 0%, rgba(151,174,196,0) 60%);
+    pointer-events: none;
+    opacity: .6;
+    transition: opacity .5s ease;
+  }
+  .alcove:hover {
+    transform: translateY(-6px);
+    border-color: var(--text-mid);
+    box-shadow:
+      0 1px 0 rgba(255,255,255,.04) inset,
+      0 40px 80px -20px rgba(0,0,0,.6);
+  }
+  .alcove:hover::before { opacity: 1; }
+
+  .alcove[data-persona="moon"]   { --tint: #C8D4E0; }
+  .alcove[data-persona="venus"]  { --tint: #FF8775; }
+  .alcove[data-persona="mercury"]{ --tint: #5f8693; }
+
+  .alcove:hover::before {
+    background: radial-gradient(ellipse at 50% 0%, color-mix(in srgb, var(--tint) 18%, transparent) 0%, transparent 60%);
+  }
+
+  .plaque {
+    font-size: 9.5px;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 28px;
+  }
+  .plaque .num {
+    color: var(--tint);
+    font-weight: 500;
+  }
+
+  .portrait {
+    width: 200px; height: 200px;
+    margin: 0 auto 28px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .portrait::after {
+    content: "";
+    position: absolute;
+    inset: -20px;
+    background: radial-gradient(circle, color-mix(in srgb, var(--tint) 22%, transparent) 0%, transparent 60%);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+  .portrait svg {
+    width: 180px;
+    height: 180px;
+    position: relative;
+    z-index: 1;
+    filter: drop-shadow(0 12px 24px rgba(0,0,0,.5));
+    animation: float 8s ease-in-out infinite;
+  }
+  .alcove:nth-child(2) .portrait svg { animation-delay: -2.6s; }
+  .alcove:nth-child(3) .portrait svg { animation-delay: -5.2s; }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-8px); }
+  }
+
+  .name {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 400;
+    font-size: 42px;
+    line-height: 1;
+    letter-spacing: -0.01em;
+    margin-bottom: 6px;
+  }
+  .name em {
+    font-style: italic;
+    color: var(--tint);
+    font-weight: 400;
+  }
+  .role {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 16px;
+    color: var(--text-mid);
+    margin-bottom: 22px;
+    font-weight: 300;
+  }
+  .divider {
+    width: 28px; height: 1px;
+    background: var(--tint);
+    margin: 0 auto 22px;
+    opacity: .6;
+  }
+  .quote {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 17px;
+    line-height: 1.55;
+    color: var(--text-mid);
+    margin-bottom: 32px;
+    font-weight: 300;
+    min-height: 7em;
+  }
+  .quote::before, .quote::after {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 38px;
+    color: var(--tint);
+    line-height: 0;
+    vertical-align: -12px;
+    opacity: .7;
+  }
+  .quote::before { content: "\201C"; margin-right: 4px; }
+  .quote::after  { content: "\201D"; margin-left: 4px; }
+
+  .stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px 18px;
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+    text-align: left;
+  }
+  .stat .lbl {
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 4px;
+  }
+  .stat .v {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 17px;
+    line-height: 1.2;
+  }
+
+  /* Closing + credits */
+  .closing {
+    max-width: 880px;
+    margin: 60px auto 80px;
+    padding: 60px 56px 0;
+    border-top: 1px solid var(--line);
+    text-align: center;
+    position: relative;
+    z-index: 2;
+  }
+  .closing .label {
+    font-size: 11px;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 22px;
+  }
+  .closing .body {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 20px;
+    line-height: 1.6;
+    color: var(--text-mid);
+    font-weight: 300;
+  }
+  .closing .body strong {
+    font-style: normal;
+    color: var(--text);
+    font-weight: 400;
+  }
+
+  .credits {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 56px 140px;
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 64px;
+    align-items: start;
+    position: relative;
+    z-index: 2;
+  }
+  .credits .label {
+    font-size: 11px;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+  .credits .humans {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    line-height: 1.7;
+    color: var(--text-mid);
+  }
+  .credits .person {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .credits .person:last-child { border-bottom: none; }
+  .credits .person .name-h {
+    color: var(--text);
+    font-weight: 400;
+    font-size: 18px;
+  }
+  .credits .person .sciper {
+    color: var(--text-dim);
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    letter-spacing: 0.05em;
+    font-variant-numeric: tabular-nums;
+  }
+  .credits .meta {
+    margin-top: 32px;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    color: var(--text-dim);
+    line-height: 1.7;
+  }
+  .credits .meta a {
+    color: var(--text-mid);
+    text-decoration: underline;
+    text-decoration-color: rgba(151,174,196,0.3);
+    text-underline-offset: 3px;
+  }
+
+  @media (max-width: 1100px) {
+    .alcoves { grid-template-columns: 1fr; gap: 24px; }
+    .floor { display: none; }
+    .credits { grid-template-columns: 1fr; gap: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="top-bar">
+  <div class="brand">
+    <a href="curators.html"><span class="brand-earth">Earth</span> Natural Disaster Museum<span class="brand-dim"> · est. 2026</span></a>
+  </div>
+  <nav class="breadcrumb">
+    <a href="globe.html" style="color:inherit;text-decoration:none;opacity:.7">The Globe: Earth</a>
+    <span class="sep">/</span>
+    Meet the Curators
+  </nav>
+  <div class="top-bar-action"></div>
+</header>
+
+<section class="hero">
+  <div class="kicker">Wing IV · Meet the Curators</div>
+  <h1>The keepers of <em>this hall</em>.</h1>
+  <p class="lede">Every museum has its custodians. Ours are not from here. They are three of Earth's nearest neighbours, each with their own perspective on what disaster means, what it costs, and what it leaves behind.</p>
+</section>
+
+<section class="gallery">
+  <div class="floor" aria-hidden="true"></div>
+  <div class="alcoves">
+
+    <!-- MOON -->
+    <article class="alcove" data-persona="moon">
+      <div class="plaque"><span class="num">I</span> · The Archivist</div>
+      <div class="portrait">
+        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="moonBody" cx="38%" cy="35%" r="70%">
+              <stop offset="0%"  stop-color="#E8E1D2"/>
+              <stop offset="55%" stop-color="#B6AE9D"/>
+              <stop offset="85%" stop-color="#5D5544"/>
+              <stop offset="100%" stop-color="#2A2620"/>
+            </radialGradient>
+            <radialGradient id="moonRim" cx="50%" cy="50%" r="50%">
+              <stop offset="86%" stop-color="rgba(255,255,255,0)"/>
+              <stop offset="98%" stop-color="rgba(200,212,224,0.4)"/>
+              <stop offset="100%" stop-color="rgba(200,212,224,0)"/>
+            </radialGradient>
+            <clipPath id="moonClip"><circle cx="100" cy="100" r="88"/></clipPath>
+          </defs>
+          <circle cx="100" cy="100" r="88" fill="url(#moonBody)"/>
+          <g clip-path="url(#moonClip)" opacity=".55">
+            <ellipse cx="78"  cy="78" rx="28" ry="18" fill="#3a342a" transform="rotate(-20 78 78)"/>
+            <ellipse cx="118" cy="92" rx="18" ry="14" fill="#3a342a"/>
+            <ellipse cx="92"  cy="128" rx="22" ry="14" fill="#3a342a" transform="rotate(15 92 128)"/>
+            <ellipse cx="135" cy="130" rx="12" ry="9"  fill="#3a342a"/>
+            <ellipse cx="62"  cy="112" rx="9" ry="6"   fill="#3a342a"/>
+          </g>
+          <g clip-path="url(#moonClip)" opacity=".5">
+            <circle cx="142" cy="68"  r="5" fill="none" stroke="#E8E1D2" stroke-width="1.2"/>
+            <circle cx="55"  cy="142" r="4" fill="none" stroke="#E8E1D2" stroke-width="1.1"/>
+            <circle cx="155" cy="155" r="3" fill="none" stroke="#E8E1D2" stroke-width="1"/>
+            <circle cx="70"  cy="55"  r="3" fill="none" stroke="#E8E1D2" stroke-width="1"/>
+            <circle cx="105" cy="160" r="2.5" fill="none" stroke="#E8E1D2" stroke-width="0.9"/>
+          </g>
+          <circle cx="100" cy="100" r="88" fill="url(#moonRim)"/>
+        </svg>
+      </div>
+      <h2 class="name">Moon<em> ☾</em></h2>
+      <p class="role">Keeper of Records · Resident, Earth Orbit</p>
+      <div class="divider"></div>
+      <p class="quote">I have watched every storm. I have watched every quake. From up here, fifty years is barely a breath — but each entry in this archive is mine to keep, and yours to read.</p>
+      <div class="stats">
+        <div class="stat"><div class="lbl">Distance from Earth</div><div class="v">384,400 km</div></div>
+        <div class="stat"><div class="lbl">Day length</div><div class="v">27.3 days</div></div>
+        <div class="stat"><div class="lbl">Surface gravity</div><div class="v">0.16 g</div></div>
+        <div class="stat"><div class="lbl">Tenure</div><div class="v">Since opening</div></div>
+      </div>
+    </article>
+
+    <!-- VENUS -->
+    <article class="alcove" data-persona="venus">
+      <div class="plaque"><span class="num">II</span> · The Climatologist</div>
+      <div class="portrait">
+        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="venusBody" cx="40%" cy="35%" r="75%">
+              <stop offset="0%"  stop-color="#FFE9B8"/>
+              <stop offset="40%" stop-color="#F4B26A"/>
+              <stop offset="75%" stop-color="#C97548"/>
+              <stop offset="100%" stop-color="#5A2F1D"/>
+            </radialGradient>
+            <radialGradient id="venusRim" cx="50%" cy="50%" r="50%">
+              <stop offset="86%" stop-color="rgba(255,255,255,0)"/>
+              <stop offset="98%" stop-color="rgba(255,135,117,0.5)"/>
+              <stop offset="100%" stop-color="rgba(255,135,117,0)"/>
+            </radialGradient>
+            <clipPath id="venusClip"><circle cx="100" cy="100" r="88"/></clipPath>
+          </defs>
+          <circle cx="100" cy="100" r="88" fill="url(#venusBody)"/>
+          <g clip-path="url(#venusClip)" opacity=".42">
+            <path d="M 12 70 Q 60 60 100 75 T 188 75"  fill="none" stroke="#FFE9B8" stroke-width="6" stroke-linecap="round"/>
+            <path d="M 12 95 Q 60 88 100 100 T 188 95"  fill="none" stroke="#FFD089" stroke-width="5" stroke-linecap="round"/>
+            <path d="M 12 120 Q 60 115 100 128 T 188 120" fill="none" stroke="#FFE9B8" stroke-width="5" stroke-linecap="round"/>
+            <path d="M 12 145 Q 60 140 100 152 T 188 145" fill="none" stroke="#E89967" stroke-width="4" stroke-linecap="round"/>
+          </g>
+          <g clip-path="url(#venusClip)" opacity=".25">
+            <ellipse cx="65"  cy="82"  rx="32" ry="6" fill="#FFE9B8" transform="rotate(-8 65 82)"/>
+            <ellipse cx="135" cy="110" rx="36" ry="7" fill="#FFE9B8" transform="rotate(-6 135 110)"/>
+            <ellipse cx="80"  cy="138" rx="30" ry="6" fill="#FFD089" transform="rotate(-10 80 138)"/>
+          </g>
+          <circle cx="100" cy="100" r="88" fill="url(#venusRim)"/>
+        </svg>
+      </div>
+      <h2 class="name">Venus<em> ♀</em></h2>
+      <p class="role">Curator of Atmospheres · On loan from the inner system</p>
+      <div class="divider"></div>
+      <p class="quote">My surface is hotter than lead is liquid. I am what happens when an atmosphere is allowed to run away. This hall is a kindness — visit me, and see what you wish to avoid.</p>
+      <div class="stats">
+        <div class="stat"><div class="lbl">Surface temperature</div><div class="v">465 °C</div></div>
+        <div class="stat"><div class="lbl">Atm. pressure</div><div class="v">92 atm</div></div>
+        <div class="stat"><div class="lbl">Atmosphere</div><div class="v">96.5% CO₂</div></div>
+        <div class="stat"><div class="lbl">Cautionary tale</div><div class="v">Since 4.5 Ga</div></div>
+      </div>
+    </article>
+
+    <!-- MERCURY -->
+    <article class="alcove" data-persona="mercury">
+    <div class="plaque"><span class="num">III</span> · The Witness</div>
+    <div class="portrait">
+        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+            <radialGradient id="mercuryBody" cx="38%" cy="35%" r="72%">
+            <stop offset="0%"  stop-color="#B5C5CB"/>
+            <stop offset="40%" stop-color="#667E86"/>
+            <stop offset="75%" stop-color="#3A4A50"/>
+            <stop offset="100%" stop-color="#15191C"/>
+            </radialGradient>
+            <radialGradient id="mercuryRim" cx="50%" cy="50%" r="50%">
+            <stop offset="86%" stop-color="rgba(255,255,255,0)"/>
+            <stop offset="98%" stop-color="rgba(181,197,203,0.5)"/>
+            <stop offset="100%" stop-color="rgba(181,197,203,0)"/>
+            </radialGradient>
+            <clipPath id="mercuryClip"><circle cx="100" cy="100" r="88"/></clipPath>
+        </defs>
+
+        <circle cx="100" cy="100" r="88" fill="url(#mercuryBody)"/>
+
+        <!-- Caloris-like basin (Mercury's huge impact crater) and surrounding maria -->
+        <g clip-path="url(#mercuryClip)" opacity=".45">
+            <circle cx="78" cy="72" r="22" fill="#3a342a"/>
+            <circle cx="78" cy="72" r="22" fill="none" stroke="#7a6f5e" stroke-width="1.2" opacity=".7"/>
+            <ellipse cx="128" cy="118" rx="20" ry="14" fill="#3a342a" transform="rotate(20 128 118)"/>
+            <ellipse cx="65"  cy="135" rx="14" ry="9"  fill="#3a342a"/>
+            <ellipse cx="140" cy="78"  rx="10" ry="7"  fill="#3a342a"/>
+        </g>
+
+        <!-- Dense crater field — Mercury is heavily cratered, more than Mars -->
+        <g clip-path="url(#mercuryClip)" opacity=".55">
+            <circle cx="142" cy="142" r="6"   fill="none" stroke="#C8BFAE" stroke-width="1.2"/>
+            <circle cx="55"  cy="92"  r="5"   fill="none" stroke="#C8BFAE" stroke-width="1.1"/>
+            <circle cx="115" cy="55"  r="4"   fill="none" stroke="#C8BFAE" stroke-width="1"/>
+            <circle cx="155" cy="105" r="3.5" fill="none" stroke="#C8BFAE" stroke-width="1"/>
+            <circle cx="98"  cy="158" r="4"   fill="none" stroke="#C8BFAE" stroke-width="1"/>
+            <circle cx="48"  cy="155" r="3"   fill="none" stroke="#C8BFAE" stroke-width="0.9"/>
+            <circle cx="168" cy="58"  r="2.5" fill="none" stroke="#C8BFAE" stroke-width="0.9"/>
+            <circle cx="85"  cy="110" r="2.5" fill="none" stroke="#C8BFAE" stroke-width="0.9"/>
+            <circle cx="125" cy="92"  r="2"   fill="none" stroke="#C8BFAE" stroke-width="0.8"/>
+            <circle cx="40"  cy="118" r="2"   fill="none" stroke="#C8BFAE" stroke-width="0.8"/>
+        </g>
+
+        <circle cx="100" cy="100" r="88" fill="url(#mercuryRim)"/>
+        </svg>
+    </div>
+    <h2 class="name">Mercury<em> ☿</em></h2>
+    <p class="role">Curator of Exposure · Closest to the fire</p>
+    <div class="divider"></div>
+    <p class="quote">I am the smallest, and the nearest. I have no atmosphere to soften anything — every meteor lands, every degree of sun arrives. I know what it is to face a thing without protection.</p>
+    <div class="stats">
+        <div class="stat"><div class="lbl">Distance from Sun</div><div class="v">57.9 M km</div></div>
+        <div class="stat"><div class="lbl">Day temperature</div><div class="v">+430 °C</div></div>
+        <div class="stat"><div class="lbl">Night temperature</div><div class="v">−180 °C</div></div>
+        <div class="stat"><div class="lbl">Atmosphere</div><div class="v">None to speak of</div></div>
+    </div>
+    </article>
+
+  </div>
+</section>
+
+<section class="closing">
+  <div class="label">A note on this exhibit</div>
+  <p class="body">The three voices above are <strong>imagined</strong>, of course. They speak for us — the team that built this museum — and for the perspective each celestial body would offer if it could. The data, however, is real. Every figure in every other wing of this museum is sourced from the <strong>EM-DAT International Disaster Database</strong>.</p>
+</section>
+
+<section class="credits">
+  <div><div class="label">Built by</div></div>
+  <div>
+    <div class="humans">
+      <div class="person"><span class="name-h">Luna Raithle</span><span class="sciper">SCIPER 332446</span></div>
+      <div class="person"><span class="name-h">Morgane Magnin</span><span class="sciper">SCIPER 347041</span></div>
+      <div class="person"><span class="name-h">Annaëlle Myriam Benlamri</span><span class="sciper">SCIPER 297135</span></div>
+    </div>
+    <div class="meta">
+      Made for <span style="color:var(--text-mid)">COM-480 · Data Visualization · EPFL · 2026</span><br>
+      Data — <a href="https://public.emdat.be/" target="_blank" rel="noopener">EM-DAT, CRED / UCLouvain</a><br>
+      Source code — <a href="https://github.com/com-480-data-visualization/PixElles#" target="_blank" rel="noopener">GitHub repository</a>
+    </div>
+  </div>
+</section>
+
+<canvas id="starfieldCanvas"></canvas>
+<script>
+  (function () {
+    const canvas = document.getElementById('starfieldCanvas');
+    const ctx    = canvas.getContext('2d');
+    function rng(seed) {
+      let s = seed;
+      return function () {
+        s = (s ^ (s << 13)) >>> 0;
+        s = (s ^ (s >>> 17)) >>> 0;
+        s = (s ^ (s << 5))  >>> 0;
+        return s / 0xffffffff;
+      };
+    }
+    function draw() {
+      const dpr = window.devicePixelRatio || 1;
+      const w   = window.innerWidth;
+      const h   = window.innerHeight;
+      canvas.width  = w * dpr;
+      canvas.height = h * dpr;
+      canvas.style.width  = w + 'px';
+      canvas.style.height = h + 'px';
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.fillStyle = '#0C1116';
+      ctx.fillRect(0, 0, w, h);
+      const rand  = rng(42);
+      const count = Math.round(w * h / 1400);
+      for (let i = 0; i < count; i++) {
+        const x     = rand() * w;
+        const y     = rand() * h;
+        const size  = rand() * 1.4 + 0.3;
+        const alpha = rand() * 0.7 + 0.15;
+        ctx.beginPath();
+        ctx.arc(x, y, size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255,255,255,${alpha.toFixed(2)})`;
+        ctx.fill();
+      }
+      const grad = ctx.createRadialGradient(w/2, h/2, h * 0.2, w/2, h/2, h * 0.9);
+      grad.addColorStop(0, 'rgba(12,17,22,0)');
+      grad.addColorStop(1, 'rgba(12,17,22,0.55)');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, w, h);
+    }
+    draw();
+    window.addEventListener('resize', draw);
+  })();
+</script>
+
+</body>
+</html>
