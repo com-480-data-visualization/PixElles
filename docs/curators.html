@@ -147,7 +147,7 @@
 
   .alcove[data-persona="moon"]   { --tint: #C8D4E0; }
   .alcove[data-persona="venus"]  { --tint: #FF8775; }
-  .alcove[data-persona="mars"]   { --tint: #E07B4D; }
+  .alcove[data-persona="mercury"]{ --tint: #5f8693; }
 
   .alcove:hover::before {
     background: radial-gradient(ellipse at 50% 0%, color-mix(in srgb, var(--tint) 18%, transparent) 0%, transparent 60%);
@@ -480,52 +480,64 @@
       </div>
     </article>
 
-    <!-- MARS -->
-    <article class="alcove" data-persona="mars">
-      <div class="plaque"><span class="num">III</span> · The Historian</div>
-      <div class="portrait">
+    <!-- MERCURY -->
+    <article class="alcove" data-persona="mercury">
+    <div class="plaque"><span class="num">III</span> · The Witness</div>
+    <div class="portrait">
         <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <radialGradient id="marsBody" cx="40%" cy="38%" r="72%">
-              <stop offset="0%"  stop-color="#F4B395"/>
-              <stop offset="35%" stop-color="#D87A4D"/>
-              <stop offset="70%" stop-color="#8E3E22"/>
-              <stop offset="100%" stop-color="#2E1410"/>
+        <defs>
+            <radialGradient id="mercuryBody" cx="38%" cy="35%" r="72%">
+            <stop offset="0%"  stop-color="#B5C5CB"/>
+            <stop offset="40%" stop-color="#667E86"/>
+            <stop offset="75%" stop-color="#3A4A50"/>
+            <stop offset="100%" stop-color="#15191C"/>
             </radialGradient>
-            <radialGradient id="marsRim" cx="50%" cy="50%" r="50%">
-              <stop offset="86%" stop-color="rgba(255,255,255,0)"/>
-              <stop offset="98%" stop-color="rgba(224,123,77,0.45)"/>
-              <stop offset="100%" stop-color="rgba(224,123,77,0)"/>
+            <radialGradient id="mercuryRim" cx="50%" cy="50%" r="50%">
+            <stop offset="86%" stop-color="rgba(255,255,255,0)"/>
+            <stop offset="98%" stop-color="rgba(181,197,203,0.5)"/>
+            <stop offset="100%" stop-color="rgba(181,197,203,0)"/>
             </radialGradient>
-            <clipPath id="marsClip"><circle cx="100" cy="100" r="88"/></clipPath>
-          </defs>
-          <circle cx="100" cy="100" r="88" fill="url(#marsBody)"/>
-          <g clip-path="url(#marsClip)" opacity=".5">
-            <path d="M 70 60 Q 95 55 110 75 Q 105 95 85 95 Q 65 88 70 60 Z" fill="#5A2818"/>
-            <path d="M 120 110 Q 145 105 155 130 Q 148 152 125 148 Q 108 135 120 110 Z" fill="#5A2818"/>
-            <ellipse cx="60" cy="130" rx="18" ry="10" fill="#5A2818" transform="rotate(-15 60 130)"/>
-            <ellipse cx="145" cy="80" rx="12" ry="7"  fill="#5A2818"/>
-          </g>
-          <g clip-path="url(#marsClip)">
-            <ellipse cx="100" cy="28" rx="34" ry="14" fill="#F4ECD8" opacity=".88"/>
-            <ellipse cx="100" cy="32" rx="28" ry="10" fill="#FFFFFF" opacity=".75"/>
-            <ellipse cx="100" cy="178" rx="20" ry="7" fill="#F4ECD8" opacity=".7"/>
-          </g>
-          <circle cx="78" cy="98" r="4" fill="#F4B395" opacity=".7"/>
-          <circle cx="78" cy="98" r="1.6" fill="#F4ECD8" opacity=".9"/>
-          <circle cx="100" cy="100" r="88" fill="url(#marsRim)"/>
+            <clipPath id="mercuryClip"><circle cx="100" cy="100" r="88"/></clipPath>
+        </defs>
+
+        <circle cx="100" cy="100" r="88" fill="url(#mercuryBody)"/>
+
+        <!-- Caloris-like basin (Mercury's huge impact crater) and surrounding maria -->
+        <g clip-path="url(#mercuryClip)" opacity=".45">
+            <circle cx="78" cy="72" r="22" fill="#3a342a"/>
+            <circle cx="78" cy="72" r="22" fill="none" stroke="#7a6f5e" stroke-width="1.2" opacity=".7"/>
+            <ellipse cx="128" cy="118" rx="20" ry="14" fill="#3a342a" transform="rotate(20 128 118)"/>
+            <ellipse cx="65"  cy="135" rx="14" ry="9"  fill="#3a342a"/>
+            <ellipse cx="140" cy="78"  rx="10" ry="7"  fill="#3a342a"/>
+        </g>
+
+        <!-- Dense crater field — Mercury is heavily cratered, more than Mars -->
+        <g clip-path="url(#mercuryClip)" opacity=".55">
+            <circle cx="142" cy="142" r="6"   fill="none" stroke="#C8BFAE" stroke-width="1.2"/>
+            <circle cx="55"  cy="92"  r="5"   fill="none" stroke="#C8BFAE" stroke-width="1.1"/>
+            <circle cx="115" cy="55"  r="4"   fill="none" stroke="#C8BFAE" stroke-width="1"/>
+            <circle cx="155" cy="105" r="3.5" fill="none" stroke="#C8BFAE" stroke-width="1"/>
+            <circle cx="98"  cy="158" r="4"   fill="none" stroke="#C8BFAE" stroke-width="1"/>
+            <circle cx="48"  cy="155" r="3"   fill="none" stroke="#C8BFAE" stroke-width="0.9"/>
+            <circle cx="168" cy="58"  r="2.5" fill="none" stroke="#C8BFAE" stroke-width="0.9"/>
+            <circle cx="85"  cy="110" r="2.5" fill="none" stroke="#C8BFAE" stroke-width="0.9"/>
+            <circle cx="125" cy="92"  r="2"   fill="none" stroke="#C8BFAE" stroke-width="0.8"/>
+            <circle cx="40"  cy="118" r="2"   fill="none" stroke="#C8BFAE" stroke-width="0.8"/>
+        </g>
+
+        <circle cx="100" cy="100" r="88" fill="url(#mercuryRim)"/>
         </svg>
-      </div>
-      <h2 class="name">Mars<em> ♂</em></h2>
-      <p class="role">Curator of Endings · Permanent collection</p>
-      <div class="divider"></div>
-      <p class="quote">I had rivers once. Oceans, perhaps. I do not, anymore. Some of what you call disaster is what we call a Tuesday — and some of it is how a planet, slowly, becomes a museum.</p>
-      <div class="stats">
-        <div class="stat"><div class="lbl">Surface temp.</div><div class="v">−63 °C avg</div></div>
-        <div class="stat"><div class="lbl">Atm. pressure</div><div class="v">0.006 atm</div></div>
-        <div class="stat"><div class="lbl">Polar caps</div><div class="v">CO₂ + H₂O</div></div>
-        <div class="stat"><div class="lbl">Olympus Mons</div><div class="v">21.9 km</div></div>
-      </div>
+    </div>
+    <h2 class="name">Mercury<em> ☿</em></h2>
+    <p class="role">Curator of Exposure · Closest to the fire</p>
+    <div class="divider"></div>
+    <p class="quote">I am the smallest, and the nearest. I have no atmosphere to soften anything — every meteor lands, every degree of sun arrives. I know what it is to face a thing without protection.</p>
+    <div class="stats">
+        <div class="stat"><div class="lbl">Distance from Sun</div><div class="v">57.9 M km</div></div>
+        <div class="stat"><div class="lbl">Day temperature</div><div class="v">+430 °C</div></div>
+        <div class="stat"><div class="lbl">Night temperature</div><div class="v">−180 °C</div></div>
+        <div class="stat"><div class="lbl">Atmosphere</div><div class="v">None to speak of</div></div>
+    </div>
     </article>
 
   </div>
@@ -546,8 +558,8 @@
     </div>
     <div class="meta">
       Made for <span style="color:var(--text-mid)">COM-480 · Data Visualization · EPFL · 2026</span><br>
-      Data — <a href="https://www.emdat.be/" target="_blank" rel="noopener">EM-DAT, CRED / UCLouvain</a><br>
-      Source code — <a href="#" target="_blank" rel="noopener">GitHub repository</a>
+      Data — <a href="https://public.emdat.be/" target="_blank" rel="noopener">EM-DAT, CRED / UCLouvain</a><br>
+      Source code — <a href="https://github.com/com-480-data-visualization/PixElles#" target="_blank" rel="noopener">GitHub repository</a>
     </div>
   </div>
 </section>
