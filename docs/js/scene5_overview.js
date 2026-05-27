@@ -84,11 +84,11 @@ const Scene5 = {
     const height = container.clientHeight || 450;
 
     // Reserve space for legend at bottom
-    const legendHeight = 80;
+    const legendHeight = 120;
     const pieHeight = height - legendHeight - 10;
     const centerX = width * 0.5;
     const centerY = pieHeight * 0.45;
-    const radius = Math.min(width * 0.25, pieHeight * 0.35);
+    const radius = Math.min(width * 0.8, pieHeight * 0.42);
 
     console.log('Composition chart dimensions:', width, height, radius);
 
@@ -244,7 +244,7 @@ const Scene5 = {
       .attr('text-anchor', 'middle')
       .attr('dy', '-0.2em')
       .attr('fill', '#FFF')
-      .attr('font-size', '2.5rem')
+      .attr('font-size', '2rem')
       .attr('font-weight', '400')
       .attr('font-family', 'Playfair Display, Georgia, serif')
       .text(total);
@@ -259,8 +259,8 @@ const Scene5 = {
       .text('EVENTS');
 
     // Populate legend
-    const itemsPerRow = Math.ceil(typeData.length / 2);
-    const itemWidth = Math.min(150, (width - 60) / itemsPerRow);
+    const itemsPerRow = Math.min(Math.ceil(typeData.length / 2), Math.floor((width - 60) / 180));
+    const itemWidth = Math.max(180, (width - 60) / itemsPerRow);
 
     typeData.forEach((d, i) => {
       const row = Math.floor(i / itemsPerRow);
@@ -563,6 +563,8 @@ const Scene5 = {
       return;
     }
 
+    console.log('Sample events for', iso, ':', events.slice(0, 3));
+
     const width = container.clientWidth || 600;
     const height = Math.max(container.clientHeight || 300, 300);
     const margin = { top: 20, right: 70, bottom: 50, left: 70 };
@@ -605,6 +607,10 @@ const Scene5 = {
       container.innerHTML = '<div style="color: var(--text-dim); text-align: center; padding: 40px;">No data available</div>';
       return;
     }
+
+    console.log('Deaths & Affected data sample:', combinedData.slice(0, 5));
+    console.log('Max deaths:', d3.max(combinedData, d => d.deaths));
+    console.log('Max affected:', d3.max(combinedData, d => d.affected));
 
     // Scales - use separate y scales for deaths and affected
     const x = d3.scaleLinear()
@@ -691,6 +697,28 @@ const Scene5 = {
     // Find peaks
     const peakDeaths = combinedData.reduce((max, d) => d.deaths > max.deaths ? d : max, combinedData[0]);
     const peakAffected = combinedData.reduce((max, d) => d.affected > max.affected ? d : max, combinedData[0]);
+
+    // Highlight peak deaths with circle
+    if (peakDeaths && peakDeaths.deaths > 0) {
+      g.append('circle')
+        .attr('cx', x(peakDeaths.year))
+        .attr('cy', yDeaths(peakDeaths.deaths))
+        .attr('r', 6)
+        .attr('fill', 'var(--volcano)')
+        .attr('stroke', '#FFF')
+        .attr('stroke-width', 2);
+    }
+
+    // Highlight peak affected with circle
+    if (peakAffected && peakAffected.affected > 0) {
+      g.append('circle')
+        .attr('cx', x(peakAffected.year))
+        .attr('cy', yAffected(peakAffected.affected))
+        .attr('r', 6)
+        .attr('fill', 'var(--drought)')
+        .attr('stroke', '#FFF')
+        .attr('stroke-width', 2);
+    }
 
     // Update peak label
     const peakLabel = document.getElementById('deathsAffectedPeakLabel');
@@ -792,7 +820,7 @@ const Scene5 = {
 
     // Add legend
     const legend = svg.append('g')
-      .attr('transform', `translate(${width - 120}, 30)`);
+      .attr('transform', `translate(${width - 150}, 30)`);
 
     legend.append('rect')
       .attr('width', 14)

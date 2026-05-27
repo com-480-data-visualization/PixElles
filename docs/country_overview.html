@@ -114,10 +114,10 @@
     <!-- Top Section: Name/Text Left, Stats Grid Right -->
     <div class="overview-top-section">
       <div class="overview-left-info">
-        <div class="overview-museum-label">EXHIBIT II — COUNTRY OVERVIEW</div>
+        <div class="overview-museum-label">EXHIBIT III — COUNTRY OVERVIEW</div>
         <h1 class="overview-country-title" id="overviewCountryName">
-          <span id="overviewCountryMainName">—</span>,<br>
-          <em id="overviewCountrySubtitle">over the years.</em>
+          <span id="overviewCountryMainName">—</span><br>
+          <em id="overviewCountrySubtitle">over fifty years.</em>
         </h1>
         <p class="overview-description">
           A half-century of seismic, atmospheric and aquatic disturbance — distilled into one wall of the exhibit.
@@ -196,17 +196,38 @@
   <script>
     // Get country ISO from URL parameter
     const urlParams = new URLSearchParams(window.location.search);
-    const countryISO = urlParams.get('country');
+    const countryISO = urlParams.get('iso');
 
     if (countryISO && typeof Scene5 !== 'undefined') {
       // Update timeline link
       const timelineLink = document.getElementById('timelineLink');
       if (timelineLink) {
-        timelineLink.href = `country_timeline.html?country=${countryISO}`;
+        timelineLink.href = `country_timeline.html?iso=${countryISO}`;
       }
 
-      // Render overview
-      Scene5.render(countryISO);
+      // Wait for data to load, then render overview
+      async function loadAndRender() {
+        try {
+          // Initialize data if not already loaded
+          if (typeof initData === 'function') {
+            await initData();
+          }
+
+          // Render overview after data is loaded
+          Scene5.render(countryISO);
+        } catch (error) {
+          console.error('Error loading data:', error);
+          document.querySelector('.overview-container').innerHTML = `
+            <div style="text-align: center; padding: 100px 20px;">
+              <h1 style="color: var(--text-mid);">Error loading data</h1>
+              <p style="color: var(--text-dim); margin-top: 20px;">Failed to load disaster data. Please try again.</p>
+              <a href="globe.html" class="back-button" style="margin-top: 30px; display: inline-block;">Go to Globe</a>
+            </div>
+          `;
+        }
+      }
+
+      loadAndRender();
     } else {
       console.error('No country specified or Scene5 not loaded');
       document.querySelector('.overview-container').innerHTML = `
