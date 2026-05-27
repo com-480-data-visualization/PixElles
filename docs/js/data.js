@@ -154,6 +154,7 @@ function processData() {
         type: e.type,
         name: e.name,
         deaths: e.deaths,
+        affected: e.affected,
         damage: e.damage
       }));
   });

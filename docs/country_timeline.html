@@ -1009,5 +1009,22 @@
 </div>
 
 <script src="js/scene3_timeline.js"></script>
+<script>
+  // Update overview links with current country ISO parameter
+  (function() {
+    const iso = new URLSearchParams(location.search).get('iso');
+    if (iso) {
+      const overviewBtn = document.getElementById('overviewBtn');
+      const endOverviewBtn = document.getElementById('endOverviewBtn');
+
+      if (overviewBtn) {
+        overviewBtn.href = `country_overview.html?iso=${iso}`;
+      }
+      if (endOverviewBtn) {
+        endOverviewBtn.href = `country_overview.html?iso=${iso}`;
+      }
+    }
+  })();
+</script>
 </body>
 </html>

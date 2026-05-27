@@ -1757,6 +1757,187 @@ button {
 }
 
 /* ============================================
+   SCENE 5: OVERVIEW STYLES
+   ============================================ */
+
+.overview-top-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: center;
+  min-height: 280px;
+  margin-bottom: 30px;
+}
+
+.overview-left-info {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.overview-museum-label {
+  font-family: var(--font-display);
+  font-size: 0.6rem;
+  letter-spacing: 0.3em;
+  color: var(--bluegrey);
+  text-transform: uppercase;
+}
+
+.overview-country-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 4.5rem;
+  font-weight: 400;
+  line-height: 0.92;
+  letter-spacing: -0.02em;
+  margin: 0;
+  color: var(--text-bright);
+}
+
+.overview-country-title em {
+  font-style: italic;
+  font-weight: 300;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.overview-description {
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--text-mid);
+  margin: 0;
+}
+
+/* Stats Grid (2x2) */
+.overview-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 15px;
+  height: 100%;
+}
+
+.overview-stat-card {
+  background: var(--exhibit);
+  border: 1px solid var(--border-dim);
+  border-radius: 8px;
+  padding: 20px 18px;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+}
+
+.overview-stat-label {
+  font-family: var(--font-display);
+  font-size: 0.55rem;
+  letter-spacing: 0.15em;
+  color: var(--text-dim);
+  margin-bottom: 8px;
+}
+
+.overview-stat-value {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 2rem;
+  font-weight: 400;
+  color: var(--bluegrey);
+  margin-bottom: 6px;
+  line-height: 1;
+}
+
+.overview-stat-value-danger {
+  color: var(--volcano);
+}
+
+.overview-stat-value-warning {
+  color: var(--drought);
+}
+
+.overview-stat-value-economic {
+  color: var(--wildfire);
+}
+
+.overview-stat-sublabel {
+  font-family: var(--font-body);
+  font-size: 0.65rem;
+  color: var(--text-dim);
+  line-height: 1.4;
+}
+
+/* Middle Section: Composition (50%) + Type Evolution (50%) */
+.overview-middle-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  min-height: 550px;
+  margin-bottom: 20px;
+}
+
+.overview-card-composition {
+  display: flex;
+  flex-direction: column;
+}
+
+.overview-card-evolution {
+  display: flex;
+  flex-direction: column;
+}
+
+.overview-card-series {
+  font-family: var(--font-display);
+  font-size: 0.55rem;
+  letter-spacing: 0.15em;
+  color: var(--text-dim);
+  margin-bottom: 8px;
+}
+
+/* Bottom Section: Deaths & Affected (left) + Damage (right) */
+.overview-bottom-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  min-height: 450px;
+}
+
+.overview-card-peak-label {
+  font-family: var(--font-display);
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  color: var(--text-dim);
+  display: block;
+  margin-top: 4px;
+}
+
+/* Responsive adjustments for overview */
+@media (max-width: 1200px) {
+  .overview-top-section {
+    grid-template-columns: 1fr;
+  }
+
+  .overview-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .overview-country-title {
+    font-size: 2.5rem;
+  }
+
+  .overview-stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .overview-middle-section,
+  .overview-bottom-section {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ============================================
    UTILITY CLASSES
    ============================================ */
 
