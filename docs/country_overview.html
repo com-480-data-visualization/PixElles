@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Country Overview | Earth Natural Disasters Museum</title>
+
+<link rel="stylesheet" href="css/style.css">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inter:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Playfair+Display:ital,wght@0,400;1,300&display=swap" rel="stylesheet">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+
+<style>
+  :root {
+    --bluegrey:    #97AEC4;
+    --bluesky:     #6EB6FF;
+    --orange:      #FF8775;
+    --bgcolor:     #0C1116;
+    --text:        #FFF;
+    --text-bright: #FFF;
+    --text-mid:    #97AEC4;
+    --text-dim:    rgba(151,174,196,0.58);
+    --gradient-primary: linear-gradient(90deg, #97AEC4 0%, #6EB6FF 50%, #FF8775 100%);
+    --exhibit:     #131922;
+    --border-dim:  rgba(151,174,196,0.18);
+    --volcano:     #ff4444;
+    --drought:     #ff9500;
+    --purple:      #9c27b0;
+    --wildfire:    #ff6f00;
+    --font-display: 'Inter', sans-serif;
+    --font-body:   'Inter', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body { height: 100%; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bgcolor);
+    color: var(--text);
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  .overview-container {
+    min-height: 100vh;
+    padding: 40px;
+    max-width: 1600px;
+    margin: 0 auto;
+  }
+
+  .overview-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+  }
+
+  .back-button {
+    background: var(--exhibit);
+    border: 1px solid var(--border-dim);
+    color: var(--text-mid);
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  .back-button:hover {
+    background: var(--bgcolor);
+    color: var(--text-bright);
+  }
+
+  .timeline-link {
+    background: transparent;
+    border: 1px solid var(--bluesky);
+    color: var(--bluesky);
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  .timeline-link:hover {
+    background: var(--bluesky);
+    color: var(--bgcolor);
+  }
+
+  .hidden {
+    display: none !important;
+  }
+</style>
+</head>
+
+<body>
+  <div class="overview-container">
+    <div class="overview-header">
+      <a href="globe.html" class="back-button">← Back to Globe</a>
+      <a href="country_timeline.html" class="timeline-link" id="timelineLink">View Timeline →</a>
+    </div>
+
+    <!-- Top Section: Name/Text Left, Stats Grid Right -->
+    <div class="overview-top-section">
+      <div class="overview-left-info">
+        <div class="overview-museum-label">EXHIBIT II — COUNTRY OVERVIEW</div>
+        <h1 class="overview-country-title" id="overviewCountryName">
+          <span id="overviewCountryMainName">—</span>,<br>
+          <em id="overviewCountrySubtitle">over the years.</em>
+        </h1>
+        <p class="overview-description">
+          A half-century of seismic, atmospheric and aquatic disturbance — distilled into one wall of the exhibit.
+        </p>
+      </div>
+
+      <!-- Statistics Grid (2x2) -->
+      <div class="overview-stats-grid">
+        <div class="overview-stat-card">
+          <div class="overview-stat-label">TOTAL EVENTS</div>
+          <div class="overview-stat-value" id="statTotalEvents">—</div>
+          <div class="overview-stat-sublabel">across <span id="statYearRange">50 years</span></div>
+        </div>
+        <div class="overview-stat-card">
+          <div class="overview-stat-label">TOTAL DEATHS</div>
+          <div class="overview-stat-value overview-stat-value-danger" id="statTotalDeaths">—</div>
+          <div class="overview-stat-sublabel">people</div>
+        </div>
+        <div class="overview-stat-card">
+          <div class="overview-stat-label">PEOPLE AFFECTED</div>
+          <div class="overview-stat-value overview-stat-value-warning" id="statPeopleAffected">—</div>
+          <div class="overview-stat-sublabel">displaced, injured</div>
+        </div>
+        <div class="overview-stat-card">
+          <div class="overview-stat-label">TOTAL DAMAGE</div>
+          <div class="overview-stat-value overview-stat-value-economic" id="statTotalDamage">—</div>
+          <div class="overview-stat-sublabel">in billion dollars</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Middle Section: Composition (left 50%) and Type Evolution (right 50%) -->
+    <div class="overview-middle-section">
+      <div class="overview-card overview-card-composition">
+        <div class="overview-card-header">
+          <div class="overview-card-series">SERIES 01 — COMPOSITION</div>
+          <h3>Disaster <em>composition</em></h3>
+        </div>
+        <div class="overview-viz" id="overviewComposition"></div>
+      </div>
+
+      <div class="overview-card overview-card-evolution">
+        <div class="overview-card-header">
+          <div class="overview-card-series">SERIES 02 — FREQUENCY</div>
+          <h3>Disaster per <em>type & year</em></h3>
+        </div>
+        <div class="overview-viz" id="overviewTypeEvolution"></div>
+      </div>
+    </div>
+
+    <!-- Bottom Section: Deaths & Affected (left) and Damage (right) -->
+    <div class="overview-bottom-section">
+      <div class="overview-card">
+        <div class="overview-card-header">
+          <div class="overview-card-series">SERIES 03 — IMPACT & MORTALITY</div>
+          <h3>Total <em>deaths & affected</em></h3>
+          <span class="overview-card-peak-label" id="deathsAffectedPeakLabel">PEAK YEAR — 2011</span>
+        </div>
+        <div class="overview-viz" id="overviewDeathsAffected"></div>
+      </div>
+
+      <div class="overview-card">
+        <div class="overview-card-header">
+          <div class="overview-card-series">SERIES 04 — COST</div>
+          <h3>Total <em>damage</em></h3>
+          <span class="overview-card-peak-label" id="damagePeakLabel">PEAK YEAR — 2011</span>
+        </div>
+        <div class="overview-viz" id="overviewDamages"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/scene5_overview.js"></script>
+
+  <script>
+    // Get country ISO from URL parameter
+    const urlParams = new URLSearchParams(window.location.search);
+    const countryISO = urlParams.get('country');
+
+    if (countryISO && typeof Scene5 !== 'undefined') {
+      // Update timeline link
+      const timelineLink = document.getElementById('timelineLink');
+      if (timelineLink) {
+        timelineLink.href = `country_timeline.html?country=${countryISO}`;
+      }
+
+      // Render overview
+      Scene5.render(countryISO);
+    } else {
+      console.error('No country specified or Scene5 not loaded');
+      document.querySelector('.overview-container').innerHTML = `
+        <div style="text-align: center; padding: 100px 20px;">
+          <h1 style="color: var(--text-mid);">No country selected</h1>
+          <p style="color: var(--text-dim); margin-top: 20px;">Please select a country from the globe.</p>
+          <a href="globe.html" class="back-button" style="margin-top: 30px; display: inline-block;">Go to Globe</a>
+        </div>
+      `;
+    }
+  </script>
+</body>
+</html>
