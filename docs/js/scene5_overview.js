@@ -865,7 +865,7 @@ const Scene5 = {
 
     const width = container.clientWidth || 600;
     const height = container.clientHeight || 300;
-    const margin = { top: 20, right: 20, bottom: 50, left: 70 };
+    const margin = { top: 20, right: 20, bottom: 50, left: 80 };
     const chartWidth = width - margin.left - margin.right;
     const chartHeight = height - margin.top - margin.bottom;
 
@@ -978,7 +978,7 @@ const Scene5 = {
       // Update peak label in header
       const damagePeakLabel = document.getElementById('damagePeakLabel');
       if (damagePeakLabel) {
-        damagePeakLabel.textContent = `PEAK YEAR — ${peakDamage.year}`;
+        damagePeakLabel.textContent = `PEAK YEAR: ${peakDamage.year}`;
       }
     }
 
@@ -1075,17 +1075,6 @@ const Scene5 = {
 
     yAxis.selectAll('line, path')
       .attr('stroke', 'var(--border-dim)');
-
-    // Y-axis label
-    g.append('text')
-      .attr('transform', 'rotate(-90)')
-      .attr('y', -50)
-      .attr('x', -chartHeight / 2)
-      .attr('text-anchor', 'middle')
-      .attr('fill', 'var(--text-mid)')
-      .attr('font-size', '0.7rem')
-      .attr('font-family', 'var(--font-body)')
-      .text('USD (Millions)');
   },
 
   capitalize(str) {
