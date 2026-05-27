@@ -82,6 +82,8 @@ All of the above are primarily descriptive and exploration-focused.
 
 We draw inspiration from a web-based platform for interactive data visualization and storytelling [Flourish](https://flourish.studio/examples/?Industry=Featured) and advanced visualization designers such as [Moritz Stefaner — *Rhythm of Food*](https://truth-and-beauty.net/).
 
+---
+
 ## Milestone 2 (17th April, 5pm)
 
 **10% of the final grade**
@@ -89,9 +91,149 @@ We draw inspiration from a web-based platform for interactive data visualization
 - Link to the report: [Milestone 2 Report](milestones/milestone-2/report.pdf)
 - Link to the initial website: [Milestone 2 Website](https://com-480-data-visualization.github.io/PixElles/)
 
+---
+
 ## Milestone 3 (29th May, 5pm)
 
 **80% of the final grade**
+
+## Overview
+Interactive museum experience visualizing 50 years of global natural disasters (1975-2025) using the EM-DAT dataset. The project tells a continuous narrative of global risk through dynamic, multi-dimensional visualizations.
+
+## Website, Screencast & Process book
+
+Live demo: [https://com-480-data-visualization.github.io/PixElles/](https://com-480-data-visualization.github.io/PixElles/)
+
+
+## Global Highlights
+
+- **14,000+ disaster events** across 220+ countries spanning 1975-2025
+- **Museum-themed narrative experience** guiding users through global disaster patterns
+- **Multi-dimensional analysis**: Disaster typology, geographic vulnerability, human impact & resilience
+- **Interactive 3D visualizations** combining globe navigation and immersive timelines
+- **Contextual narratives** providing historical context per country
+- **Real-time data filtering** by year, type, and geographic region
+
+
+## Intended Usage
+
+### User Journey
+1. **Enter Museum** (Scene 1) → Experience animated ticket entry
+2. **Explore Globe** (Scene 2) → Click on any country to select it
+3. **View Timeline** (Scene 3) → Navigate immersive 3D hallway of country's disasters
+4. **Open Overview** (Scene 4) → Access detailed statistical dashboard for selected country
+5. **Understand Global Context** (Scene 5) → See worldwide trends and patterns
+6. **Meet Team** (Scene 6) → Learn about project creators
+
+
+## Museum Scenes
+
+### Scene 1: Museum Entrance (`index.html`)
+**EXHIBIT 0 — ENTRANCE**
+- Animated ticket entry experience
+- Museum theme introduction with interactive elements
+
+### Scene 2: Interactive Globe (`globe.html`)
+**EXHIBIT I — GLOBAL VIEW**
+- **3D globe visualization** with Three.js
+- **Country selection** by clicking on globe surface
+- **Dominant disaster type** color-coding per country
+- **Interactive navigation** to country-specific exhibits
+
+### Scene 3: Country Timeline (`country_timeline.html`)
+**EXHIBIT II — COUNTRY TIMELINE**
+- **Immersive 3D hallway** displaying chronological disaster timeline
+- **3D event cards** floating in space with perspective depth
+- **Comprehensive event data**: year, type, name, deaths, affected, economic damage
+- **Contextual narratives** providing historical context per country
+- **Navigation controls**: Open Overview button linking to Scene 4
+
+### Scene 4: Country Overview (`country_overview.html`)
+**EXHIBIT III — COUNTRY OVERVIEW**
+
+**Top Statistics Grid (2×2):**
+- Total events across 50 years
+- Total deaths
+- People affected (displaced, injured)
+- Total economic damages (billion USD)
+
+**SERIES 01 — COMPOSITION:**
+- Interactive pie chart showing disaster type breakdown
+- Clickable legend for type filtering
+- Dynamic tooltips with percentages
+
+**SERIES 02 — FREQUENCY:**
+- Stacked area chart
+- Disaster frequency evolution by type over time
+- Color-coded layers for each disaster category
+
+**SERIES 03 — IMPACT & MORTALITY:**
+- Dual-axis chart comparing deaths vs affected populations
+- Peak year indicators with visual circles
+- Separate Y-axis scales for different magnitude metrics
+- Legend positioned for clarity
+
+**SERIES 04 — COST (USD Millions):**
+- Area chart showing economic damages over time
+- Peak year highlighting with annotations
+- Formatted currency values in millions
+
+### Scene 5: Earth Story (`earth_story.html`)
+**EXHIBIT IV — GLOBAL TRENDS**
+- **50-year global analysis** across all disasters
+- **Trend identification**: Climate-related vs geological events
+- **Regional vulnerability patterns**
+- **Human resilience indicators**
+
+### Scene 6: Meet the Curators (`curators.html`)
+**MEET THE CURATORS**
+- Team presentation page
+- Project credits and acknowledgments
+
+
+
+## Technical Setup
+
+### Architecture
+- **Static website** with multiple HTML pages representing museum scenes
+- **Modular JavaScript** organization with separate scene files
+- **Centralized data module** (`data.js`) handling all EM-DAT processing
+- **Shared CSS** system for consistent museum aesthetic
+
+### Project Structure
+```
+docs/
+├── index.html              # Scene 1: Museum entrance
+├── globe.html              # Scene 2: 3D globe
+├── country_timeline.html   # Scene 3: Country timeline hallway
+├── country_overview.html   # Scene 4: Country statistics
+├── earth_story.html        # Scene 5: Global trends
+├── curators.html           # Scene 6: Team page
+├── css/
+│   └── style.css          # Global styles + Scene 4 styles
+├── js/
+│   ├── data.js            # Data loading and processing
+│   ├── scene1_ticket.js   # Entrance animation
+│   ├── scene2_globe.js    # Globe interactions
+│   ├── scene3_country.js  # Country view logic
+│   ├── scene3_timeline.js # Timeline 3D visualization
+│   ├── scene4_overview.js # Overview statistics
+│   └── scene5_story.js    # Global trends charts
+└── data/
+    ├── emdat_clean.csv    # Cleaned disaster dataset
+    └── context/           # Contextual narratives per country
+        └── [ISO].json     # Country-specific context files
+```
+
+### Technologies
+- **D3.js v7**: Data-driven visualizations, SVG manipulation, data binding
+- **Three.js**: 3D graphics rendering (globe, timeline hallway)
+- **Vanilla JavaScript ES6+**: Core application logic, async/await patterns
+- **CSS Grid & Flexbox**: Responsive layouts
+- **Python**: Data preprocessing
+
+---
+
 
 ## Late policy
 
