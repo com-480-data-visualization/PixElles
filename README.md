@@ -121,8 +121,8 @@ Live demo: [https://com-480-data-visualization.github.io/PixElles/](https://com-
 1. **Enter Museum** (Scene 1) → Experience animated ticket entry
 2. **Explore Globe** (Scene 2) → Click on any country to select it
 3. **View Timeline** (Scene 3) → Navigate immersive 3D hallway of country's disasters
-4. **Open Overview** (Scene 4) → Access detailed statistical dashboard for selected country
-5. **Understand Global Context** (Scene 5) → See worldwide trends and patterns
+4. **Open Overview** (Scene 5) → Access detailed statistical dashboard for selected country
+5. **Understand Global Context** (Scene 4) → See worldwide trends and patterns
 6. **Meet Team** (Scene 6) → Learn about project creators
 
 
@@ -148,7 +148,7 @@ Live demo: [https://com-480-data-visualization.github.io/PixElles/](https://com-
 - **Contextual narratives** providing historical context per country
 - **Navigation controls**: Open Overview button linking to Scene 4
 
-### Scene 4: Country Overview (`country_overview.html`)
+### Scene 5: Country Overview (`country_overview.html`)
 **EXHIBIT III — COUNTRY OVERVIEW**
 
 **Top Statistics Grid (2×2):**
@@ -178,7 +178,7 @@ Live demo: [https://com-480-data-visualization.github.io/PixElles/](https://com-
 - Peak year highlighting with annotations
 - Formatted currency values in millions
 
-### Scene 5: Earth Story (`earth_story.html`)
+### Scene 4: Earth Story (`earth_story.html`)
 **EXHIBIT IV — GLOBAL TRENDS**
 - **50-year global analysis** across all disasters
 - **Trend identification**: Climate-related vs geological events
@@ -189,7 +189,6 @@ Live demo: [https://com-480-data-visualization.github.io/PixElles/](https://com-
 **MEET THE CURATORS**
 - Team presentation page
 - Project credits and acknowledgments
-
 
 
 ## Technical Setup
@@ -217,8 +216,8 @@ docs/
 │   ├── scene2_globe.js    # Globe interactions
 │   ├── scene3_country.js  # Country view logic
 │   ├── scene3_timeline.js # Timeline 3D visualization
-│   ├── scene4_overview.js # Overview statistics
-│   └── scene5_story.js    # Global trends charts
+│   ├── scene5_overview.js # Overview statistics
+│   └── scene4_story.js    # Global trends charts
 └── data/
     ├── emdat_clean.csv    # Cleaned disaster dataset
     └── context/           # Contextual narratives per country
