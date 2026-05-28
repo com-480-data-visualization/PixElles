@@ -28,7 +28,7 @@
     --border-dim:  rgba(151,174,196,0.18);
     --volcano:     #ff4444;
     --drought:     #ff9500;
-    --purple:      #9c27b0;
+    --purple:      #6EB6FF;
     --wildfire:    #ff6f00;
     --font-display: 'Inter', sans-serif;
     --font-body:   'Inter', sans-serif;
@@ -40,7 +40,7 @@
 
   body {
     font-family: 'Inter', sans-serif;
-    background: var(--bgcolor);
+    background: transparent;
     color: var(--text);
     overflow-x: hidden;
     overflow-y: auto;
@@ -53,63 +53,146 @@
     margin: 0 auto;
   }
 
-  .overview-header {
+  /* ---------- Top bar ---------- */
+  .top-bar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    height: 74px;
+    padding: 0 26px 0 50px;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    margin-bottom: 40px;
+    justify-content: space-between;
+    background: rgb(12, 17, 22);
+  }
+  .brand {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 16px;
+    font-weight: 300;
+    color: var(--text);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .brand a { color: inherit; text-decoration: none; }
+  .brand-earth { font-style: italic; }
+  .brand-dim { color: rgba(255,255,255,0.6); font-style: italic; }
+
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-style: italic;
+    font-weight: 300;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.6);
+    white-space: nowrap;
+  }
+  .breadcrumb a { color: rgba(255,255,255,0.6); text-decoration: none; }
+  .breadcrumb a:hover { color: rgba(255,255,255,0.9); }
+  .breadcrumb .sep { margin: 0 10px; opacity: 0.5; }
+
+  .pill-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 28px;
+    border: 1px solid rgba(255,255,255,0.5);
+    border-radius: 999px;
+    color: var(--text);
+    background: rgba(12,17,22,0.2);
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.3s ease, border-color 0.3s ease;
+  }
+  .pill-btn:hover {
+    background: rgba(255,255,255,0.1);
+    border-color: rgba(255,255,255,0.8);
+  }
+  .pill-btn .arrow { transition: transform .3s ease; }
+  .pill-btn:hover .arrow { transform: translateX(3px); }
+
+  .pie-legend-html {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    width: 100%;
+    padding: 4px 16px 12px;
+    gap: 4px 20px;
   }
 
-  .back-button {
-    background: var(--exhibit);
-    border: 1px solid var(--border-dim);
+  .pie-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
     color: var(--text-mid);
-    padding: 12px 24px;
-    border-radius: 8px;
-    font-family: var(--font-body);
-    font-size: 0.9rem;
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(151,174,196,0.10);
     cursor: pointer;
-    transition: all 0.3s;
-    text-decoration: none;
-    display: inline-block;
   }
 
-  .back-button:hover {
-    background: var(--bgcolor);
-    color: var(--text-bright);
+  .pie-legend-swatch {
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+    flex-shrink: 0;
   }
 
-  .timeline-link {
-    background: transparent;
-    border: 1px solid var(--bluesky);
-    color: var(--bluesky);
-    padding: 12px 24px;
-    border-radius: 8px;
-    font-family: var(--font-body);
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: all 0.3s;
-    text-decoration: none;
-    display: inline-block;
-  }
+  .pie-legend-label { flex: 1; }
 
-  .timeline-link:hover {
-    background: var(--bluesky);
-    color: var(--bgcolor);
+  .pie-legend-count {
+    margin-left: auto;
+    color: var(--text);
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 16px;
+    font-weight: 400;
   }
 
   .hidden {
     display: none !important;
   }
+
+  #overviewStarfield {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+  }
 </style>
 </head>
 
 <body>
-  <div class="overview-container">
-    <div class="overview-header">
-      <a href="globe.html" class="back-button">← Back to Globe</a>
-      <a href="country_timeline.html" class="timeline-link" id="timelineLink">View Timeline →</a>
-    </div>
+
+<canvas id="overviewStarfield"></canvas>
+
+<header class="top-bar">
+  <div class="brand">
+    <a href="curators.html"><span class="brand-earth">Earth</span> Natural Disaster Museum<span class="brand-dim"> · est. 2026</span></a>
+  </div>
+  <nav class="breadcrumb">
+    <a href="globe.html">The Globe: Earth</a>
+    <span class="sep">/</span>
+    <a id="timelineLink" href="country_timeline.html"><span id="breadcrumbCountry">—</span> Timeline</a>
+    <span class="sep">/</span>
+    <span>Overview</span>
+  </nav>
+  <a id="returnTimelineBtn" href="country_timeline.html" class="pill-btn">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M10 8H2M2 8L6 4M2 8L6 12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    Return to Timeline
+  </a>
+</header>
+
+  <div class="overview-container" style="padding-top: 114px;">
 
     <!-- Top Section: Name/Text Left, Stats Grid Right -->
     <div class="overview-top-section">
@@ -153,7 +236,7 @@
     <div class="overview-middle-section">
       <div class="overview-card overview-card-composition">
         <div class="overview-card-header">
-          <div class="overview-card-series">SERIES 01 — COMPOSITION</div>
+          <div class="overview-card-series">SERIES 01 · COMPOSITION</div>
           <h3>Disaster <em>composition</em></h3>
         </div>
         <div class="overview-viz" id="overviewComposition"></div>
@@ -161,7 +244,7 @@
 
       <div class="overview-card overview-card-evolution">
         <div class="overview-card-header">
-          <div class="overview-card-series">SERIES 02 — FREQUENCY</div>
+          <div class="overview-card-series">SERIES 02 · FREQUENCY</div>
           <h3>Disaster per <em>type & year</em></h3>
         </div>
         <div class="overview-viz" id="overviewTypeEvolution"></div>
@@ -172,8 +255,8 @@
     <div class="overview-bottom-section">
       <div class="overview-card">
         <div class="overview-card-header">
-          <div class="overview-card-series">SERIES 03 — IMPACT & MORTALITY</div>
-          <h3>Total <em>deaths & affected</em></h3>
+          <div class="overview-card-series">SERIES 03 · IMPACT & MORTALITY</div>
+          <h3>Total <em style="color: var(--orange);">deaths & affected</em></h3>
           <span class="overview-card-peak-label" id="deathsAffectedPeakLabel">PEAK YEAR — 2011</span>
         </div>
         <div class="overview-viz" id="overviewDeathsAffected"></div>
@@ -181,7 +264,7 @@
 
       <div class="overview-card">
         <div class="overview-card-header">
-          <div class="overview-card-series">SERIES 04 — COST (USD Millions)</div>
+          <div class="overview-card-series">SERIES 04 · COST (USD Millions)</div>
           <h3>Total <em>damage</em></h3>
           <span class="overview-card-peak-label" id="damagePeakLabel">PEAK YEAR — 2011</span>
         </div>
@@ -199,10 +282,14 @@
     const countryISO = urlParams.get('iso');
 
     if (countryISO && typeof Scene5 !== 'undefined') {
-      // Update timeline link
+      // Update timeline links with ISO
       const timelineLink = document.getElementById('timelineLink');
       if (timelineLink) {
         timelineLink.href = `country_timeline.html?iso=${countryISO}`;
+      }
+      const returnTimelineBtn = document.getElementById('returnTimelineBtn');
+      if (returnTimelineBtn) {
+        returnTimelineBtn.href = `country_timeline.html?iso=${countryISO}`;
       }
 
       // Wait for data to load, then render overview
@@ -238,6 +325,99 @@
         </div>
       `;
     }
+  </script>
+
+  <!-- Starfield background -->
+  <script>
+    (function () {
+      const canvas = document.getElementById('overviewStarfield');
+      const ctx    = canvas.getContext('2d');
+
+      let stars = [], bgGrad, vigGrad, w, h, animId;
+
+      function rng(seed) {
+        let s = seed;
+        return function () {
+          s = (s ^ (s << 13)) >>> 0;
+          s = (s ^ (s >>> 17)) >>> 0;
+          s = (s ^ (s << 5))  >>> 0;
+          return s / 0xffffffff;
+        };
+      }
+
+      function init() {
+        const dpr = window.devicePixelRatio || 1;
+        w = window.innerWidth;
+        h = window.innerHeight;
+        canvas.width  = w * dpr;
+        canvas.height = h * dpr;
+        canvas.style.width  = w + 'px';
+        canvas.style.height = h + 'px';
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+        bgGrad = ctx.createRadialGradient(w * 0.4, h * 0.5, 0, w * 0.5, h * 0.5, Math.max(w, h) * 0.85);
+        bgGrad.addColorStop(0,   '#0f1e30');
+        bgGrad.addColorStop(0.2, '#0b1622');
+        bgGrad.addColorStop(1,   '#060a0f');
+
+        vigGrad = ctx.createRadialGradient(w / 2, h / 2, h * 0.2, w / 2, h / 2, h * 0.9);
+        vigGrad.addColorStop(0, 'rgba(12,17,22,0)');
+        vigGrad.addColorStop(1, 'rgba(12,17,22,0.55)');
+
+        const rand  = rng(42);
+        const count = Math.round(w * h / 1400);
+        stars = [];
+        for (let i = 0; i < count; i++) {
+          stars.push({
+            x:            rand() * w,
+            y:            rand() * h,
+            size:         rand() * 1.4 + 0.3,
+            baseAlpha:    rand() * 0.55 + 0.15,
+            twinklePhase: rand() * Math.PI * 2,
+            twinkleSpeed: rand() * 0.003  + 0.001,   /* 2 – 6 s period  */
+            twinkleAmp:   rand() * 0.35   + 0.1,
+            driftPhaseX:  rand() * Math.PI * 2,
+            driftPhaseY:  rand() * Math.PI * 2,
+            driftSpeedX:  rand() * 0.0001 + 0.00003, /* 60 – 200 s period */
+            driftSpeedY:  rand() * 0.0001 + 0.00003,
+            driftAmpX:    rand() * 1.5    + 0.5,     /* ± 0.5 – 2 px    */
+            driftAmpY:    rand() * 1.5    + 0.5,
+          });
+        }
+      }
+
+      function animate(ts) {
+        ctx.fillStyle = bgGrad;
+        ctx.fillRect(0, 0, w, h);
+
+        for (const s of stars) {
+          const alpha = Math.max(0.05, Math.min(0.9,
+            s.baseAlpha + Math.sin(ts * s.twinkleSpeed + s.twinklePhase) * s.twinkleAmp
+          ));
+          const x = s.x + Math.sin(ts * s.driftSpeedX + s.driftPhaseX) * s.driftAmpX;
+          const y = s.y + Math.sin(ts * s.driftSpeedY + s.driftPhaseY) * s.driftAmpY;
+
+          ctx.beginPath();
+          ctx.arc(x, y, s.size, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(255,255,255,${alpha.toFixed(2)})`;
+          ctx.fill();
+        }
+
+        ctx.fillStyle = vigGrad;
+        ctx.fillRect(0, 0, w, h);
+
+        animId = requestAnimationFrame(animate);
+      }
+
+      init();
+      animId = requestAnimationFrame(animate);
+
+      window.addEventListener('resize', () => {
+        cancelAnimationFrame(animId);
+        init();
+        animId = requestAnimationFrame(animate);
+      });
+    })();
   </script>
 </body>
 </html>

@@ -1724,8 +1724,11 @@ button {
   border-radius: 12px;
   padding: 30px;
   min-height: 400px;
+  height: 100%;
   display: flex;
   flex-direction: column;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .overview-card-header {
@@ -1733,11 +1736,18 @@ button {
 }
 
 .overview-card-header h3 {
-  font-family: var(--font-display);
-  font-size: 1.8rem;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2.4rem;
+  font-weight: 400;
   color: var(--text-bright);
   margin: 0 0 8px 0;
-  letter-spacing: 0.05em;
+  letter-spacing: 0;
+  line-height: 1.1;
+}
+
+.overview-card-header h3 em {
+  font-style: italic;
+  color: var(--bluesky);
 }
 
 .overview-card-header p {
@@ -1748,12 +1758,16 @@ button {
 
 .overview-viz {
   flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0,0,0,0.2);
+  position: relative;
+  overflow: hidden;
+  background: var(--exhibit);
   border-radius: 8px;
   min-height: 300px;
+}
+
+.overview-viz svg {
+  display: block;
+  max-width: 100%;
 }
 
 /* ============================================
@@ -1762,7 +1776,7 @@ button {
 
 .overview-top-section {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
   gap: 40px;
   align-items: center;
   min-height: 280px;
@@ -1843,26 +1857,27 @@ button {
   font-family: 'Playfair Display', Georgia, serif;
   font-size: 2rem;
   font-weight: 400;
-  color: var(--bluegrey);
+  color: var(--text-bright);
   margin-bottom: 6px;
   line-height: 1;
 }
 
 .overview-stat-value-danger {
-  color: var(--volcano);
+  color: var(--orange);
 }
 
 .overview-stat-value-warning {
-  color: var(--drought);
+  color: var(--text-bright);
 }
 
 .overview-stat-value-economic {
-  color: var(--wildfire);
+  color: var(--orange);
 }
 
 .overview-stat-sublabel {
-  font-family: var(--font-body);
-  font-size: 0.65rem;
+  font-family: var(--font-garamond);
+  font-size: 1.05rem;
+  font-style: italic;
   color: var(--text-dim);
   line-height: 1.4;
 }
@@ -1870,7 +1885,7 @@ button {
 /* Middle Section: Composition (50%) + Type Evolution (50%) */
 .overview-middle-section {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
   gap: 20px;
   min-height: 550px;
   margin-bottom: 20px;
@@ -1881,23 +1896,35 @@ button {
   flex-direction: column;
 }
 
+.overview-card-composition .overview-viz {
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+}
+
+.overview-card-composition .overview-viz svg {
+  width: 100%;
+}
+
 .overview-card-evolution {
   display: flex;
   flex-direction: column;
 }
 
 .overview-card-series {
-  font-family: var(--font-display);
-  font-size: 0.55rem;
-  letter-spacing: 0.15em;
-  color: var(--text-dim);
-  margin-bottom: 8px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 400;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-mid);
+  margin-bottom: 10px;
 }
 
 /* Bottom Section: Deaths & Affected (left) + Damage (right) */
 .overview-bottom-section {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
   gap: 20px;
   min-height: 450px;
 }
@@ -1912,9 +1939,9 @@ button {
 }
 
 /* Responsive adjustments for overview */
-@media (max-width: 1200px) {
-  .overview-top-section {
-    grid-template-columns: 1fr;
+@media (max-width: 900px) {
+  .overview-country-title {
+    font-size: 2.5rem;
   }
 
   .overview-stats-grid {
@@ -1922,17 +1949,8 @@ button {
   }
 }
 
-@media (max-width: 768px) {
-  .overview-country-title {
-    font-size: 2.5rem;
-  }
-
+@media (max-width: 500px) {
   .overview-stats-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .overview-middle-section,
-  .overview-bottom-section {
     grid-template-columns: 1fr;
   }
 }

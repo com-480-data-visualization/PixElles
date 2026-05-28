@@ -2,6 +2,23 @@
    SCENE 5: COUNTRY OVERVIEW
    ============================================ */
 
+const TYPES = {
+  drought:             { color: '#F2B44D', label: 'Drought' },
+  earthquake:          { color: '#8A4E24', label: 'Earthquake' },
+  extreme_temperature: { color: '#F45FA8', label: 'Extreme Temperature' },
+  flood:               { color: '#5F9CF5', label: 'Flood' },
+  landslide:           { color: '#7D9D67', label: 'Landslide' },
+  storm:               { color: '#7870D8', label: 'Storm / Typhoon' },
+  epidemic:            { color: '#70C7A8', label: 'Epidemic' },
+  infestation:         { color: '#B8C96B', label: 'Infestation' },
+  volcano:             { color: '#D85745', label: 'Volcano' },
+  wildfire:            { color: '#F39A3C', label: 'Wildfire' },
+};
+
+function getDisasterColor(type) {
+  return TYPES[type]?.color || '#97AEC4';
+}
+
 const Scene5 = {
   currentCountry: null,
 
@@ -21,6 +38,11 @@ const Scene5 = {
     const countryNameEl = document.getElementById('overviewCountryMainName');
     if (countryNameEl) {
       countryNameEl.textContent = stats.country;
+    }
+
+    const breadcrumbCountryEl = document.getElementById('breadcrumbCountry');
+    if (breadcrumbCountryEl) {
+      breadcrumbCountryEl.textContent = stats.country;
     }
 
     // Populate statistics cards
@@ -60,11 +82,13 @@ const Scene5 = {
       compositionYearRangeEl.textContent = `${minYear}–${maxYear}`;
     }
 
-    // Render visualizations
-    this.renderCompositionChart(iso, stats);
-    this.renderTypeEvolutionChart(iso, events);
-    this.renderDeathsAffectedChart(iso, events);
-    this.renderEconomicChart(iso, events);
+    // Defer renders until after the CSS grid has finished laying out
+    requestAnimationFrame(() => {
+      this.renderCompositionChart(iso, stats);
+      this.renderTypeEvolutionChart(iso, events);
+      this.renderDeathsAffectedChart(iso, events);
+      this.renderEconomicChart(iso, events);
+    });
   },
 
   renderCompositionChart(iso, stats) {
@@ -83,22 +107,16 @@ const Scene5 = {
     const width = container.clientWidth || 600;
     const height = container.clientHeight || 450;
 
-    // Reserve space for legend at bottom
-    const legendHeight = 120;
-    const pieHeight = height - legendHeight - 10;
+    const pieHeight = height * 0.62;
     const centerX = width * 0.5;
-    const centerY = pieHeight * 0.45;
-    const radius = Math.min(width * 0.8, pieHeight * 0.42);
-
-    console.log('Composition chart dimensions:', width, height, radius);
+    const centerY = pieHeight * 0.5;
+    const radius = Math.min(width * 0.38, pieHeight * 0.44);
 
     const svg = d3.select(container)
       .append('svg')
       .attr('width', width)
-      .attr('height', height);
-
-    const chartGroup = svg.append('g')
-      .attr('transform', `translate(${centerX},${centerY})`);
+      .attr('height', pieHeight)
+      .style('display', 'block');
 
     // Prepare data
     const typeData = Object.entries(stats.typeBreakdown)
@@ -107,20 +125,48 @@ const Scene5 = {
 
     const total = d3.sum(typeData, d => d.count);
 
+    // Define radial gradients — one per disaster type
+    const defs = svg.append('defs');
+    typeData.forEach(({ type }) => {
+      const color = getDisasterColor(type);
+      const gradId = `pie-grad-${type.replace(/[\s\/&]+/g, '-')}`;
+      const grad = defs.append('radialGradient')
+        .attr('id', gradId)
+        .attr('gradientUnits', 'userSpaceOnUse')
+        .attr('cx', centerX)
+        .attr('cy', centerY)
+        .attr('r', radius);
+      grad.append('stop')
+        .attr('offset', '0%')
+        .attr('stop-color', color)
+        .attr('stop-opacity', 0.05);
+      grad.append('stop')
+        .attr('offset', '48%')
+        .attr('stop-color', color)
+        .attr('stop-opacity', 0.1);
+      grad.append('stop')
+        .attr('offset', '100%')
+        .attr('stop-color', color)
+        .attr('stop-opacity', 0.85);
+    });
+
+    const chartGroup = svg.append('g')
+      .attr('transform', `translate(${centerX},${centerY})`);
+
     // Pie layout
     const pie = d3.pie()
       .value(d => d.count)
+      .padAngle(0.023)
       .sort(null);
 
     const arc = d3.arc()
-      .innerRadius(0)
+      .innerRadius(radius * 0.48)
       .outerRadius(radius);
 
-    // Create legend group below the pie chart
-    const legendX = 30;
-    const legendY = pieHeight + 15;
-    const legend = svg.append('g')
-      .attr('transform', `translate(${legendX},${legendY})`);
+    // HTML legend (matches timeline detail card style)
+    const legendEl = document.createElement('div');
+    legendEl.className = 'pie-legend-html';
+    container.appendChild(legendEl);
 
     // Draw pie slices with hover and click effects
     let selectedType = null;
@@ -129,10 +175,11 @@ const Scene5 = {
       .data(pie(typeData))
       .join('path')
       .attr('d', arc)
-      .attr('fill', d => getDisasterColor(d.data.type))
-      .attr('opacity', 0.9)
-      .attr('stroke', '#FFF')
-      .attr('stroke-width', 2)
+      .attr('fill', d => `url(#pie-grad-${d.data.type.replace(/[\s\/&]+/g, '-')})`)
+      .attr('stroke', d => getDisasterColor(d.data.type))
+      .attr('stroke-width', 0.5)
+      .attr('stroke-opacity', 0.4)
+      .attr('opacity', 1)
       .style('cursor', 'pointer')
       .on('mouseover', function(event, d) {
         if (selectedType !== d.data.type) {
@@ -161,7 +208,7 @@ const Scene5 = {
           d3.select(this)
             .transition()
             .duration(200)
-            .attr('opacity', 0.9)
+            .attr('opacity', 1)
             .attr('transform', 'translate(0,0)');
 
           // Reset the legend box
@@ -181,7 +228,7 @@ const Scene5 = {
           selectedType = null;
           // Reset all slices
           slices.transition().duration(300)
-            .attr('opacity', 0.9)
+            .attr('opacity', 1)
             .attr('transform', 'translate(0,0)');
           // Reset all legend boxes
           legend.selectAll('.legend-box')
@@ -212,10 +259,10 @@ const Scene5 = {
         }
       });
 
-    // Add percentage labels on slices
+    // Add type name labels on slices
     const labelArc = d3.arc()
-      .innerRadius(radius * 0.65)
-      .outerRadius(radius * 0.65);
+      .innerRadius(radius * 0.7)
+      .outerRadius(radius * 0.7);
 
     chartGroup.selectAll('.slice-label')
       .data(pie(typeData))
@@ -223,15 +270,14 @@ const Scene5 = {
       .attr('class', 'slice-label')
       .attr('transform', d => `translate(${labelArc.centroid(d)})`)
       .attr('text-anchor', 'middle')
-      .attr('fill', '#FFF')
-      .attr('font-size', '0.8rem')
-      .attr('font-weight', '700')
-      .attr('font-family', 'var(--font-display)')
+      .attr('fill', '#fff')
+      .attr('font-size', '0.75rem')
+      .attr('font-weight', '600')
+      .attr('font-family', 'Inter, sans-serif')
       .style('pointer-events', 'none')
-      .style('text-shadow', '0 1px 3px rgba(0,0,0,0.5)')
       .text(d => {
         const percentage = ((d.data.count / total) * 100);
-        return percentage > 3 ? `${percentage.toFixed(0)}%` : '';
+        return percentage > 5 ? `${percentage.toFixed(0)}%` : '';
       });
 
     // Center label with total
@@ -244,7 +290,7 @@ const Scene5 = {
       .attr('text-anchor', 'middle')
       .attr('dy', '-0.2em')
       .attr('fill', '#FFF')
-      .attr('font-size', '2rem')
+      .attr('font-size', `${(radius * 0.28).toFixed(1)}px`)
       .attr('font-weight', '400')
       .attr('font-family', 'Playfair Display, Georgia, serif')
       .text(total);
@@ -253,98 +299,40 @@ const Scene5 = {
       .attr('text-anchor', 'middle')
       .attr('dy', '2em')
       .attr('fill', 'var(--text-mid)')
-      .attr('font-size', '0.9rem')
+      .attr('font-size', `${(radius * 0.13).toFixed(1)}px`)
       .attr('font-family', 'var(--font-body)')
       .attr('letter-spacing', '0.1em')
       .text('EVENTS');
 
-    // Populate legend
-    const itemsPerRow = Math.min(Math.ceil(typeData.length / 2), Math.floor((width - 60) / 180));
-    const itemWidth = Math.max(180, (width - 60) / itemsPerRow);
+    // Populate HTML legend
+    legendEl.innerHTML = typeData.map(d => `
+      <div class="pie-legend-item" data-type="${d.type}">
+        <span class="pie-legend-swatch" style="background:${getDisasterColor(d.type)}"></span>
+        <span class="pie-legend-label">${d.type.replace(/_/g, ' ')}</span>
+        <span class="pie-legend-count">${d.count}</span>
+      </div>`).join('');
 
-    typeData.forEach((d, i) => {
-      const row = Math.floor(i / itemsPerRow);
-      const col = i % itemsPerRow;
-
-      const legendItem = legend.append('g')
-        .attr('transform', `translate(${col * itemWidth},${row * 25})`)
-        .style('cursor', 'pointer')
-        .on('click', function() {
-          // Find the corresponding slice and trigger its click event
-          const slice = slices.filter(sliceData => sliceData.data.type === d.type);
-          if (slice.size() > 0) {
-            slice.dispatch('click');
-          }
-        })
-        .on('mouseover', function() {
-          // Enlarge the box on hover
-          d3.select(this).select('.legend-box')
-            .transition()
-            .duration(200)
-            .attr('width', 16)
-            .attr('height', 16)
-            .attr('x', -2)
-            .attr('y', -2);
-
-          // Also highlight the corresponding slice
-          slices.filter(sliceData => sliceData.data.type === d.type)
-            .transition()
-            .duration(200)
-            .attr('opacity', 1)
-            .attr('transform', function(sliceData) {
-              const [x, y] = arc.centroid(sliceData);
-              return `translate(${x * 0.08},${y * 0.08})`;
-            });
-        })
-        .on('mouseout', function() {
-          // Only reset if not selected
-          if (selectedType !== d.type) {
-            d3.select(this).select('.legend-box')
-              .transition()
-              .duration(200)
-              .attr('width', 12)
-              .attr('height', 12)
-              .attr('x', 0)
-              .attr('y', 0);
-
-            // Reset the slice
-            slices.filter(sliceData => sliceData.data.type === d.type)
-              .transition()
-              .duration(200)
-              .attr('opacity', 0.9)
-              .attr('transform', 'translate(0,0)');
-          }
-        });
-
-      // Color box with class for animation
-      legendItem.append('rect')
-        .datum(d)
-        .attr('class', 'legend-box')
-        .attr('width', 12)
-        .attr('height', 12)
-        .attr('fill', getDisasterColor(d.type))
-        .attr('rx', 2)
-        .attr('x', 0)
-        .attr('y', 0);
-
-      // Type label
-      legendItem.append('text')
-        .attr('x', 18)
-        .attr('y', 10)
-        .attr('fill', 'var(--text-mid)')
-        .attr('font-size', '0.75rem')
-        .attr('font-family', 'var(--font-body)')
-        .text(this.capitalize(d.type));
-
-      // Count with parentheses
-      const labelWidth = this.capitalize(d.type).length * 7;
-      legendItem.append('text')
-        .attr('x', 18 + labelWidth + 5)
-        .attr('y', 10)
-        .attr('fill', 'var(--text-dim)')
-        .attr('font-size', '0.7rem')
-        .attr('font-family', 'var(--font-body)')
-        .text(`(${d.count})`);
+    // Wire up hover/click on HTML legend items to highlight slices
+    legendEl.querySelectorAll('.pie-legend-item').forEach(item => {
+      const type = item.dataset.type;
+      item.addEventListener('mouseover', () => {
+        slices.filter(s => s.data.type === type)
+          .transition().duration(200)
+          .attr('transform', function(s) {
+            const [x, y] = arc.centroid(s);
+            return `translate(${x * 0.08},${y * 0.08})`;
+          });
+      });
+      item.addEventListener('mouseout', () => {
+        if (selectedType !== type) {
+          slices.filter(s => s.data.type === type)
+            .transition().duration(200)
+            .attr('transform', 'translate(0,0)');
+        }
+      });
+      item.addEventListener('click', () => {
+        slices.filter(s => s.data.type === type).dispatch('click');
+      });
     });
   },
 
@@ -419,9 +407,9 @@ const Scene5 = {
       .curve(d3.curveBasis);
 
     // Create tooltip
-    const tooltip = d3.select(container)
+    const tooltip = d3.select('body')
       .append('div')
-      .style('position', 'absolute')
+      .style('position', 'fixed')
       .style('background', 'var(--exhibit)')
       .style('border', '1px solid var(--border-dim)')
       .style('border-radius', '8px')
@@ -486,8 +474,8 @@ const Scene5 = {
                 ${total} events
               </div>
             `)
-            .style('left', (event.pageX + 15) + 'px')
-            .style('top', (event.pageY - 100) + 'px');
+            .style('left', (event.clientX + 15) + 'px')
+            .style('top', (event.clientY - 100) + 'px');
         }
       })
       .on('mouseout', function() {
@@ -496,6 +484,7 @@ const Scene5 = {
       });
 
     // Axes with styling
+
     const xAxis = g.append('g')
       .attr('transform', `translate(0,${chartHeight})`)
       .call(d3.axisBottom(x).tickFormat(d3.format('d')).ticks(6));
@@ -529,11 +518,24 @@ const Scene5 = {
     const legendG = svg.append('g')
       .attr('transform', `translate(${width - margin.right + 10},${margin.top})`);
 
+    const legendRows = [];
+
     topTypes.forEach((typeData, i) => {
       const legendRow = legendG.append('g')
-        .attr('transform', `translate(0,${i * 22})`);
+        .attr('transform', `translate(0,${i * 22})`)
+        .style('cursor', 'pointer');
+
+      legendRows.push({ row: legendRow, type: typeData.type });
+
+      // Invisible full-row hit area
+      legendRow.append('rect')
+        .attr('class', 'legend-hit')
+        .attr('width', margin.right - 10)
+        .attr('height', 20)
+        .attr('fill', 'transparent');
 
       legendRow.append('rect')
+        .attr('class', 'legend-swatch')
         .attr('width', 14)
         .attr('height', 14)
         .attr('fill', getDisasterColor(typeData.type))
@@ -547,6 +549,28 @@ const Scene5 = {
         .attr('font-size', '0.7rem')
         .attr('font-family', 'var(--font-body)')
         .text(this.capitalize(typeData.type));
+
+      legendRow
+        .on('mouseenter', () => {
+          g.selectAll('.area')
+            .attr('opacity', d => d.key === typeData.type ? 1 : 0.08)
+            .filter(d => d.key === typeData.type)
+            .raise();
+          legendRows.forEach(({ row, type }) => {
+            const active = type === typeData.type;
+            row.select('.legend-swatch').attr('opacity', active ? 1 : 0.25);
+            row.select('text').attr('fill', active ? 'var(--text-bright)' : 'var(--text-dim)');
+          });
+        })
+        .on('mouseleave', () => {
+          g.selectAll('.area')
+            .attr('opacity', 0.8)
+            .sort((a, b) => series.findIndex(s => s.key === a.key) - series.findIndex(s => s.key === b.key));
+          legendRows.forEach(({ row }) => {
+            row.select('.legend-swatch').attr('opacity', 0.8);
+            row.select('text').attr('fill', 'var(--text-mid)');
+          });
+        });
     });
   },
 
@@ -628,9 +652,9 @@ const Scene5 = {
       .range([chartHeight, 0]);
 
     // Create tooltip
-    const tooltip = d3.select(container)
+    const tooltip = d3.select('body')
       .append('div')
-      .style('position', 'absolute')
+      .style('position', 'fixed')
       .style('background', 'var(--exhibit)')
       .style('border', '1px solid var(--border-dim)')
       .style('border-radius', '8px')
@@ -651,7 +675,7 @@ const Scene5 = {
 
     g.append('path')
       .datum(combinedData.filter(d => d.deaths > 0))
-      .attr('fill', 'var(--volcano)')
+      .attr('fill', 'var(--orange)')
       .attr('opacity', 0.3)
       .attr('d', areaDeaths);
 
@@ -664,8 +688,8 @@ const Scene5 = {
     g.append('path')
       .datum(combinedData.filter(d => d.deaths > 0))
       .attr('fill', 'none')
-      .attr('stroke', 'var(--volcano)')
-      .attr('stroke-width', 3)
+      .attr('stroke', 'var(--orange)')
+      .attr('stroke-width', 2)
       .attr('d', lineDeaths);
 
     // Area for affected
@@ -677,7 +701,7 @@ const Scene5 = {
 
     g.append('path')
       .datum(combinedData.filter(d => d.affected > 0))
-      .attr('fill', 'var(--drought)')
+      .attr('fill', '#FFF')
       .attr('opacity', 0.2)
       .attr('d', areaAffected);
 
@@ -690,8 +714,8 @@ const Scene5 = {
     g.append('path')
       .datum(combinedData.filter(d => d.affected > 0))
       .attr('fill', 'none')
-      .attr('stroke', 'var(--drought)')
-      .attr('stroke-width', 3)
+      .attr('stroke', '#FFF')
+      .attr('stroke-width', 2)
       .attr('d', lineAffected);
 
     // Find peaks
@@ -704,7 +728,7 @@ const Scene5 = {
         .attr('cx', x(peakDeaths.year))
         .attr('cy', yDeaths(peakDeaths.deaths))
         .attr('r', 6)
-        .attr('fill', 'var(--volcano)')
+        .attr('fill', 'var(--orange)')
         .attr('stroke', '#FFF')
         .attr('stroke-width', 2);
     }
@@ -715,7 +739,7 @@ const Scene5 = {
         .attr('cx', x(peakAffected.year))
         .attr('cy', yAffected(peakAffected.affected))
         .attr('r', 6)
-        .attr('fill', 'var(--drought)')
+        .attr('fill', '#FFF')
         .attr('stroke', '#FFF')
         .attr('stroke-width', 2);
     }
@@ -764,15 +788,15 @@ const Scene5 = {
               <div style="font-family: var(--font-display); font-size: 0.7rem; letter-spacing: 0.1em; color: var(--text-dim); margin-bottom: 6px;">
                 YEAR ${d.year} · ${d.eventCount} EVENT${d.eventCount > 1 ? 'S' : ''}
               </div>
-              <div style="font-size: 1.1rem; font-weight: 600; color: var(--volcano); margin-bottom: 4px;">
+              <div style="font-size: 1.1rem; font-weight: 600; color: var(--orange); margin-bottom: 4px;">
                 ${formatNumber(d.deaths)} deaths
               </div>
-              <div style="font-size: 1.1rem; font-weight: 600; color: var(--drought);">
+              <div style="font-size: 1.1rem; font-weight: 600; color: #FFF;">
                 ${formatNumber(d.affected)} affected
               </div>
             `)
-            .style('left', (event.pageX + 15) + 'px')
-            .style('top', (event.pageY - 120) + 'px');
+            .style('left', (event.clientX + 15) + 'px')
+            .style('top', (event.clientY - 120) + 'px');
         }
       })
       .on('mouseout', function() {
@@ -798,7 +822,7 @@ const Scene5 = {
       .call(d3.axisLeft(yDeaths).ticks(5).tickFormat(d => formatNumber(d)));
 
     yAxisLeft.selectAll('text')
-      .attr('fill', 'var(--volcano)')
+      .attr('fill', 'var(--orange)')
       .attr('font-size', '0.7rem')
       .attr('font-family', 'var(--font-body)');
 
@@ -811,7 +835,7 @@ const Scene5 = {
       .call(d3.axisRight(yAffected).ticks(5).tickFormat(d => formatNumber(d)));
 
     yAxisRight.selectAll('text')
-      .attr('fill', 'var(--drought)')
+      .attr('fill', '#FFF')
       .attr('font-size', '0.7rem')
       .attr('font-family', 'var(--font-body)');
 
@@ -825,7 +849,7 @@ const Scene5 = {
     legend.append('rect')
       .attr('width', 14)
       .attr('height', 14)
-      .attr('fill', 'var(--volcano)')
+      .attr('fill', 'var(--orange)')
       .attr('opacity', 0.8);
 
     legend.append('text')
@@ -839,7 +863,7 @@ const Scene5 = {
       .attr('y', 22)
       .attr('width', 14)
       .attr('height', 14)
-      .attr('fill', 'var(--drought)')
+      .attr('fill', '#FFF')
       .attr('opacity', 0.8);
 
     legend.append('text')
@@ -912,9 +936,9 @@ const Scene5 = {
       .range([chartHeight, 0]);
 
     // Create tooltip
-    const tooltip = d3.select(container)
+    const tooltip = d3.select('body')
       .append('div')
-      .style('position', 'absolute')
+      .style('position', 'fixed')
       .style('background', 'var(--exhibit)')
       .style('border', '1px solid var(--border-dim)')
       .style('border-radius', '8px')
@@ -936,7 +960,7 @@ const Scene5 = {
     g.append('path')
       .datum(damageData)
       .attr('fill', 'var(--purple)')
-      .attr('opacity', 0.3)
+      .attr('opacity', 0.2)
       .attr('d', area);
 
     // Line
@@ -949,7 +973,7 @@ const Scene5 = {
       .datum(damageData)
       .attr('fill', 'none')
       .attr('stroke', 'var(--purple)')
-      .attr('stroke-width', 3)
+      .attr('stroke-width', 2)
       .attr('d', line);
 
     // Find peak
@@ -1042,8 +1066,8 @@ const Scene5 = {
                 economic damage
               </div>
             `)
-            .style('left', (event.pageX + 15) + 'px')
-            .style('top', (event.pageY - 120) + 'px');
+            .style('left', (event.clientX + 15) + 'px')
+            .style('top', (event.clientY - 120) + 'px');
         }
       })
       .on('mouseout', function() {
