@@ -1,0 +1,620 @@
+{
+  "meta": {
+    "source": "EM-DAT (docs/data/emdat_clean.csv)",
+    "year_min": 1975,
+    "year_max": 2025,
+    "total_events": 15869,
+    "total_deaths": 3393822
+  },
+  "yearly": {
+    "events": {
+      "1975": 59,
+      "1976": 86,
+      "1977": 138,
+      "1978": 133,
+      "1979": 114,
+      "1980": 124,
+      "1981": 129,
+      "1982": 150,
+      "1983": 201,
+      "1984": 147,
+      "1985": 171,
+      "1986": 168,
+      "1987": 221,
+      "1988": 230,
+      "1989": 186,
+      "1990": 290,
+      "1991": 267,
+      "1992": 230,
+      "1993": 262,
+      "1994": 254,
+      "1995": 275,
+      "1996": 270,
+      "1997": 323,
+      "1998": 362,
+      "1999": 412,
+      "2000": 501,
+      "2001": 427,
+      "2002": 487,
+      "2003": 386,
+      "2004": 393,
+      "2005": 482,
+      "2006": 458,
+      "2007": 446,
+      "2008": 389,
+      "2009": 388,
+      "2010": 433,
+      "2011": 354,
+      "2012": 371,
+      "2013": 357,
+      "2014": 341,
+      "2015": 397,
+      "2016": 350,
+      "2017": 371,
+      "2018": 337,
+      "2019": 438,
+      "2020": 414,
+      "2021": 437,
+      "2022": 435,
+      "2023": 461,
+      "2024": 445,
+      "2025": 369
+    },
+    "deaths": {
+      "1975": 26858,
+      "1976": 280516,
+      "1977": 22409,
+      "1978": 38119,
+      "1979": 7276,
+      "1980": 22999,
+      "1981": 119416,
+      "1982": 14018,
+      "1983": 461737,
+      "1984": 15737,
+      "1985": 60234,
+      "1986": 10350,
+      "1987": 21557,
+      "1988": 57454,
+      "1989": 12628,
+      "1990": 53154,
+      "1991": 189707,
+      "1992": 18833,
+      "1993": 21872,
+      "1994": 15593,
+      "1995": 27156,
+      "1996": 31613,
+      "1997": 30038,
+      "1998": 62671,
+      "1999": 76911,
+      "2000": 16588,
+      "2001": 39413,
+      "2002": 20892,
+      "2003": 113110,
+      "2004": 244705,
+      "2005": 93494,
+      "2006": 29863,
+      "2007": 22399,
+      "2008": 241993,
+      "2009": 16038,
+      "2010": 330153,
+      "2011": 34125,
+      "2012": 11620,
+      "2013": 22202,
+      "2014": 20876,
+      "2015": 24332,
+      "2016": 10730,
+      "2017": 11912,
+      "2018": 15989,
+      "2019": 22667,
+      "2020": 15766,
+      "2021": 14619,
+      "2022": 80524,
+      "2023": 139149,
+      "2024": 84816,
+      "2025": 16991
+    },
+    "climate_events": {
+      "1975": 50,
+      "1976": 57,
+      "1977": 97,
+      "1978": 99,
+      "1979": 85,
+      "1980": 96,
+      "1981": 108,
+      "1982": 124,
+      "1983": 158,
+      "1984": 115,
+      "1985": 135,
+      "1986": 121,
+      "1987": 163,
+      "1988": 171,
+      "1989": 146,
+      "1990": 227,
+      "1991": 181,
+      "1992": 167,
+      "1993": 227,
+      "1994": 213,
+      "1995": 215,
+      "1996": 207,
+      "1997": 234,
+      "1998": 254,
+      "1999": 297,
+      "2000": 351,
+      "2001": 328,
+      "2002": 360,
+      "2003": 314,
+      "2004": 299,
+      "2005": 396,
+      "2006": 364,
+      "2007": 384,
+      "2008": 316,
+      "2009": 318,
+      "2010": 363,
+      "2011": 291,
+      "2012": 318,
+      "2013": 302,
+      "2014": 289,
+      "2015": 351,
+      "2016": 295,
+      "2017": 321,
+      "2018": 290,
+      "2019": 364,
+      "2020": 379,
+      "2021": 393,
+      "2022": 381,
+      "2023": 404,
+      "2024": 409,
+      "2025": 325
+    }
+  },
+  "chapters": [
+    {
+      "id": "intro",
+      "kind": "intro",
+      "year": 1975,
+      "title": "Half a Century of Disasters",
+      "body": "Between 1975 and 2025, EM-DAT recorded 15,869 natural disasters across 230 countries. They killed 3,393,822 people and affected billions more.",
+      "camera": {
+        "lat": 10,
+        "lng": 20,
+        "altitude": 2.6
+      },
+      "markers": [],
+      "stats": [
+        {
+          "label": "Disasters recorded",
+          "value": "16K"
+        },
+        {
+          "label": "Lives lost",
+          "value": "3.4M"
+        }
+      ]
+    },
+    {
+      "id": "tangshan",
+      "kind": "event",
+      "year": 1976,
+      "title": "Tangshan, 1976",
+      "body": "In the early hours of 28 July 1976, an earthquake levelled the Chinese industrial city of Tangshan. It remains the deadliest single disaster in the modern record.",
+      "camera": {
+        "lat": 39.6,
+        "lng": 118.2,
+        "altitude": 1.5
+      },
+      "markers": [
+        {
+          "lat": 39.63,
+          "lng": 118.18,
+          "iso": "CHN",
+          "type": "earthquake",
+          "hazard": "Earthquake",
+          "year": 1976,
+          "country": "China",
+          "label": "China earthquake",
+          "deaths": 242000,
+          "affected": 164000
+        }
+      ],
+      "stats": [
+        {
+          "label": "Deaths",
+          "value": "242K"
+        },
+        {
+          "label": "People affected",
+          "value": "164K"
+        }
+      ]
+    },
+    {
+      "id": "sahel",
+      "kind": "event",
+      "year": 1983,
+      "title": "Drought across Ethiopia and Sudan",
+      "body": "Between 1983 and 1985, drought triggered famine across Ethiopia and Sudan. War and government failures then turned the shortage into mass starvation that built slowly over two years.",
+      "camera": {
+        "lat": 12,
+        "lng": 33,
+        "altitude": 1.7
+      },
+      "markers": [
+        {
+          "lat": 9.15,
+          "lng": 40.49,
+          "iso": "ETH",
+          "type": "drought",
+          "hazard": "Drought",
+          "year": 1983,
+          "country": "Ethiopia",
+          "label": "Ethiopia drought",
+          "deaths": 300000,
+          "affected": 7750000
+        },
+        {
+          "lat": 15.5,
+          "lng": 30.5,
+          "iso": "SDN",
+          "type": "drought",
+          "hazard": "Drought",
+          "year": 1983,
+          "country": "Sudan",
+          "label": "Sudan drought",
+          "deaths": 150000,
+          "affected": 8400000
+        }
+      ],
+      "stats": [
+        {
+          "label": "Deaths",
+          "value": "450K"
+        },
+        {
+          "label": "People affected",
+          "value": "16.1M"
+        }
+      ]
+    },
+    {
+      "id": "rising",
+      "kind": "trend",
+      "year": 1990,
+      "span": [
+        1980,
+        2009
+      ],
+      "title": "From Dozens to Hundreds a Year",
+      "body": "Through the 1980s, 1990s and 2000s the number of reported disasters climbed steeply, peaking around 2005 to 2010. Better monitoring explains part of it, but most of the growth is in climate-related hazards: storms, floods and droughts.",
+      "camera": {
+        "lat": 20,
+        "lng": 80,
+        "altitude": 2.6
+      },
+      "markers": [],
+      "stats": [
+        {
+          "label": "Disasters, 1980-2009",
+          "value": "9K"
+        },
+        {
+          "label": "Climate share, 1980-2009",
+          "value": "77%"
+        }
+      ]
+    },
+    {
+      "id": "gorky",
+      "kind": "event",
+      "year": 1991,
+      "title": "Cyclone Gorky",
+      "body": "On the night of 29 April 1991, a tropical cyclone drove a six-metre storm surge into the low-lying coast of Bangladesh, a country that would become a symbol of climate vulnerability.",
+      "camera": {
+        "lat": 22.5,
+        "lng": 91.8,
+        "altitude": 1.5
+      },
+      "markers": [
+        {
+          "lat": 22.36,
+          "lng": 91.78,
+          "iso": "BGD",
+          "type": "storm",
+          "hazard": "Cyclone",
+          "year": 1991,
+          "country": "Bangladesh",
+          "label": "Gorky (02B)",
+          "deaths": 138866,
+          "affected": 15438849
+        }
+      ],
+      "stats": [
+        {
+          "label": "Deaths",
+          "value": "139K"
+        },
+        {
+          "label": "People affected",
+          "value": "15.4M"
+        }
+      ]
+    },
+    {
+      "id": "tsunami",
+      "kind": "event",
+      "year": 2004,
+      "title": "The Indian Ocean Tsunami",
+      "body": "On 26 December 2004 a magnitude-9.1 earthquake off Sumatra sent waves across an entire ocean, killing people in fourteen countries on the same morning.",
+      "camera": {
+        "lat": 6,
+        "lng": 90,
+        "altitude": 1.9
+      },
+      "markers": [
+        {
+          "lat": 3.32,
+          "lng": 95.85,
+          "iso": "IDN",
+          "type": "earthquake",
+          "hazard": "Tsunami",
+          "year": 2004,
+          "country": "Indonesia",
+          "label": "Indonesia earthquake",
+          "deaths": 165708,
+          "affected": 532898
+        },
+        {
+          "lat": 7.87,
+          "lng": 80.77,
+          "iso": "LKA",
+          "type": "earthquake",
+          "hazard": "Tsunami",
+          "year": 2004,
+          "country": "Sri Lanka",
+          "label": "Sri Lanka earthquake",
+          "deaths": 35399,
+          "affected": 1019306
+        },
+        {
+          "lat": 11.0,
+          "lng": 79.8,
+          "iso": "IND",
+          "type": "earthquake",
+          "hazard": "Tsunami",
+          "year": 2004,
+          "country": "India",
+          "label": "India earthquake",
+          "deaths": 16389,
+          "affected": 654512
+        },
+        {
+          "lat": 8.5,
+          "lng": 98.3,
+          "iso": "THA",
+          "type": "earthquake",
+          "hazard": "Tsunami",
+          "year": 2004,
+          "country": "Thailand",
+          "label": "Thailand earthquake",
+          "deaths": 8345,
+          "affected": 67007
+        }
+      ],
+      "stats": [
+        {
+          "label": "Deaths",
+          "value": "226K"
+        },
+        {
+          "label": "People affected",
+          "value": "2.3M"
+        }
+      ]
+    },
+    {
+      "id": "kashmir",
+      "kind": "event",
+      "year": 2005,
+      "title": "The Kashmir Earthquake",
+      "body": "Less than a year later, on 8 October 2005, a quake in the mountainous Kashmir region of Pakistan destroyed villages that rescue teams could barely reach before winter set in.",
+      "camera": {
+        "lat": 34.5,
+        "lng": 73.6,
+        "altitude": 1.5
+      },
+      "markers": [
+        {
+          "lat": 34.49,
+          "lng": 73.63,
+          "iso": "PAK",
+          "type": "earthquake",
+          "hazard": "Earthquake",
+          "year": 2005,
+          "country": "Pakistan",
+          "label": "Pakistan earthquake",
+          "deaths": 73338,
+          "affected": 5128309
+        }
+      ],
+      "stats": [
+        {
+          "label": "Deaths",
+          "value": "73K"
+        },
+        {
+          "label": "People affected",
+          "value": "5.1M"
+        }
+      ]
+    },
+    {
+      "id": "cataclysmic-2008",
+      "kind": "event",
+      "year": 2008,
+      "title": "Nargis and Sichuan",
+      "body": "2008 struck twice. On 2 May, Cyclone Nargis flooded the Irrawaddy Delta of Myanmar; on 12 May the Sichuan earthquake devastated central China.",
+      "camera": {
+        "lat": 24,
+        "lng": 99,
+        "altitude": 1.7
+      },
+      "markers": [
+        {
+          "lat": 16.0,
+          "lng": 95.3,
+          "iso": "MMR",
+          "type": "storm",
+          "hazard": "Cyclone",
+          "year": 2008,
+          "country": "Myanmar",
+          "label": "Cyclone 'Nargis'",
+          "deaths": 138366,
+          "affected": 2420000
+        },
+        {
+          "lat": 31.0,
+          "lng": 103.4,
+          "iso": "CHN",
+          "type": "earthquake",
+          "hazard": "Earthquake",
+          "year": 2008,
+          "country": "China",
+          "label": "China earthquake",
+          "deaths": 87476,
+          "affected": 45976596
+        }
+      ],
+      "stats": [
+        {
+          "label": "Deaths",
+          "value": "226K"
+        },
+        {
+          "label": "People affected",
+          "value": "48.4M"
+        }
+      ]
+    },
+    {
+      "id": "haiti",
+      "kind": "event",
+      "year": 2010,
+      "title": "The Haiti Earthquake",
+      "body": "On 12 January 2010 a shallow magnitude-7.0 earthquake struck just outside Port-au-Prince, collapsing the Haitian capital in seconds. With hospitals, ports and government buildings destroyed, the toll climbed into the hundreds of thousands.",
+      "camera": {
+        "lat": 18.5,
+        "lng": -72.3,
+        "altitude": 1.5
+      },
+      "markers": [
+        {
+          "lat": 18.46,
+          "lng": -72.53,
+          "iso": "HTI",
+          "type": "earthquake",
+          "hazard": "Earthquake",
+          "year": 2010,
+          "country": "Haiti",
+          "label": "Haiti earthquake",
+          "deaths": 222570,
+          "affected": 3700000
+        }
+      ],
+      "stats": [
+        {
+          "label": "Deaths",
+          "value": "223K"
+        },
+        {
+          "label": "People affected",
+          "value": "3.7M"
+        }
+      ]
+    },
+    {
+      "id": "climate-era",
+      "kind": "trend",
+      "year": 2015,
+      "span": [
+        2010,
+        2024
+      ],
+      "title": "The Climate Era",
+      "body": "By the 2010s, storms, floods and droughts made up the overwhelming majority of disasters. Geophysical events grew modestly with better detection; the climate curve grew much faster.",
+      "camera": {
+        "lat": 0,
+        "lng": -60,
+        "altitude": 2.6
+      },
+      "markers": [],
+      "stats": [
+        {
+          "label": "Disasters, 2010-2024",
+          "value": "6K"
+        },
+        {
+          "label": "Climate share, 2010-2024",
+          "value": "87%"
+        }
+      ]
+    },
+    {
+      "id": "turkiye",
+      "kind": "event",
+      "year": 2023,
+      "title": "The Turkey and Syria Earthquake",
+      "body": "On 6 February 2023 a pair of powerful earthquakes ruptured the border region of Turkey and Syria, the deadliest event of the decade so far.",
+      "camera": {
+        "lat": 37.2,
+        "lng": 37.0,
+        "altitude": 1.5
+      },
+      "markers": [
+        {
+          "lat": 37.17,
+          "lng": 37.03,
+          "iso": "TUR",
+          "type": "earthquake",
+          "hazard": "Earthquake",
+          "year": 2023,
+          "country": "Turkey",
+          "label": "Turkey earthquake",
+          "deaths": 53000,
+          "affected": 16107000
+        }
+      ],
+      "stats": [
+        {
+          "label": "Deaths",
+          "value": "53K"
+        },
+        {
+          "label": "People affected",
+          "value": "16.1M"
+        }
+      ]
+    },
+    {
+      "id": "outro",
+      "kind": "outro",
+      "year": 2025,
+      "title": "Where We Stand",
+      "body": "Fifty years on, disasters arrive more often than they once did, and the climate-related share keeps growing. The record does not end here. Explore the globe to see it country by country.",
+      "camera": {
+        "lat": 10,
+        "lng": 20,
+        "altitude": 2.6
+      },
+      "markers": [],
+      "stats": [
+        {
+          "label": "Climate share, 1975-1984",
+          "value": "77%"
+        },
+        {
+          "label": "Climate share, 2015-2024",
+          "value": "88%"
+        }
+      ]
+    }
+  ]
+}
