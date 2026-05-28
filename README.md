@@ -118,12 +118,12 @@ Live demo: [https://com-480-data-visualization.github.io/PixElles/](https://com-
 ## Intended Usage
 
 ### User Journey
-1. **Enter Museum** (Scene 1) → Experience animated ticket entry
-2. **Explore Globe** (Scene 2) → Click on any country to select it
-3. **View Timeline** (Scene 3) → Navigate immersive 3D hallway of country's disasters
-4. **Open Overview** (Scene 5) → Access detailed statistical dashboard for selected country
-5. **Understand Global Context** (Scene 4) → See worldwide trends and patterns
-6. **Meet Team** (Scene 6) → Learn about project creators
+1. **Enter Museum** (Scene 1): Experience animated ticket entry
+2. **Explore Globe** (Scene 2): Click on any country to select it
+3. **View Timeline** (Scene 3): Navigate immersive 3D hallway of country's disasters
+4. **Open Overview** (Scene 5): Access detailed statistical dashboard for selected country
+5. **Understand Global Context** (Scene 4): See worldwide trends and patterns
+6. **Meet Team** (Scene 6): Learn about project creators
 
 
 ## Museum Scenes
