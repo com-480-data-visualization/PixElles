@@ -13,6 +13,7 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="js/data.js"></script>
 
 <style>
   :root {
@@ -184,6 +185,18 @@
     pointer-events: none;
     transition: opacity .6s ease;
   }
+  .intro::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 1280px;
+    height: 520px;
+    background: radial-gradient(ellipse at center, rgba(9, 26, 39, 0.96) 0%, rgba(22, 37, 56, 0.8) 30%, rgba(11, 26, 29, 0.4) 60%, transparent 70%);
+    pointer-events: none;
+    z-index: -1;
+  }
   .intro .kicker {
     font-size: 11px;
     letter-spacing: 0.32em;
@@ -233,6 +246,14 @@
   @keyframes bob {
     0%,100% { transform: translateY(0); }
     50%     { transform: translateY(6px); }
+  }
+
+  /* ---------- Particle background ---------- */
+  #bgParticles {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
   }
 
   /* ---------- The Hallway ---------- */
@@ -752,11 +773,12 @@
     font-style: italic;
   }
 
-  /* Chart col: pie + legend side by side */
+  /* Chart col: pie on top, legend below */
   .dc-chart-inner {
     display: flex;
-    align-items: flex-start;
-    gap: 28px;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
   }
   .pie { width: 200px; height: 200px; flex-shrink: 0; position: relative; }
   .pie-svg { width: 100%; height: 100%; }
@@ -774,7 +796,7 @@
     font-size: 9.5px; letter-spacing: 0.25em;
     text-transform: uppercase; color: var(--text-dim); margin-top: 4px;
   }
-  .pie-legend { display: flex; flex-direction: column; flex: 1; align-self: center; }
+  .pie-legend { display: flex; flex-direction: column; width: 100%; }
   .pie-legend .item {
     display: flex; align-items: center; gap: 10px;
     font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
@@ -821,20 +843,21 @@
   .dc-curator-lbl {
     font-size: 10.5px; letter-spacing: 0.32em;
     text-transform: uppercase; color: var(--text-dim);
-    text-align: center; margin-bottom: 24px;
+    text-align: center; margin-bottom: 10px;
   }
   .narrative {
     font-family: 'Cormorant Garamond', serif;
     font-size: 18px; line-height: 1.65;
     color: var(--text-mid);
-    column-count: 2; column-gap: 48px;
+    column-count: 1; max-width: 720px; margin: 0 auto;
     font-weight: 300;
   }
   .narrative::first-letter {
     font-family: 'Cormorant Garamond', serif;
     font-size: 64px; font-weight: 400;
-    float: left; line-height: 0.85;
-    margin: 4px 10px 0 0;
+    line-height: 1;
+    vertical-align: baseline;
+    margin-right: 4px;
     color: var(--bluesky); font-style: italic;
   }
 
@@ -858,7 +881,7 @@
     .dc-body { grid-template-columns: 1fr; }
     .dc-vdivider { height: 1px; width: auto; }
     .dc-col { padding: 24px 20px; }
-    .dc-chart-inner { flex-direction: column; align-items: center; }
+
     .dc-curator { padding: 24px 20px 32px; }
     .narrative { column-count: 1; }
   }
@@ -879,6 +902,8 @@
 </style>
 </head>
 <body>
+
+<canvas id="bgParticles"></canvas>
 
 <div class="loading-overlay" id="loadingOverlay">
   <div class="spinner"></div>
@@ -964,7 +989,7 @@
 
     <div class="dc-body">
       <div class="dc-col dc-col-chart">
-        <div class="dc-section-lbl">-- Object &nbsp;·&nbsp; Distribution of Events --</div>
+        <div class="dc-section-lbl">— Object &nbsp;·&nbsp; Distribution of Events —</div>
         <div class="dc-chart-inner">
           <div class="pie">
             <svg class="pie-svg" viewBox="0 0 100 100" id="pieSvg"></svg>
@@ -980,7 +1005,7 @@
       <div class="dc-vdivider"></div>
 
       <div class="dc-col dc-col-numbers">
-        <div class="dc-section-lbl">-- Object &nbsp;·&nbsp; Numbers --</div>
+        <div class="dc-section-lbl">— Object &nbsp;·&nbsp; Numbers —</div>
         <div class="ledger">
           <div class="ledger-row">
             <div class="lbl">Total Deaths</div>
@@ -1025,6 +1050,77 @@
       }
     }
   })();
+</script>
+
+<script>
+(function () {
+  const canvas = document.getElementById('bgParticles');
+  const ctx    = canvas.getContext('2d');
+  const N      = 260;
+  let   W, H, dpr, parts;
+
+  function resize() {
+    dpr = window.devicePixelRatio || 1;
+    W   = window.innerWidth;
+    H   = window.innerHeight;
+    canvas.width  = W * dpr;
+    canvas.height = H * dpr;
+    canvas.style.width  = W + 'px';
+    canvas.style.height = H + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function rand(a, b) { return a + Math.random() * (b - a); }
+
+  function spawn() {
+    return {
+      x:    rand(0, W),
+      y:    rand(0, H),
+      r:    rand(0.4, 1.6),
+      vx:   rand(-0.06, 0.06),
+      vy:   rand(-0.04, 0.04),
+      base: rand(0.08, 0.55),
+      phase: rand(0, Math.PI * 2),
+      speed: rand(0.004, 0.012)
+    };
+  }
+
+  function init() {
+    resize();
+    parts = Array.from({ length: N }, spawn);
+  }
+
+  let t = 0;
+  function draw() {
+    t++;
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = '#0C1116';
+    ctx.fillRect(0, 0, W, H);
+
+    for (const p of parts) {
+      p.x += p.vx;
+      p.y += p.vy;
+
+      // wrap around edges
+      if (p.x < -2)  p.x = W + 2;
+      if (p.x > W+2) p.x = -2;
+      if (p.y < -2)  p.y = H + 2;
+      if (p.y > H+2) p.y = -2;
+
+      const alpha = p.base * (0.6 + 0.4 * Math.sin(p.phase + t * p.speed));
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(180, 210, 255, ${alpha.toFixed(3)})`;
+      ctx.fill();
+    }
+
+    requestAnimationFrame(draw);
+  }
+
+  init();
+  draw();
+  window.addEventListener('resize', () => { resize(); });
+})();
 </script>
 </body>
 </html>

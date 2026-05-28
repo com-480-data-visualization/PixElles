@@ -871,7 +871,7 @@ async function init() {
     } catch (e) { /* try next */ }
   }
 
-  const events = rawRows.filter(d => d.iso === ISO).map(d => ({
+  const events = rawRows.filter(d => canonicalIso(d.iso) === ISO).map(d => ({
     year: +d.year, type: d.type || 'unknown', name: d.name || 'Unnamed Event',
     deaths: +d.deaths || 0, affected: +d.affected || 0, damage: +d.damage_usd_thousands || 0, region: d.region || ''
   }));
@@ -884,8 +884,8 @@ async function init() {
     return;
   }
 
-  const refRow = rawRows.find(d => d.iso === ISO);
-  COUNTRY_NAME = refRow ? refRow.country : ISO;
+  const refRow = rawRows.find(d => canonicalIso(d.iso) === ISO);
+  COUNTRY_NAME = normalizeCountryName(refRow ? refRow.country : ISO);
 
   const allYears = [...new Set(events.map(d => d.year))].sort((a, b) => a - b);
   const yearDataArr = allYears.map(year => {
