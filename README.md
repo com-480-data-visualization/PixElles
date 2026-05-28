@@ -68,7 +68,7 @@ EM-DAT is a widely used dataset and several types of work exist:
 
 - **Academic and student projects.** A common pattern is studying trends with choropleth maps, line charts, and pie charts at the country level (such as [example](https://github.com/valeqm/World-Disaster-Pipeline)). [Global Disasters (UGent)](https://datavisualiatie-ugent.github.io/project-dv24-5/) goes further by linking disaster frequency to climate indicators, but each chart is standalone.
 
-- **Our World in Data.** [OWID](https://ourworldindata.org/natural-disasters) offers the most comprehensive public collection of EM-DAT-based charts — deaths, economic costs, and long-term trends - but remains filter-based.
+- **Our World in Data.** [OWID](https://ourworldindata.org/natural-disasters) offers the most comprehensive public collection of EM-DAT-based charts (deaths, economic costs, and long-term trends) but remains filter-based.
 
 All of the above are primarily descriptive and exploration-focused.
 
@@ -107,7 +107,7 @@ Live demo: [https://com-480-data-visualization.github.io/PixElles/](https://com-
 
 ## Global Highlights
 
-- **14,000+ disaster events** across 220+ countries spanning 1975-2025
+- **14000+ disaster events** across 220+ countries spanning 1975-2025
 - **Museum-themed narrative experience** guiding users through global disaster patterns
 - **Multi-dimensional analysis**: Disaster typology, geographic vulnerability, human impact & resilience
 - **Interactive 3D visualizations** combining globe navigation and immersive timelines
@@ -205,11 +205,11 @@ docs/
 ├── index.html              # Scene 1: Museum entrance
 ├── globe.html              # Scene 2: 3D globe
 ├── country_timeline.html   # Scene 3: Country timeline hallway
-├── country_overview.html   # Scene 4: Country statistics
-├── earth_story.html        # Scene 5: Global trends
+├── country_overview.html   # Scene 5: Country statistics
+├── earth_story.html        # Scene 4: Global trends
 ├── curators.html           # Scene 6: Team page
 ├── css/
-│   └── style.css          # Global styles + Scene 4 styles
+│   └── style.css          # Global styles
 ├── js/
 │   ├── data.js            # Data loading and processing
 │   ├── scene1_ticket.js   # Entrance animation
@@ -225,11 +225,11 @@ docs/
 ```
 
 ### Technologies
-- **D3.js v7**: Data-driven visualizations, SVG manipulation, data binding
-- **Three.js**: 3D graphics rendering (globe, timeline hallway)
-- **Vanilla JavaScript ES6+**: Core application logic, async/await patterns
-- **CSS Grid & Flexbox**: Responsive layouts
-- **Python**: Data preprocessing
+- **D3.js v7**: Data-driven visualizations, SVG manipulation, data binding.
+- **Three.js**: 3D graphics rendering (globe, timeline hallway).
+- **Vanilla JavaScript ES6+**: Core application logic, async/await patterns.
+- **CSS Grid & Flexbox**: Responsive layouts.
+- **Python**: Data preprocessing.
 
 ---
 
