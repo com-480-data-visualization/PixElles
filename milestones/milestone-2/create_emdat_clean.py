@@ -1,9 +1,4 @@
 #!/usr/bin/env python3
-"""
-Create emdat_clean.csv from raw EM-DAT Excel file
-This script processes the raw data and creates the format expected by the website.
-"""
-
 import pandas as pd
 from pathlib import Path
 
@@ -15,7 +10,6 @@ SHEET_NAME = 'EM-DAT Data'
 YEAR_START = 1975
 YEAR_END = 2025
 
-# Group raw EM-DAT disaster types into categories
 DISASTER_TYPE_MAPPING = {
     'Flood': 'flood',
     'Glacial lake outburst flood': 'flood',
@@ -45,7 +39,7 @@ print(f'Filtered to {YEAR_START}-{YEAR_END}, Natural disasters: {len(df):,} reco
 
 df_clean = df[[
     'Start Year', 'ISO', 'Country', 'Region', 'Subregion',
-    'Disaster Type', 'Disaster Subtype', 'Event Name',
+    'Disaster Subgroup', 'Disaster Type', 'Disaster Subtype', 'Event Name',
     'Total Deaths', 'Total Affected',
     'Total Damage, Adjusted (\'000 US$)',
     'Latitude', 'Longitude'
@@ -53,7 +47,7 @@ df_clean = df[[
 
 df_clean.columns = [
     'year', 'iso', 'country', 'region', 'subregion',
-    'raw_type', 'type_detail', 'name',
+    'subgroup', 'raw_type', 'type_detail', 'name',
     'deaths', 'affected', 'damage_usd_thousands',
     'lat', 'lon'
 ]
@@ -70,7 +64,6 @@ if unmapped_types:
     for dtype in unmapped_types:
         print(f'  - {dtype}')
 
-# Fill NaN values
 df_clean['name'] = df_clean['name'].fillna('Unnamed Event')
 df_clean['raw_type'] = df_clean['raw_type'].fillna('')
 df_clean['type_detail'] = df_clean['type_detail'].fillna('')
@@ -80,7 +73,7 @@ df_clean['damage_usd_thousands'] = df_clean['damage_usd_thousands'].fillna(0)
 
 df_clean = df_clean[[
     'year', 'iso', 'country', 'region', 'subregion',
-    'type', 'raw_type', 'type_detail', 'name',
+    'subgroup', 'type', 'raw_type', 'type_detail', 'name',
     'deaths', 'affected', 'damage_usd_thousands',
     'lat', 'lon'
 ]]
