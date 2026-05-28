@@ -36,16 +36,8 @@ const GLOBE_COUNTRY_NAME_ALIASES = {
   'viet nam': 'vietnam'
 };
 
-const GLOBE_ISO_CENTER_ALIASES = {
-  CSK: 'CZE',
-  DDR: 'DEU',
-  DFR: 'DEU',
-  SCG: 'SRB',
-  SUN: 'RUS',
-  YMD: 'YEM',
-  YMN: 'YEM',
-  YUG: 'SRB'
-};
+// ISO_ALIASES and canonicalIso() are defined in data.js (loaded first)
+const GLOBE_ISO_CENTER_ALIASES = ISO_ALIASES;
 
 const GLOBE_FALLBACK_CENTERS = {
   AIA: { lat: 18.22, lng: -63.06 },
@@ -296,7 +288,7 @@ const Scene2 = {
   },
 
   canonicalIso(iso) {
-    return GLOBE_ISO_CENTER_ALIASES[iso] || iso;
+    return canonicalIso(iso);
   },
 
   getCountryLabel(country) {

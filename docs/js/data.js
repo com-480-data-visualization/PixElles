@@ -38,6 +38,78 @@ const DISASTER_COLORS = Object.fromEntries(
   Object.entries(DISASTER_TYPE_META).map(([type, meta]) => [type, meta.color])
 );
 
+// Historical ISO codes → current canonical ISO codes (matches globe logic)
+const ISO_ALIASES = {
+  CSK: 'CZE',
+  DDR: 'DEU',
+  DFR: 'DEU',
+  SCG: 'SRB',
+  SUN: 'RUS',
+  YMD: 'YEM',
+  YMN: 'YEM',
+  YUG: 'SRB'
+};
+
+function canonicalIso(iso) {
+  return ISO_ALIASES[iso] || iso;
+}
+
+const COUNTRY_NAME_ALIASES = {
+  'bolivia plurinational state of': 'Bolivia',
+  'brunei darussalam': 'Brunei',
+  'central african rep': 'Central African Republic',
+  'czech republic': 'Czechia',
+  'dem rep congo': 'DR Congo',
+  'dominican rep': 'Dominican Republic',
+  'eq guinea': 'Equatorial Guinea',
+  'iran islamic republic of': 'Iran',
+  'lao peoples democratic republic': 'Laos',
+  'macedonia': 'North Macedonia',
+  'micronesia federated states of': 'Micronesia',
+  'netherlands kingdom of the': 'Netherlands',
+  'republic of congo': 'Congo',
+  'republic of korea': 'South Korea',
+  'russian federation': 'Russia',
+  's korea': 'South Korea',
+  's sudan': 'South Sudan',
+  'solomon is': 'Solomon Islands',
+  'state of palestine': 'Palestine',
+  'swaziland': 'Eswatini',
+  'syrian arab republic': 'Syria',
+  'tanzanian united republic': 'Tanzania',
+  'united republic of tanzania': 'Tanzania',
+  'turkiye': 'Turkey',
+  'united kingdom of great britain and northern ireland': 'United Kingdom',
+  'venezuela bolivarian republic of': 'Venezuela',
+  'viet nam': 'Vietnam',
+  'democratic peoples republic of korea': 'North Korea',
+  'korea democratic peoples republic of': 'North Korea',
+  'korea republic of': 'South Korea',
+  'moldova republic of': 'Moldova',
+  'taiwan province of china': 'Taiwan',
+  'hong kong special administrative region of china': 'Hong Kong',
+  'macao special administrative region of china': 'Macao',
+  'virgin islands british': 'British Virgin Islands',
+  'virgin islands us': 'US Virgin Islands',
+  'saint helena ascension and tristan da cunha': 'Saint Helena',
+  'saint kitts and nevis': 'St Kitts and Nevis',
+  'saint lucia': 'St Lucia',
+  'saint vincent and the grenadines': 'St Vincent',
+  'sao tome and principe': 'São Tomé and Príncipe',
+  'turks and caicos islands': 'Turks and Caicos',
+  'wallis and futuna islands': 'Wallis and Futuna',
+  'western sahara': 'Western Sahara',
+  'british indian ocean territory': 'BIOT'
+};
+
+function normalizeCountryName(raw) {
+  if (!raw) return raw;
+  const key = raw.toLowerCase().replace(/[^a-z\s]/g, ' ').replace(/\s+/g, ' ').trim();
+  if (COUNTRY_NAME_ALIASES[key]) return COUNTRY_NAME_ALIASES[key];
+  // Title-case the original if no alias found
+  return raw.replace(/\w\S*/g, w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase());
+}
+
 // Initialize data from the cleaned EM-DAT CSV.
 async function initData(csvPath = 'data/emdat_clean.csv') {
   const csvCandidates = Array.from(new Set([
