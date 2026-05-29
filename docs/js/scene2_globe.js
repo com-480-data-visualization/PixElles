@@ -2,41 +2,7 @@
    SCENE 2: 3D GLOBE
    ============================================ */
 
-const GLOBE_COUNTRY_NAME_ALIASES = {
-  'bolivia plurinational state of': 'bolivia',
-  'bosnia and herz': 'bosnia and herzegovina',
-  'brunei darussalam': 'brunei',
-  'cape verde': 'cabo verde',
-  'central african rep': 'central african republic',
-  'czech republic': 'czechia',
-  'dem rep congo': 'democratic republic of the congo',
-  'dominican rep': 'dominican republic',
-  'eq guinea': 'equatorial guinea',
-  'iran islamic republic of': 'iran',
-  'ivory coast': 'cote d ivoire',
-  'lao peoples democratic republic': 'laos',
-  'macedonia': 'north macedonia',
-  'micronesia federated states of': 'micronesia',
-  'moldova': 'republic of moldova',
-  'netherlands kingdom of the': 'netherlands',
-  'north korea': 'democratic peoples republic of korea',
-  'republic of congo': 'congo',
-  'republic of korea': 'south korea',
-  'russian federation': 'russia',
-  's korea': 'south korea',
-  's sudan': 'south sudan',
-  'solomon is': 'solomon islands',
-  'state of palestine': 'palestine',
-  'swaziland': 'eswatini',
-  'syrian arab republic': 'syria',
-  'tanzania': 'united republic of tanzania',
-  'turkiye': 'turkey',
-  'united kingdom of great britain and northern ireland': 'united kingdom',
-  'venezuela bolivarian republic of': 'venezuela',
-  'viet nam': 'vietnam'
-};
-
-// ISO_ALIASES and canonicalIso() are defined in data.js (loaded first)
+// GLOBE_COUNTRY_NAME_ALIASES, baseNormalize(), canonicalIso() defined in data.js (loaded first)
 const GLOBE_ISO_CENTER_ALIASES = ISO_ALIASES;
 
 const GLOBE_FALLBACK_CENTERS = {
@@ -335,7 +301,7 @@ const Scene2 = {
       ? getDisasterTypeLabel(this.selectedType)
       : 'No matching type';
     const accent = hasMatches ? getDisasterColor(this.selectedType) : '#97AEC4';
-    const displayName = country?.properties?.name || stats.country;
+    const displayName = normalizeCountryName(stats.country || country?.properties?.name);
 
     return `
       <div style="background: rgba(13,17,23,0.95); padding: 12px; border-radius: 8px; border: 1px solid ${accent};">
@@ -445,15 +411,8 @@ const Scene2 = {
   },
 
   normalizeCountryName(name = '') {
-    const normalized = String(name)
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, ' ')
-      .replace(/\s+/g, ' ')
-      .trim();
-
-    return GLOBE_COUNTRY_NAME_ALIASES[normalized] || normalized;
+    const key = baseNormalize(name);
+    return GLOBE_COUNTRY_NAME_ALIASES[key] || key;
   },
 
   getInternalCountryCenter(feature) {
@@ -556,7 +515,7 @@ const Scene2 = {
     const color = this.selectedType === 'all' ? '#1E3A8A' : getDisasterColor(this.selectedType);
 
     return countryGroups.map(({ iso, events: countryEvents, center }) => {
-      const country = COUNTRY_STATS[iso]?.country || countryEvents[0]?.country || iso;
+      const country = normalizeCountryName(COUNTRY_STATS[iso]?.country || countryEvents[0]?.country) || iso;
       const count = countryEvents.length;
       const deaths = d3.sum(countryEvents, d => d.deaths);
 
@@ -923,7 +882,7 @@ const Scene2 = {
 
       return {
         iso,
-        country: stats.country,
+        country: normalizeCountryName(stats.country),
         count: countryEvents.length,
         deaths: d3.sum(countryEvents, d => d.deaths),
         damage: d3.sum(countryEvents, d => d.damage)

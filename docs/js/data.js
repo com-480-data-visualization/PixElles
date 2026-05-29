@@ -29,10 +29,8 @@ const DISASTER_TYPE_META = {
   storm: { label: 'Storm', color: '#8C86FF', order: 60 },
   epidemic: { label: 'Epidemic', color: '#6EE7C8', order: 70 },
   infestation: { label: 'Infestation', color: '#D6E75B', order: 80 },
-  animal_incident: { label: 'Animal Incident', color: '#6DD6E8', order: 90 },
   volcano: { label: 'Volcano', color: '#FF695B', order: 100 },
   wildfire: { label: 'Wildfire', color: '#FFA142', order: 110 },
-  impact: { label: 'Impact', color: '#C7A8FF', order: 120 }
 };
 
 const DISASTER_COLORS = Object.fromEntries(
@@ -103,9 +101,55 @@ const COUNTRY_NAME_ALIASES = {
   'british indian ocean territory': 'BIOT'
 };
 
+// Shared base: NFD decompose → strip diacritics → lowercase → collapse non-alpha to spaces
+function baseNormalize(str) {
+  return String(str)
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+// Aliases used by the globe for feature-name → ISO matching (returns lowercase keys)
+const GLOBE_COUNTRY_NAME_ALIASES = {
+  'bolivia plurinational state of': 'bolivia',
+  'bosnia and herz': 'bosnia and herzegovina',
+  'brunei darussalam': 'brunei',
+  'cape verde': 'cabo verde',
+  'central african rep': 'central african republic',
+  'czech republic': 'czechia',
+  'dem rep congo': 'democratic republic of the congo',
+  'dominican rep': 'dominican republic',
+  'eq guinea': 'equatorial guinea',
+  'iran islamic republic of': 'iran',
+  'ivory coast': 'cote d ivoire',
+  'lao peoples democratic republic': 'laos',
+  'macedonia': 'north macedonia',
+  'micronesia federated states of': 'micronesia',
+  'moldova': 'republic of moldova',
+  'netherlands kingdom of the': 'netherlands',
+  'north korea': 'democratic peoples republic of korea',
+  'republic of congo': 'congo',
+  'republic of korea': 'south korea',
+  'russian federation': 'russia',
+  's korea': 'south korea',
+  's sudan': 'south sudan',
+  'solomon is': 'solomon islands',
+  'state of palestine': 'palestine',
+  'swaziland': 'eswatini',
+  'syrian arab republic': 'syria',
+  'tanzania': 'united republic of tanzania',
+  'turkiye': 'turkey',
+  'united kingdom of great britain and northern ireland': 'united kingdom',
+  'venezuela bolivarian republic of': 'venezuela',
+  'viet nam': 'vietnam'
+};
+
 function normalizeCountryName(raw) {
   if (!raw) return raw;
-  const key = raw.toLowerCase().replace(/[^a-z\s]/g, ' ').replace(/\s+/g, ' ').trim();
+  const key = baseNormalize(raw);
   if (COUNTRY_NAME_ALIASES[key]) return COUNTRY_NAME_ALIASES[key];
   // Title-case the original if no alias found
   return raw.replace(/\w\S*/g, w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase());

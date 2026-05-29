@@ -711,14 +711,19 @@
   }
   .dc-title {
     font-family: 'Cormorant Garamond', serif;
-    font-size: 54px;
+    font-size: clamp(28px, 3.5vw, 54px);
     font-weight: 400;
     letter-spacing: 0.05em;
     color: var(--text);
     text-transform: uppercase;
-    white-space: nowrap;
+    white-space: normal;
     text-align: center;
-    line-height: 1;
+    line-height: 1.1;
+    overflow-wrap: break-word;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
   .dc-title em {
     font-style: italic;
@@ -876,7 +881,7 @@
     .hud-year .yr { font-size: 64px; }
     .hud-progress { right: 20px; bottom: 30px; width: 200px; }
     .dc-header { grid-template-columns: 1fr; gap: 8px; padding: 20px 20px 16px; }
-    .dc-title { font-size: 38px; text-align: left; }
+    .dc-title { font-size: clamp(22px, 6vw, 38px); text-align: left; }
     .dc-meta-group { justify-content: space-between; }
     .dc-body { grid-template-columns: 1fr; }
     .dc-vdivider { height: 1px; width: auto; }
