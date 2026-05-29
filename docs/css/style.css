@@ -1387,7 +1387,7 @@ button {
 
 .range-slider-container {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   gap: 8px;
   width: 100%;
 }
@@ -1414,6 +1414,10 @@ button {
   flex-shrink: 0;
   width: 32px;
   height: 32px;
+  /* Bottom-aligned to the wrapper, then nudged down so the button's centre
+     lines up with the slider track centre (track centre sits 12px above the
+     slider's bottom; half the 32px button is 16px). */
+  margin-bottom: -4px;
   padding: 0;
   background: rgba(151, 174, 196, 0.15);
   border: 1px solid rgba(151, 174, 196, 0.4);
@@ -1873,7 +1877,10 @@ button {
   font-weight: 400;
   line-height: 1;
   letter-spacing: 0;
-  color: var(--text);
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
   text-transform: uppercase;
 }
 
