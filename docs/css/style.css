@@ -450,6 +450,15 @@ button {
   white-space: nowrap;
 }
 
+.breadcrumb a {
+  color: rgba(255, 255, 255, 0.6);
+  text-decoration: none;
+}
+
+.breadcrumb a:hover {
+  color: rgba(255, 255, 255, 0.9);
+}
+
 .breadcrumb .sep {
   margin: 0 10px;
   opacity: 0.5;

@@ -182,7 +182,10 @@
         }
       }
 
-      function animate(ts) {
+      const FRAME_MS = 1000 / 30; /* 30 fps cap */
+      let lastFrame = 0;
+
+      function drawFrame(ts) {
         ctx.fillStyle = '#0C1116';
         ctx.fillRect(0, 0, w, h);
 
@@ -201,7 +204,13 @@
 
         ctx.fillStyle = vigGrad;
         ctx.fillRect(0, 0, w, h);
+      }
 
+      function animate(ts) {
+        if (ts - lastFrame >= FRAME_MS) {
+          lastFrame = ts;
+          drawFrame(ts);
+        }
         animId = requestAnimationFrame(animate);
       }
 
