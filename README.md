@@ -102,7 +102,10 @@ Interactive museum experience visualizing 50 years of global natural disasters (
 
 ## Website, Screencast & Process book
 
-Live demo: [https://com-480-data-visualization.github.io/PixElles/](https://com-480-data-visualization.github.io/PixElles/)
+- **Live Website:** [Earth Natural Disaster Museum](https://com-480-data-visualization.github.io/PixElles/)
+- **Screencast:** [Watch the screencast](milestones/milestone-3/screencast.mp4)
+- **Process Book:** [Read the process book](milestones/milestone-3/Process_book.pdf)
+
 
 
 ## Global Highlights
