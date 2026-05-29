@@ -87,7 +87,7 @@ const Scene2 = {
   countryCentroids: {},
   countryFeatures: {},
   countryNameToISO: new Map(),
-  currentYearRange: [1975, 1975],
+  currentYearRange: [1975, 2025],
   currentCountryData: {},
   debounceTimeout: null,
   disasterTypes: [],
@@ -267,9 +267,11 @@ const Scene2 = {
   },
 
   selectType(type) {
-    if (!type || type === this.selectedType) return;
+    if (!type) return;
 
-    this.selectedType = type;
+    // Toggle off when the already-active type is clicked: no type selected
+    // leaves the globe empty (no markers, 0 events).
+    this.selectedType = type === this.selectedType ? null : type;
     this.updateSelectedTypeButtons();
     this.updateEventCount();
     this.debounceUpdate();
@@ -734,16 +736,13 @@ const Scene2 = {
     this.playButton?.classList.add('playing');
     this.playButton?.setAttribute('aria-label', 'Pause timeline animation');
 
-    // Set start year to 1975 if not already
-    const currentStart = this.currentYearRange[0];
-    if (currentStart !== 1975) {
-      this.currentYearRange = [1975, 1975];
-      this.yearStartSlider.value = 1975;
-      this.yearEndSlider.value = 1975;
-      this.updateYearRangeUI();
-      this.updateEventCount();
-      this.updateVisualization();
-    }
+    // Always restart the sweep from 1975 so Play replays the full animation.
+    this.currentYearRange = [1975, 1975];
+    this.yearStartSlider.value = 1975;
+    this.yearEndSlider.value = 1975;
+    this.updateYearRangeUI();
+    this.updateEventCount();
+    this.updateVisualization();
 
     // Use slower speed for bubble chart, normal speed for globe
     const speed = this.bubbleChartVisible ? this.animationSpeed * 2 : this.animationSpeed;
