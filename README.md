@@ -103,7 +103,7 @@ Interactive museum experience visualizing 50 years of global natural disasters (
 ## Website, Screencast & Process book
 
 - **Live Website:** [Earth Natural Disaster Museum](https://com-480-data-visualization.github.io/PixElles/)
-- **Screencast:** [Watch the screencast](milestones/milestone-3/screencast.mp4)
+- **Screencast:** [Watch the screencast](https://drive.google.com/file/d/1hvtsKswg5lsN7-KODzIZS1n4a3VXAAXt/view?usp=sharing)
 - **Process Book:** [Read the process book](milestones/milestone-3/Process_book.pdf)
 
 
@@ -132,19 +132,16 @@ Interactive museum experience visualizing 50 years of global natural disasters (
 ## Museum Scenes
 
 ### Scene 1: Museum Entrance (`index.html`)
-**EXHIBIT 0 — ENTRANCE**
 - Animated ticket entry experience
 - Museum theme introduction with interactive elements
 
 ### Scene 2: Interactive Globe (`globe.html`)
-**EXHIBIT I — GLOBAL VIEW**
 - **3D globe visualization** with Three.js
 - **Country selection** by clicking on globe surface
 - **Dominant disaster type** color-coding per country
 - **Interactive navigation** to country-specific exhibits
 
 ### Scene 3: Country Timeline (`country_timeline.html`)
-**EXHIBIT II — COUNTRY TIMELINE**
 - **Immersive 3D hallway** displaying chronological disaster timeline
 - **3D event cards** floating in space with perspective depth
 - **Comprehensive event data**: year, type, name, deaths, affected, economic damage
@@ -152,7 +149,6 @@ Interactive museum experience visualizing 50 years of global natural disasters (
 - **Navigation controls**: Open Overview button linking to Scene 4
 
 ### Scene 5: Country Overview (`country_overview.html`)
-**EXHIBIT III — COUNTRY OVERVIEW**
 
 **Top Statistics Grid (2×2):**
 - Total events across 50 years
@@ -182,7 +178,6 @@ Interactive museum experience visualizing 50 years of global natural disasters (
 - Formatted currency values in millions
 
 ### Scene 4: Earth Story (`earth_story.html`)
-**EXHIBIT IV — GLOBAL TRENDS**
 - **50-year global analysis** across all disasters
 - **Trend identification**: Climate-related vs geological events
 - **Regional vulnerability patterns**
