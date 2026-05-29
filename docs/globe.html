@@ -128,11 +128,13 @@
     <iframe id="storyFrame" title="Earth Story" src="about:blank"></iframe>
   </div>
 
-  <!-- Static starfield -->
+  <!-- Animated starfield -->
   <script>
     (function () {
       const canvas = document.getElementById('starfieldCanvas');
       const ctx    = canvas.getContext('2d');
+
+      let stars = [], vigGrad, w, h, animId;
 
       function rng(seed) {
         let s = seed;
@@ -144,44 +146,73 @@
         };
       }
 
-      function draw() {
+      function init() {
         const dpr = window.devicePixelRatio || 1;
-        const w   = window.innerWidth;
-        const h   = window.innerHeight;
+        w = window.innerWidth;
+        h = window.innerHeight;
         canvas.width  = w * dpr;
         canvas.height = h * dpr;
         canvas.style.width  = w + 'px';
         canvas.style.height = h + 'px';
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
+        vigGrad = ctx.createRadialGradient(w / 2, h / 2, h * 0.2, w / 2, h / 2, h * 0.9);
+        vigGrad.addColorStop(0, 'rgba(12,17,22,0)');
+        vigGrad.addColorStop(1, 'rgba(12,17,22,0.55)');
+
+        const rand  = rng(42);
+        const count = Math.round(w * h / 1400);
+        stars = [];
+        for (let i = 0; i < count; i++) {
+          stars.push({
+            x:            rand() * w,
+            y:            rand() * h,
+            size:         rand() * 1.4 + 0.3,
+            baseAlpha:    rand() * 0.55 + 0.15,
+            twinklePhase: rand() * Math.PI * 2,
+            twinkleSpeed: rand() * 0.003  + 0.001,
+            twinkleAmp:   rand() * 0.35   + 0.1,
+            driftPhaseX:  rand() * Math.PI * 2,
+            driftPhaseY:  rand() * Math.PI * 2,
+            driftSpeedX:  rand() * 0.0001 + 0.00003,
+            driftSpeedY:  rand() * 0.0001 + 0.00003,
+            driftAmpX:    rand() * 1.5    + 0.5,
+            driftAmpY:    rand() * 1.5    + 0.5,
+          });
+        }
+      }
+
+      function animate(ts) {
         ctx.fillStyle = '#0C1116';
         ctx.fillRect(0, 0, w, h);
 
-        const rand = rng(42);
-        const count = Math.round(w * h / 1400); /* ~850 stars on 1080p */
-
-        for (let i = 0; i < count; i++) {
-          const x     = rand() * w;
-          const y     = rand() * h;
-          const size  = rand() * 1.4 + 0.3;
-          const alpha = rand() * 0.7 + 0.15;
+        for (const s of stars) {
+          const alpha = Math.max(0.05, Math.min(0.9,
+            s.baseAlpha + Math.sin(ts * s.twinkleSpeed + s.twinklePhase) * s.twinkleAmp
+          ));
+          const x = s.x + Math.sin(ts * s.driftSpeedX + s.driftPhaseX) * s.driftAmpX;
+          const y = s.y + Math.sin(ts * s.driftSpeedY + s.driftPhaseY) * s.driftAmpY;
 
           ctx.beginPath();
-          ctx.arc(x, y, size, 0, Math.PI * 2);
+          ctx.arc(x, y, s.size, 0, Math.PI * 2);
           ctx.fillStyle = `rgba(255,255,255,${alpha.toFixed(2)})`;
           ctx.fill();
         }
 
-        /* faint radial vignette so the edges feel like deep space */
-        const grad = ctx.createRadialGradient(w/2, h/2, h * 0.2, w/2, h/2, h * 0.9);
-        grad.addColorStop(0, 'rgba(12,17,22,0)');
-        grad.addColorStop(1, 'rgba(12,17,22,0.55)');
-        ctx.fillStyle = grad;
+        ctx.fillStyle = vigGrad;
         ctx.fillRect(0, 0, w, h);
+
+        animId = requestAnimationFrame(animate);
       }
 
-      draw();
-      window.addEventListener('resize', draw);
+      init();
+      animId = requestAnimationFrame(animate);
+
+      window.addEventListener('resize', () => {
+        cancelAnimationFrame(animId);
+        init();
+        animId = requestAnimationFrame(animate);
+      });
     })();
   </script>
 
