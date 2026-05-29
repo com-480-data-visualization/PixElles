@@ -62,7 +62,7 @@ const Scene1 = {
   function frame() {
     // Soft trailing fade — instead of clearing, draw a translucent dark layer.
     // This creates faint motion-trails that sell the "drifting through space" feel.
-    ctx.fillStyle = 'rgba(12, 17, 22, 0.25)';   // matches your --bgcolor
+    ctx.fillStyle = 'rgba(12, 17, 22, 0.25)';
     ctx.fillRect(0, 0, w, h);
 
     for (const s of stars) {
@@ -117,7 +117,6 @@ const Scene1 = {
 })();
 
 // Ticket click → Scene 2
-// (script is at end of <body> so DOM is ready — no DOMContentLoaded needed)
 (function attachTicketHandler() {
   const ticket = document.getElementById('ticket');
   const frame  = document.getElementById('scene-ticket');
