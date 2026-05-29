@@ -20,6 +20,7 @@ const WORLD_COUNTRY_COUNT = 220;
 
 // Metadata for normalized values from the CSV `type` column.
 const DISASTER_TYPE_META = {
+  all: { label: 'All', color: '#1E3A8A', order: 0 },
   drought: { label: 'Drought', color: '#FFC857', order: 10 },
   earthquake: { label: 'Earthquake', color: '#C96B32', order: 20 },
   extreme_temperature: { label: 'Extreme Temperature', color: '#FF5DB8', order: 30 },
@@ -390,7 +391,15 @@ function getAvailableDisasterTypes() {
     ? Array.from(new Set(RAW_DATA.map(d => d.type).filter(Boolean)))
     : [];
 
-  return types
+  // Add the "All" option at the beginning
+  const allOption = {
+    type: 'all',
+    label: 'All',
+    color: '#1E3A8A',
+    order: 0
+  };
+
+  const typeOptions = types
     .map(type => ({
       type,
       label: getDisasterTypeLabel(type),
@@ -398,6 +407,8 @@ function getAvailableDisasterTypes() {
       order: DISASTER_TYPE_META[type]?.order ?? 999
     }))
     .sort((a, b) => a.order - b.order || a.label.localeCompare(b.label));
+
+  return [allOption, ...typeOptions];
 }
 
 // Helper to format large numbers

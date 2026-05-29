@@ -87,10 +87,17 @@ const Scene2 = {
   countryCentroids: {},
   countryFeatures: {},
   countryNameToISO: new Map(),
-  currentYearRange: [1975, 2025],
+  currentYearRange: [1975, 1975],
   currentCountryData: {},
   debounceTimeout: null,
   disasterTypes: [],
+  isPlaying: false,
+  animationInterval: null,
+  animationSpeed: 400,
+  bubbleChartVisible: false,
+  bubbleChartSvg: null,
+  bubbleSimulation: null,
+  topCountriesLimit: 30,
 
   async init() {
     console.log('Initializing Scene 2: 3D Globe');
@@ -139,7 +146,12 @@ const Scene2 = {
     };
 
     resizeGlobe();
-    window.addEventListener('resize', resizeGlobe);
+    window.addEventListener('resize', () => {
+      resizeGlobe();
+      if (this.bubbleChartVisible) {
+        this.updateBubbleChart();
+      }
+    });
 
     controls.addEventListener('change', () => this.updateMarkerVisibility());
   },
@@ -155,12 +167,25 @@ const Scene2 = {
     this.eventCount = document.getElementById('eventCount');
     this.dataStatus = document.getElementById('dataStatus');
     this.typeFilter = document.getElementById('typeFilter');
+    this.playButton = document.getElementById('timelinePlayButton');
+    this.bubbleChartButton = document.getElementById('bubbleChartButton');
+    this.bubbleChartContainer = document.getElementById('bubbleChartContainer');
+    this.closeBubbleChartButton = document.getElementById('closeBubbleChart');
     this.refreshTypeButtons();
 
     this.yearStartSlider?.addEventListener('input', () => this.handleYearRangeInput('start'));
     this.yearStartSlider?.addEventListener('change', () => this.handleYearRangeInput('start'));
     this.yearEndSlider?.addEventListener('input', () => this.handleYearRangeInput('end'));
     this.yearEndSlider?.addEventListener('change', () => this.handleYearRangeInput('end'));
+
+    this.playButton?.addEventListener('click', () => this.togglePlayAnimation());
+    this.bubbleChartButton?.addEventListener('click', () => this.toggleBubbleChart());
+    this.closeBubbleChartButton?.addEventListener('click', () => this.closeBubbleChart());
+
+    // Zoom controls
+    document.getElementById('zoomIn')?.addEventListener('click', () => this.zoomIn());
+    document.getElementById('zoomOut')?.addEventListener('click', () => this.zoomOut());
+    document.getElementById('zoomReset')?.addEventListener('click', () => this.zoomReset());
 
     this.typeFilter?.addEventListener('click', event => {
       const button = event.target.closest('.chip[data-type]');
@@ -199,6 +224,11 @@ const Scene2 = {
   },
 
   handleYearRangeInput(changedHandle) {
+    // Stop animation if user manually adjusts sliders
+    if (this.isPlaying) {
+      this.stopAnimation();
+    }
+
     let start = +this.yearStartSlider.value;
     let end = +this.yearEndSlider.value;
 
@@ -267,7 +297,7 @@ const Scene2 = {
     return {
       yearStart,
       yearEnd,
-      types: this.selectedType ? [this.selectedType] : []
+      types: this.selectedType === 'all' ? 'all' : (this.selectedType ? [this.selectedType] : [])
     };
   },
 
@@ -323,6 +353,11 @@ const Scene2 = {
   updateVisualization() {
     this.refreshCurrentCountryData();
     this.updateEventCount();
+
+    if (this.bubbleChartVisible) {
+      this.updateBubbleChart();
+      return;
+    }
 
     if (!this.globe || !this.worldData) return;
 
@@ -515,7 +550,8 @@ const Scene2 = {
 
     const counts = countryGroups.map(group => group.events.length);
     const sizeScaleLimit = this.getBubbleSizeScaleLimit(counts);
-    const color = getDisasterColor(this.selectedType);
+    // Use midnight-blue for "all", otherwise use the disaster type color
+    const color = this.selectedType === 'all' ? '#1E3A8A' : getDisasterColor(this.selectedType);
 
     return countryGroups.map(({ iso, events: countryEvents, center }) => {
       const country = COUNTRY_STATS[iso]?.country || countryEvents[0]?.country || iso;
@@ -529,7 +565,7 @@ const Scene2 = {
         count,
         deaths,
         type: this.selectedType,
-        typeLabel: getDisasterTypeLabel(this.selectedType),
+        typeLabel: this.selectedType === 'all' ? 'All Disasters' : getDisasterTypeLabel(this.selectedType),
         color,
         size: this.getBubbleMarkerSize(count, sizeScaleLimit),
         lat: center.lat,
@@ -681,5 +717,489 @@ const Scene2 = {
 
   handleCountryClick(iso) {
     window.location.href = `country_timeline.html?iso=${iso}`;
+  },
+
+  togglePlayAnimation() {
+    if (this.isPlaying) {
+      this.stopAnimation();
+    } else {
+      this.startAnimation();
+    }
+  },
+
+  startAnimation() {
+    if (this.isPlaying) return;
+
+    this.isPlaying = true;
+    this.playButton?.classList.add('playing');
+    this.playButton?.setAttribute('aria-label', 'Pause timeline animation');
+
+    // Set start year to 1975 if not already
+    const currentStart = this.currentYearRange[0];
+    if (currentStart !== 1975) {
+      this.currentYearRange = [1975, 1975];
+      this.yearStartSlider.value = 1975;
+      this.yearEndSlider.value = 1975;
+      this.updateYearRangeUI();
+      this.updateEventCount();
+      this.updateVisualization();
+    }
+
+    // Use slower speed for bubble chart, normal speed for globe
+    const speed = this.bubbleChartVisible ? this.animationSpeed * 2 : this.animationSpeed;
+
+    this.animationInterval = setInterval(() => {
+      const currentYear = this.currentYearRange[1];
+
+      if (currentYear >= 2025) {
+        this.stopAnimation();
+        return;
+      }
+
+      const nextYear = currentYear + 1;
+      this.currentYearRange = [1975, nextYear];
+      this.yearStartSlider.value = 1975;
+      this.yearEndSlider.value = nextYear;
+      this.updateYearRangeUI();
+      this.updateEventCount();
+      this.updateVisualization();
+    }, speed);
+  },
+
+  stopAnimation() {
+    if (!this.isPlaying) return;
+
+    this.isPlaying = false;
+    this.playButton?.classList.remove('playing');
+    this.playButton?.setAttribute('aria-label', 'Play timeline animation');
+
+    if (this.animationInterval) {
+      clearInterval(this.animationInterval);
+      this.animationInterval = null;
+    }
+  },
+
+  // Bubble Chart Methods
+
+  toggleBubbleChart() {
+    if (this.bubbleChartVisible) {
+      this.closeBubbleChart();
+    } else {
+      this.openBubbleChart();
+    }
+  },
+
+  openBubbleChart() {
+    this.bubbleChartVisible = true;
+
+    // Update button state
+    this.bubbleChartButton?.classList.add('active');
+    const buttonText = this.bubbleChartButton?.querySelector('.bubble-chart-text');
+    if (buttonText) {
+      buttonText.textContent = 'Return to the globe';
+    }
+
+    // Capture globe marker positions before transition
+    this.captureGlobeMarkerPositions();
+
+    // Show bubble chart container
+    this.bubbleChartContainer?.classList.remove('hidden');
+
+    // Initialize bubble chart
+    this.initBubbleChart();
+
+    // Start transition: fade out globe, fade in bubbles
+    requestAnimationFrame(() => {
+      const globeContainer = document.getElementById('globeContainer');
+      globeContainer?.classList.add('hide-for-bubbles');
+
+      // Show bubbles after a brief delay
+      setTimeout(() => {
+        this.bubbleChartContainer?.classList.add('visible');
+        this.updateBubbleChart();
+      }, 300);
+    });
+  },
+
+  captureGlobeMarkerPositions() {
+    this.globeMarkerPositions = new Map();
+
+    // Get the HTML elements data from the globe
+    const htmlElements = this.globe?.htmlElementsData?.() || [];
+
+    // Get all visible globe country bubbles
+    const bubbles = document.querySelectorAll('.globe-country-bubble');
+    const bubbleArray = Array.from(bubbles);
+
+    // Match bubbles with their data by index
+    htmlElements.forEach((marker, index) => {
+      if (marker.iso && bubbleArray[index]) {
+        const rect = bubbleArray[index].getBoundingClientRect();
+        const opacity = parseFloat(bubbleArray[index].style.getPropertyValue('--angle-opacity') || '1');
+
+        // Only capture visible bubbles
+        if (opacity > 0.1) {
+          this.globeMarkerPositions.set(marker.iso, {
+            x: rect.left + rect.width / 2,
+            y: rect.top + rect.height / 2,
+            size: parseFloat(bubbleArray[index].style.getPropertyValue('--marker-size') || marker.size)
+          });
+        }
+      }
+    });
+  },
+
+  closeBubbleChart() {
+    this.bubbleChartVisible = false;
+    this.bubbleChartContainer?.classList.remove('visible');
+
+    // Update button state
+    this.bubbleChartButton?.classList.remove('active');
+    const buttonText = this.bubbleChartButton?.querySelector('.bubble-chart-text');
+    if (buttonText) {
+      buttonText.textContent = 'Open bubble chart';
+    }
+
+    // Fade in globe
+    setTimeout(() => {
+      const globeContainer = document.getElementById('globeContainer');
+      globeContainer?.classList.remove('hide-for-bubbles');
+    }, 200);
+
+    // Clean up after transition
+    setTimeout(() => {
+      this.bubbleChartContainer?.classList.add('hidden');
+      this.cleanupBubbleChart();
+    }, 800);
+  },
+
+  initBubbleChart() {
+    if (this.bubbleChartSvg) return;
+
+    const svg = d3.select('#bubbleChartSvg');
+    this.bubbleChartSvg = svg;
+
+    // Clear any existing content
+    svg.selectAll('*').remove();
+
+    // Create main group for bubbles
+    const bubblesGroup = svg.append('g').attr('class', 'bubbles-group');
+
+    // Add zoom behavior
+    const zoom = d3.zoom()
+      .scaleExtent([0.3, 3]) // Allow zoom out to 30% and zoom in to 300%
+      .on('zoom', (event) => {
+        bubblesGroup.attr('transform', event.transform);
+      });
+
+    // Apply zoom to SVG
+    svg.call(zoom);
+
+    // Store zoom behavior for later use
+    this.bubbleZoom = zoom;
+  },
+
+  cleanupBubbleChart() {
+    if (this.bubbleSimulation) {
+      this.bubbleSimulation.stop();
+      this.bubbleSimulation = null;
+    }
+
+    if (this.bubbleChartSvg) {
+      this.bubbleChartSvg.selectAll('*').remove();
+      this.bubbleChartSvg = null;
+    }
+  },
+
+  getBubbleChartData() {
+    if (!isRealDataLoaded()) return [];
+
+    const events = getFilteredEvents(this.getActiveFilters());
+    const eventsByCountry = d3.group(events, d => this.canonicalIso(d.iso));
+
+    // Calculate total disasters per country
+    const countryData = Array.from(eventsByCountry, ([iso, countryEvents]) => {
+      const stats = COUNTRY_STATS[iso];
+      if (!stats) return null;
+
+      return {
+        iso,
+        country: stats.country,
+        count: countryEvents.length,
+        deaths: d3.sum(countryEvents, d => d.deaths),
+        damage: d3.sum(countryEvents, d => d.damage)
+      };
+    }).filter(d => d !== null);
+
+    // Sort by count and take top 35 countries
+    return countryData
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 30);
+  },
+
+  updateBubbleChart() {
+    if (!this.bubbleChartSvg) return;
+
+    const data = this.getBubbleChartData();
+    if (data.length === 0) return;
+
+    const container = document.getElementById('bubbleChartContainer');
+    const width = container.clientWidth;
+    const height = container.clientHeight;
+
+    // Update SVG dimensions
+    this.bubbleChartSvg
+      .attr('width', width)
+      .attr('height', height);
+
+    // Calculate bubble sizes
+    const maxCount = d3.max(data, d => d.count);
+    const minCount = d3.min(data, d => d.count);
+
+    // Size scale: ensure bubbles are large enough for country names
+    const maxRadius = Math.min(width, height) * 0.10; // Slightly larger for better readability
+    const minRadius = 28; // Minimum 28px radius to fit country names
+
+    const radiusScale = d3.scaleSqrt()
+      .domain([minCount, maxCount])
+      .range([minRadius, maxRadius]);
+
+    // Color scale: use the same color as globe circles with gradient and transparency
+    let baseColor = getDisasterColor('all'); // Default for "all"
+
+    if (this.selectedType && this.selectedType !== 'all') {
+      baseColor = getDisasterColor(this.selectedType);
+    }
+
+    // Create gradient from light to dark version of the base color
+    const lightColor = this.lightenColor(baseColor, 0.4);
+    const darkColor = this.darkenColor(baseColor, 0.5);
+
+    // Convert hex to rgba with transparency
+    const hexToRgba = (hex, alpha) => {
+      const h = hex.replace('#', '');
+      const r = parseInt(h.substring(0, 2), 16);
+      const g = parseInt(h.substring(2, 4), 16);
+      const b = parseInt(h.substring(4, 6), 16);
+      return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+    };
+
+    const colorScale = d3.scaleLinear()
+      .domain([minCount, maxCount])
+      .range([hexToRgba(lightColor, 0.95), hexToRgba(darkColor, 0.95)])
+      .interpolate(d3.interpolateRgb);
+
+    // Get existing nodes to preserve positions, or use globe positions
+    const bubblesGroup = this.bubbleChartSvg.select('.bubbles-group');
+    const existingNodes = new Map();
+    bubblesGroup.selectAll('.bubble-node').each(function(d) {
+      if (d && d.iso) {
+        existingNodes.set(d.iso, { x: d.x, y: d.y });
+      }
+    });
+
+    // Prepare node data
+    const nodes = data.map(d => {
+      const existing = existingNodes.get(d.iso);
+      const globePos = this.globeMarkerPositions?.get(d.iso);
+
+      let startX, startY;
+      if (existing) {
+        // Use existing position for smooth updates
+        startX = existing.x;
+        startY = existing.y;
+      } else if (globePos) {
+        // Use globe marker position for initial transformation
+        startX = globePos.x;
+        startY = globePos.y;
+      } else {
+        // Random position near center
+        startX = width / 2 + (Math.random() - 0.5) * width * 0.5;
+        startY = height / 2 + (Math.random() - 0.5) * height * 0.5;
+      }
+
+      return {
+        ...d,
+        radius: radiusScale(d.count),
+        color: colorScale(d.count),
+        x: startX,
+        y: startY
+      };
+    });
+
+    // Create or update force simulation
+    if (this.bubbleSimulation) {
+      this.bubbleSimulation.nodes(nodes);
+      this.bubbleSimulation.force('collision', d3.forceCollide().radius(d => d.radius + 4).strength(0.9));
+      this.bubbleSimulation.alpha(0.6).restart();
+    } else {
+      this.bubbleSimulation = d3.forceSimulation(nodes)
+        .force('charge', d3.forceManyBody().strength(2))
+        .force('center', d3.forceCenter(width / 2, height / 2).strength(0.05))
+        .force('collision', d3.forceCollide().radius(d => d.radius + 4).strength(0.9))
+        .force('x', d3.forceX(width / 2).strength(0.05))
+        .force('y', d3.forceY(height / 2).strength(0.05))
+        .alphaDecay(0.015)
+        .velocityDecay(0.3);
+    }
+
+    // Bind data
+    const bubbleNodes = bubblesGroup.selectAll('.bubble-node')
+      .data(nodes, d => d.iso);
+
+    // Exit
+    bubbleNodes.exit()
+      .transition()
+      .duration(300)
+      .attr('opacity', 0)
+      .remove();
+
+    // Enter
+    const bubbleEnter = bubbleNodes.enter()
+      .append('g')
+      .attr('class', 'bubble-node')
+      .attr('opacity', 0)
+      .on('click', (event, d) => this.handleCountryClick(d.iso));
+
+    bubbleEnter.append('circle');
+    bubbleEnter.append('text').attr('class', 'bubble-label');
+
+    // Merge enter + update
+    const bubbleMerge = bubbleEnter.merge(bubbleNodes);
+
+    // Fade in new bubbles
+    bubbleMerge.transition().duration(600).attr('opacity', 1);
+
+    // Update circles with smooth transitions
+    bubbleMerge.select('circle')
+      .transition()
+      .duration(800)
+      .ease(d3.easeCubicInOut)
+      .attr('r', d => d.radius)
+      .attr('fill', d => d.color);
+
+    // Update labels - show all country names with wrapping for long names
+    bubbleMerge.select('.bubble-label')
+      .each(function(d) {
+        const label = d3.select(this);
+        label.selectAll('*').remove(); // Clear existing tspans
+
+        // Calculate optimal font size
+        const charWidth = 0.6;
+        const maxFontSize = 16;
+        const minFontSize = 10;
+        const availableWidth = d.radius * 1.8;
+        let fontSize = availableWidth / (d.country.length * charWidth);
+        fontSize = Math.min(maxFontSize, Math.max(minFontSize, fontSize));
+
+        label.attr('font-size', fontSize);
+
+        // Wrap text if needed
+        const words = d.country.split(' ');
+        const maxLineWidth = d.radius * 1.8;
+        const lines = [];
+        let currentLine = [];
+
+        words.forEach(word => {
+          const testLine = [...currentLine, word].join(' ');
+          const testWidth = testLine.length * fontSize * charWidth;
+
+          if (testWidth < maxLineWidth) {
+            currentLine.push(word);
+          } else {
+            if (currentLine.length > 0) {
+              lines.push(currentLine.join(' '));
+              currentLine = [word];
+            } else {
+              // Word too long, add it anyway
+              lines.push(word);
+            }
+          }
+        });
+        if (currentLine.length > 0) {
+          lines.push(currentLine.join(' '));
+        }
+
+        // Create tspans for each line
+        const lineHeight = 1.1;
+        const totalHeight = lines.length * fontSize * lineHeight;
+        const startY = -(totalHeight / 2) + (fontSize * lineHeight / 2);
+
+        lines.forEach((line, i) => {
+          label.append('tspan')
+            .attr('x', 0)
+            .attr('dy', i === 0 ? startY : fontSize * lineHeight)
+            .text(line);
+        });
+      })
+      .attr('opacity', 1)
+      .transition()
+      .duration(500);
+
+    // Apply simulation tick
+    this.bubbleSimulation.on('tick', () => {
+      bubbleMerge.attr('transform', d => `translate(${d.x},${d.y})`);
+    });
+  },
+
+  // Color manipulation helpers
+  lightenColor(color, amount) {
+    // Convert hex to RGB
+    const hex = color.replace('#', '');
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+
+    // Lighten by moving towards white
+    const newR = Math.min(255, Math.round(r + (255 - r) * amount));
+    const newG = Math.min(255, Math.round(g + (255 - g) * amount));
+    const newB = Math.min(255, Math.round(b + (255 - b) * amount));
+
+    // Convert back to hex
+    return `#${newR.toString(16).padStart(2, '0')}${newG.toString(16).padStart(2, '0')}${newB.toString(16).padStart(2, '0')}`;
+  },
+
+  darkenColor(color, amount) {
+    // Convert hex to RGB
+    const hex = color.replace('#', '');
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+
+    // Darken by moving towards black
+    const newR = Math.max(0, Math.round(r * (1 - amount)));
+    const newG = Math.max(0, Math.round(g * (1 - amount)));
+    const newB = Math.max(0, Math.round(b * (1 - amount)));
+
+    // Convert back to hex
+    return `#${newR.toString(16).padStart(2, '0')}${newG.toString(16).padStart(2, '0')}${newB.toString(16).padStart(2, '0')}`;
+  },
+
+  // Zoom control methods
+  zoomIn() {
+    if (!this.bubbleChartSvg || !this.bubbleZoom) return;
+
+    this.bubbleChartSvg
+      .transition()
+      .duration(300)
+      .call(this.bubbleZoom.scaleBy, 1.3);
+  },
+
+  zoomOut() {
+    if (!this.bubbleChartSvg || !this.bubbleZoom) return;
+
+    this.bubbleChartSvg
+      .transition()
+      .duration(300)
+      .call(this.bubbleZoom.scaleBy, 0.77);
+  },
+
+  zoomReset() {
+    if (!this.bubbleChartSvg || !this.bubbleZoom) return;
+
+    this.bubbleChartSvg
+      .transition()
+      .duration(500)
+      .call(this.bubbleZoom.transform, d3.zoomIdentity);
   }
 };
