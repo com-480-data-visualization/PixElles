@@ -1376,6 +1376,20 @@ button {
   width: 100%;
 }
 
+.range-slider-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.range-slider-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
 .range-values {
   display: flex;
   justify-content: space-between;
@@ -1385,6 +1399,50 @@ button {
   font-size: 12px;
   line-height: 1;
   color: var(--bluegrey);
+}
+
+.timeline-play-button {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  background: rgba(151, 174, 196, 0.15);
+  border: 1px solid rgba(151, 174, 196, 0.4);
+  border-radius: 6px;
+  color: var(--bluegrey);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.timeline-play-button:hover {
+  background: rgba(151, 174, 196, 0.25);
+  border-color: rgba(151, 174, 196, 0.6);
+  color: #fff;
+}
+
+.timeline-play-button:active {
+  transform: scale(0.95);
+}
+
+.timeline-play-button svg {
+  width: 18px;
+  height: 18px;
+  display: none;
+}
+
+.timeline-play-button .play-icon {
+  display: block;
+}
+
+.timeline-play-button.playing .play-icon {
+  display: none;
+}
+
+.timeline-play-button.playing .pause-icon {
+  display: block;
 }
 
 .range-slider {
@@ -1586,6 +1644,200 @@ button {
   font-size: 10px;
   line-height: 1.2;
   text-transform: none;
+}
+
+.bubble-chart-button {
+  width: 100%;
+  margin-top: 16px;
+  padding: 12px 16px;
+  background: rgba(151, 174, 196, 0.15);
+  border: 1px solid rgba(151, 174, 196, 0.4);
+  border-radius: 10px;
+  color: var(--bluegrey);
+  font-family: var(--font-display);
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.25s ease;
+}
+
+.bubble-chart-button:hover {
+  background: rgba(151, 174, 196, 0.25);
+  border-color: rgba(151, 174, 196, 0.6);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.bubble-chart-button:active {
+  transform: translateY(0);
+}
+
+.bubble-chart-icon {
+  font-size: 10px;
+  line-height: 1;
+  letter-spacing: -1px;
+  display: inline-block;
+}
+
+.globe-icon {
+  font-size: 16px;
+  line-height: 1;
+  display: none;
+}
+
+.bubble-chart-button.active .bubble-chart-icon {
+  display: none;
+}
+
+.bubble-chart-button.active .globe-icon {
+  display: inline-block;
+}
+
+.bubble-chart-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.8s ease;
+  z-index: 10;
+}
+
+#globeContainer.hide-for-bubbles {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+}
+
+.bubble-chart-container.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.bubble-chart-container.hidden {
+  display: none;
+}
+
+#bubbleChartSvg {
+  width: 100%;
+  height: 100%;
+}
+
+.close-bubble-chart {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  background: rgba(151, 174, 196, 0.15);
+  border: 1px solid rgba(151, 174, 196, 0.4);
+  border-radius: 8px;
+  color: var(--bluegrey);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  z-index: 11;
+}
+
+.close-bubble-chart:hover {
+  background: rgba(151, 174, 196, 0.25);
+  border-color: rgba(151, 174, 196, 0.6);
+  color: #fff;
+}
+
+.close-bubble-chart svg {
+  width: 20px;
+  height: 20px;
+}
+
+.bubble-zoom-controls {
+  position: absolute;
+  bottom: 24px;
+  right: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 11;
+}
+
+.zoom-control-btn {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  background: rgba(151, 174, 196, 0.15);
+  border: 1px solid rgba(151, 174, 196, 0.4);
+  border-radius: 8px;
+  color: var(--bluegrey);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.zoom-control-btn:hover {
+  background: rgba(151, 174, 196, 0.25);
+  border-color: rgba(151, 174, 196, 0.6);
+  color: #fff;
+}
+
+.zoom-control-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+.bubble-node {
+  cursor: pointer;
+  transition: opacity 0.3s ease;
+}
+
+.bubble-node circle {
+  stroke: rgba(255, 255, 255, 0.3);
+  stroke-width: 2px;
+}
+
+.bubble-node:hover circle {
+  stroke: rgba(255, 255, 255, 0.6);
+  stroke-width: 3px;
+}
+
+.bubble-label {
+  font-family: var(--font-garamond);
+  font-size: 12px;
+  fill: #000000;
+  text-anchor: middle;
+  pointer-events: none;
+  user-select: none;
+  text-transform: capitalize;
+  letter-spacing: 0.3px;
+  font-weight: 1000;
+  filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.8))
+          drop-shadow(0 0 2px rgba(255, 255, 255, 0.5))
+          drop-shadow(0 1px 1px rgba(255, 255, 255, 0.6));
+}
+
+.bubble-label tspan {
+  fill: #000000;
+}
+
+.bubble-count {
+  font-family: var(--font-inter);
+  font-size: 11px;
+  fill: rgba(255, 255, 255, 0.8);
+  text-anchor: middle;
+  pointer-events: none;
+  user-select: none;
 }
 
 .earth-story-card {
